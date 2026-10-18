@@ -11,6 +11,8 @@ export const TYPES = {
   claim: "claim", // a volunteer's encrypted offer to take a ride
   assign: "assign", // the dispatcher's confirmation of one claim
   closeout: "closeout", // the dispatcher's encrypted "ride done" note
+  member: "member", // a device public key (secp256k1, not the wallet key) so the dispatcher can rekey
+  rekey: "rekey", // a fresh chain key sealed to each remaining member device key
 } as const;
 export type EntityType = (typeof TYPES)[keyof typeof TYPES];
 

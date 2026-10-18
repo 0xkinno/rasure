@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@arkiv-network/sdk": "0.8.1",
+    "@noble/curves": "1.9.1",
     "@noble/hashes": "1.8.0",
     "viem": "2.57.7"
   },

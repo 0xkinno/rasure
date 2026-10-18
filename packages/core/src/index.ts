@@ -8,3 +8,5 @@ export * from "./decide";
 export * from "./queries";
 export * from "./writes";
 export * from "./read";
+export * from "./rekey";
+export * from "./writes-rekey";

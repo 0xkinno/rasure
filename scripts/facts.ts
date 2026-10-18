@@ -33,7 +33,7 @@ if (d2) {
 }
 if (drill) {
   const t = drill.data.totals as Record<string, { exposed: number; total: number }>;
-  facts.drill = { ...t, ...(drill.data.rekeyTotals ? { rekey: drill.data.rekeyTotals } : {}) };
+  facts.drill = { ...t, ...(rekey?.data.rekeyTotals ? { rekey: rekey.data.rekeyTotals } : {}) };
   facts.errorDirections = drill.data.errorDirections;
   src.drill = drill.file;
 }

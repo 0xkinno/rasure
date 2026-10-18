@@ -26,7 +26,7 @@ describe("queries render exact predicates", () => {
   });
   it("renders all eight", () => {
     const p = renderedPredicates("abc", 5n, [D1], "t", "0x" + "11".repeat(32));
-    expect(Object.keys(p)).toEqual(["Q1", "Q2", "Q3b", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8"]);
+    expect(Object.keys(p)).toEqual(["Q1", "Q2", "Q3b", "Q3", "Q4", "Q5", "Q6", "Q9", "Q10", "Q7", "Q8"]);
   });
 });
 

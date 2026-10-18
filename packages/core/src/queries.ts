@@ -68,6 +68,20 @@ export function q6Circle(circle: string): Expression {
   return and(base(circle, TYPES.circle));
 }
 
+/** Q9 member device keys of a circle (the dispatcher builds the rekey from these). */
+export function q9Members(circle: string): Expression {
+  return and(base(circle, TYPES.member));
+}
+
+/** Q10 rekeys taking effect at the given epoch or the next two, trusted dispatchers only. */
+export function q10Rekeys(circle: string, fromEpoch: bigint, dispatchers: readonly string[]): Expression {
+  return and([
+    ...base(circle, TYPES.rekey),
+    or(eq("epoch", u64(fromEpoch)), eq("epoch", u64(fromEpoch + 1n)), eq("epoch", u64(fromEpoch + 2n))),
+    creatorsOf(dispatchers),
+  ]);
+}
+
 /** Q7 leak audit: every Rasure entity (cursor-paginated, pinned with `.atBlock(head)`). */
 export function q7Audit(): Expression {
   return eq("project", PROJECT);
@@ -86,6 +100,8 @@ export function renderedPredicates(circle: string, epoch: bigint, dispatchers: r
     Q4: render(q4Forged(circle, dispatchers)),
     Q5: render(q5Claims(circle)),
     Q6: render(q6Circle(circle)),
+    Q9: render(q9Members(circle)),
+    Q10: render(q10Rekeys(circle, epoch, dispatchers)),
     Q7: render(q7Audit()),
     Q8: render(q8History()),
   };
