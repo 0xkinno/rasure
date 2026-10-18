@@ -7,7 +7,7 @@ import { ROOT } from "./lib";
 const dir = resolve(ROOT, "proof/results");
 const newest = (prefix: string) => {
   if (!existsSync(dir)) return null;
-  const f = readdirSync(dir).filter((n) => n.startsWith(prefix) && /^[a-zA-Z0-9]+-\d{4}-/.test(n) && n.endsWith(".json")).sort().pop();
+  const f = readdirSync(dir).filter((n) => n.startsWith(prefix) && /^[a-zA-Z0-9]+(?:-audit)?-\d{4}-/.test(n) && n.endsWith(".json")).sort().pop();
   return f ? { file: f, data: JSON.parse(readFileSync(resolve(dir, f), "utf8")) } : null;
 };
 

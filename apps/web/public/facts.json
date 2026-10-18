@@ -1,11 +1,12 @@
 {
   "generated": true,
-  "generatedAt": "2026-10-18T18:00:02.905Z",
+  "generatedAt": "2026-10-18T20:47:02.161Z",
   "sources": {
     "d1": "d1-2026-10-18.json",
     "d2": "d2-2026-10-18.json",
     "drill": "drill-2026-10-18.json",
     "rekey": "rekey-2026-10-18.json",
+    "leakAudit": "leak-audit-2026-10-18.json",
     "wild": "wild-2026-10-18-43200.json",
     "cost": "cost-2026-10-18.json",
     "wildCalldata": "wildcalldata-2026-10-18.json"
@@ -42,6 +43,13 @@
     "attackerOpenedPast": 0,
     "memberRefused": 0,
     "liveRecords": 8
+  },
+  "leakAudit": {
+    "entities": 60,
+    "maxPublicAttributes": 6,
+    "plaintextTx": 0,
+    "minEntropy": 7.168454030195016,
+    "pass": true
   },
   "wild": {
     "sampled": 300,

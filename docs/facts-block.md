@@ -5,6 +5,7 @@
 - Seizure drill, ratchet: 4 of 32 records exposed.
 - Seizure drill, rekey: 0 of 2 records exposed.
 - Error directions: attacker opened 0 past records; legitimate member refused 0 of 8 live records.
+- Leak audit: 60 entities, at most 6 public attributes, 0 plaintext creation transactions, pass: true.
 - Calldata on the wild set: of 39 sampled public entities, 39 creation transactions were found and 39 payloads were recovered from calldata, 39 identical to the history read.
 - Cost: about 115072 gas and 0.00011507 GLM per ride; 0.00023014 GLM per batch; 0.00016701 GLM per rekey.
 - Key-death timing: 13 demo rides checked, expiresAt equals keyDeathBlock for 13 (I1).
