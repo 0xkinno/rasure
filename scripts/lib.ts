@@ -37,7 +37,7 @@ export function accountFor(role: Role) {
 /** Optional Hub access key, from env ARKIV_ACCESS_KEY, sent as X-API-KEY. Never logged. */
 export function transport() {
   const key = process.env.ARKIV_ACCESS_KEY;
-  return http(RPC_HTTP, key ? { retryCount: 0, fetchOptions: { headers: { "X-API-KEY": key } } } : { retryCount: 0 });
+  return http(RPC_HTTP, key ? { retryCount: 0, timeout: 60_000, fetchOptions: { headers: { "X-API-KEY": key } } } : { retryCount: 0, timeout: 60_000 });
 }
 
 export const reader = () => createPublicClient({ chain: tiramisu, transport: transport() });

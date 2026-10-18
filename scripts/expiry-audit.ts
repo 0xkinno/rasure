@@ -38,30 +38,41 @@ let boundaryError: string | null = null;
 let pages = 0;
 const kinds: Record<string, number> = { empty: 0, json: 0, text: 0, binary: 0 };
 
-try {
-  let page = await c
-    .select({ key: true, expiresAt: true, payload: true })
-    .where(and([gt("$expiresAt", u64(past)), lte("$expiresAt", u64(head - 1n))]))
-    .atBlock(past)
-    .limit(100)
-    .fetch();
-  for (;;) {
-    pages++;
-    for (const e of page.entities) {
-      if (sampled >= max) break;
-      sampled++;
-      const p = e.payload ?? new Uint8Array();
-      if (p.length > 0) stillReturnPayload++;
-      const k = classify(p);
-      kinds[k]++;
-      if (k === "json" || k === "text") readableText++;
+// A single wide $expiresAt range over every entity makes the node answer 504 (recorded in friction.md),
+// so the audit reads narrow expiry windows, each pinned to the same past block.
+const win = BigInt(arg("win", 40));
+const errors: string[] = [];
+let windows = 0;
+for (let lo = past; lo < head - 1n && sampled < max; lo += win) {
+  const hi = lo + win < head ? lo + win : head - 1n;
+  windows++;
+  try {
+    let page = await c
+      .select({ key: true, expiresAt: true, payload: true })
+      .where(and([gt("$expiresAt", u64(lo)), lte("$expiresAt", u64(hi))]))
+      .atBlock(past)
+      .limit(100)
+      .fetch();
+    for (;;) {
+      pages++;
+      for (const e of page.entities) {
+        if (sampled >= max) break;
+        sampled++;
+        const p = e.payload ?? new Uint8Array();
+        if (p.length > 0) stillReturnPayload++;
+        const k = classify(p);
+        kinds[k]++;
+        if (k === "json" || k === "text") readableText++;
+      }
+      if (sampled >= max || !page.hasNextPage()) break;
+      page = await page.next();
     }
-    if (sampled >= max || !page.hasNextPage()) break;
-    page = await page.next();
+  } catch (e) {
+    errors.push(e instanceof QueryError ? `QueryError kind=${e.kind} code=${e.code}` : (e as Error).message.slice(0, 80).replace(/\s+/g, " "));
+    if (errors.length >= 3) break;
   }
-} catch (e) {
-  boundaryError = e instanceof QueryError ? `QueryError kind=${e.kind} code=${e.code}` : (e as Error).message.slice(0, 160);
 }
+boundaryError = errors.length ? errors.join(" | ") : null;
 
 const out = {
   experiment: "wild-set expiry audit (aggregate only)",
@@ -70,7 +81,8 @@ const out = {
   head,
   pastBlock: past,
   windowBlocks: back,
-  predicate: "$expiresAt > past AND $expiresAt <= head - 1, read atBlock(past)",
+  predicate: `$expiresAt > lo AND $expiresAt <= lo + ${win}, windows from past to head, read atBlock(past)`,
+  windows,
   sampled,
   stillReturnPayload,
   readableText,

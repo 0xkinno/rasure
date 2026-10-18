@@ -1,0 +1,23 @@
+{
+  "experiment": "wild-set expiry audit (aggregate only)",
+  "date": "2026-10-18",
+  "sdk": "@arkiv-network/sdk@0.8.1",
+  "head": "739549",
+  "pastBlock": "738949",
+  "windowBlocks": "600",
+  "predicate": "$expiresAt > lo AND $expiresAt <= lo + 40, windows from past to head, read atBlock(past)",
+  "windows": 9,
+  "sampled": 300,
+  "stillReturnPayload": 294,
+  "readableText": 12,
+  "kinds": {
+    "empty": 6,
+    "json": 9,
+    "text": 3,
+    "binary": 282
+  },
+  "pagesRead": 8,
+  "liveNow": 0,
+  "error": "HTTP request failed. Status: 504 URL: https://rpc.tiramisu.db-chain.testnet.ark",
+  "note": "Counts only. No content, keys, creators or project names are printed or stored."
+}

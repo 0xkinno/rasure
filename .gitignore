@@ -11,3 +11,6 @@ reference/
 *.log
 playwright-report/
 test-results/
+
+# private working docs (list sample repos; never public)
+RASURE_BUILD_INSTRUCTION.md
