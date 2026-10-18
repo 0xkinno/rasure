@@ -99,7 +99,7 @@ export default function Proof() {
                   <div className="pf-k">D1 · RECOVERY AFTER EXPIRY</div>
                   <div className="pf-v">{d1.recoveredByteForByte ? "Recovered byte for byte" : "Not recovered"}</div>
                   <p>An expired record's payload read back from its creation transaction's calldata.</p>
-                  <a className="mono pf-link" href={txUrl(d1.txHash)} target="_blank" rel="noreferrer">{short(d1.txHash)} ↗</a>
+                  <a className="mono pf-link" href={txUrl(d1.txHash)} target="_blank" rel="noreferrer">{short(d1.txHash)}</a>
                 </div>
               )}
               {f.d2 && (
@@ -210,7 +210,7 @@ export default function Proof() {
               <details key={k} className="pf-card pf-qcard">
                 <summary><span className="mono">{k}</span><span className="label">show predicate and curl</span></summary>
                 <div className="pf-qbody">
-                  <a className="mono pf-link" href={dataExplorerQuery(q)} target="_blank" rel="noreferrer">Open in Arkiv Data Explorer ↗</a>
+                  <a className="mono pf-link" href={dataExplorerQuery(q)} target="_blank" rel="noreferrer">Open in Arkiv Data Explorer</a>
                   <Copyable text={q} label={`${k} predicate`} />
                   <Copyable text={curl(q)} label={`${k} curl`} />
                 </div>
