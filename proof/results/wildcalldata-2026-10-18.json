@@ -1,0 +1,11 @@
+{
+  "experiment": "calldata recovery on the wild set (aggregate)",
+  "date": "2026-10-18",
+  "pastBlock": "746902",
+  "head": "747502",
+  "sampled": 39,
+  "creationTxFound": 39,
+  "payloadRecovered": 39,
+  "matchesHistory": 39,
+  "note": "Counts only."
+}

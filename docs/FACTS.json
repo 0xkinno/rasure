@@ -1,11 +1,14 @@
 {
   "generated": true,
-  "generatedAt": "2026-10-18T17:21:50.955Z",
+  "generatedAt": "2026-10-18T17:42:03.618Z",
   "sources": {
     "d1": "d1-2026-10-18.json",
     "d2": "d2-2026-10-18.json",
-    "wild": "wild-2026-10-18-600.json",
-    "seed": "seed-2026-10-18.json"
+    "drill": "drill-2026-10-18.json",
+    "rekey": "rekey-2026-10-18.json",
+    "wild": "wild-2026-10-18-43200.json",
+    "cost": "cost-2026-10-18.json",
+    "wildCalldata": "wildcalldata-2026-10-18.json"
   },
   "d1": {
     "txHash": "0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6",
@@ -17,16 +20,48 @@
     "retentionHours": 411.0811111111111,
     "payloadReturnedAtLastLiveBlock": true
   },
+  "drill": {
+    "plaintext": {
+      "exposed": 32,
+      "total": 32
+    },
+    "static_key": {
+      "exposed": 32,
+      "total": 32
+    },
+    "ratchet": {
+      "exposed": 4,
+      "total": 32
+    },
+    "rekey": {
+      "exposed": 0,
+      "total": 2
+    }
+  },
+  "errorDirections": {
+    "attackerOpenedPast": 0,
+    "memberRefused": 0,
+    "liveRecords": 8
+  },
   "wild": {
     "sampled": 300,
-    "stillReturnPayload": 294,
-    "readableText": 12,
-    "pastBlock": "738949",
-    "head": "739549"
+    "stillReturnPayload": 300,
+    "readableText": 9,
+    "pastBlock": "704211",
+    "head": "747411"
   },
   "cost": {
     "gasPerRide": 115072,
-    "glmPerRide": "0.00011507"
+    "glmPerRide": "0.00011507",
+    "gasPerBatch": 230144,
+    "glmPerBatch": "0.00023014",
+    "gasPerRekey": 167008,
+    "glmPerRekey": "0.00016701"
+  },
+  "keyDeathTiming": {
+    "checked": 13,
+    "i1Pass": 13,
+    "failures": []
   },
   "wildWindows": [
     {
@@ -36,6 +71,36 @@
       "stillReturnPayload": 294,
       "readableText": 12,
       "partial": true
+    },
+    {
+      "windowBlocks": "1800",
+      "approxMinutes": 60,
+      "sampled": 300,
+      "stillReturnPayload": 300,
+      "readableText": 9,
+      "partial": false
+    },
+    {
+      "windowBlocks": "10800",
+      "approxMinutes": 360,
+      "sampled": 300,
+      "stillReturnPayload": 294,
+      "readableText": 12,
+      "partial": false
+    },
+    {
+      "windowBlocks": "43200",
+      "approxMinutes": 1440,
+      "sampled": 300,
+      "stillReturnPayload": 300,
+      "readableText": 9,
+      "partial": false
     }
-  ]
+  ],
+  "wildCalldata": {
+    "sampled": 39,
+    "creationTxFound": 39,
+    "payloadRecoveredFromCalldata": 39,
+    "payloadMatchesHistoryRead": 39
+  }
 }

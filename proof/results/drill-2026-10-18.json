@@ -1,0 +1,707 @@
+{
+  "experiment": "seizure drill on Tiramisu history",
+  "date": "2026-10-18",
+  "sdk": "@arkiv-network/sdk@0.8.1",
+  "chainId": 7738577,
+  "dispatcher": "dispatcher",
+  "genesis": "747128",
+  "epochBlocks": "60",
+  "epochs": 8,
+  "ridesPerEpoch": 4,
+  "seizedEpoch": "7",
+  "headAtDrill": "747592",
+  "totals": {
+    "plaintext": {
+      "exposed": 32,
+      "total": 32
+    },
+    "static_key": {
+      "exposed": 32,
+      "total": 32
+    },
+    "ratchet": {
+      "exposed": 4,
+      "total": 32
+    }
+  },
+  "errorDirections": {
+    "attackerOpenedPast": 0,
+    "memberRefused": 0,
+    "liveRecords": 8
+  },
+  "outcomes": [
+    {
+      "key": "0xaa1f37f93517bb69e16da7078b0505f2427336b212dd9e7c206abc69918be693",
+      "policy": "plaintext",
+      "epoch": "0",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xa6da1916d6d6f0dafb54557cf8d5fa4905cfbbcecec9fdd216f4118c7098cecb",
+      "policy": "static_key",
+      "epoch": "0",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x1c52116b1b548e393ca245ee63652e4dbccc22749f777d386512640c8b4c3652",
+      "policy": "ratchet",
+      "epoch": "0",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xc9f66806e7938e20ae3368f5fc1bce2ef9b655460db9e786fd6ce5f9f3a16625",
+      "policy": "plaintext",
+      "epoch": "0",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x2135926b8fee9e693381a42f605c983c49177f3587366fcffced77f9cb862654",
+      "policy": "static_key",
+      "epoch": "0",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x1cbbc9ca486863913d5b3e81265ddf9a51889aeb93ca22278877b3880f11d9b5",
+      "policy": "ratchet",
+      "epoch": "0",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xc88d06d6a75262e2d0198c46411122551078062be28916589fc360b2af805013",
+      "policy": "plaintext",
+      "epoch": "0",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x529ca2b09dc34a827d0c4e7b6911f47ceae364c3d391a639bfea6a276384c13e",
+      "policy": "static_key",
+      "epoch": "0",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x40b38aca0228e2642df41b31c573783736ee4e3860e0cdb0bb378897a47a0c39",
+      "policy": "ratchet",
+      "epoch": "0",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x1e887cac500274866e714108b9787f8c824ca77c54819a832f3c6b5752731684",
+      "policy": "plaintext",
+      "epoch": "0",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x8a8d855354f617e5f9cdfcf8eced6ca17ee633e8a12a00349b74e8695198a316",
+      "policy": "static_key",
+      "epoch": "0",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xc79115f705d19d4faa353a0fb7c78d3529433216789c9f1a64d88aacac826f09",
+      "policy": "ratchet",
+      "epoch": "0",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xe5ba8cd65325fbefc7eb66ab95aea1a81e260e7e3431e970f58d487d9076a4fc",
+      "policy": "plaintext",
+      "epoch": "1",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x9714d016802134cb04ddae127bd0d0d9c1e1734cc77fd8b43f8773ea9152f897",
+      "policy": "static_key",
+      "epoch": "1",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x88f22e4c93affaef3e38f11805981abdcce5c96a1eba90f36a5d137fd47c66d5",
+      "policy": "ratchet",
+      "epoch": "1",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xb4bda31cc04cd8feaa23008261c18d501f8c454936d63563a4819af91d46930c",
+      "policy": "plaintext",
+      "epoch": "1",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x4b4eeb77c15b42faa29fafbec27c05c2f9b2aced938bf3b4db487628d64816ae",
+      "policy": "static_key",
+      "epoch": "1",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xbb83ac17bc054e14f65098cbabc7c9e5ad0258ab59aaeeb12374dd22b24997c4",
+      "policy": "ratchet",
+      "epoch": "1",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x461cbe24942b66586df7f536aa3fead26f54c093b3f4c0810c979bba4d85aefe",
+      "policy": "plaintext",
+      "epoch": "1",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x860b47ba551c749081dadccf0ac0bd56b5aa60986ccf188fa42d55a9188c1ea7",
+      "policy": "static_key",
+      "epoch": "1",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x187ca3be18d8691b627eaf99740f12f46df16146ca912f35221e1d16f2eecc53",
+      "policy": "ratchet",
+      "epoch": "1",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xe62ed67d09c9da4b0cadf673ab0e1799a3ef3a70590915c70f234aa9fbcd8ee9",
+      "policy": "plaintext",
+      "epoch": "1",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x33970845c7f608b17391eb90d8023b300f068d4f6583208d6a404d40a62cc52a",
+      "policy": "static_key",
+      "epoch": "1",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xa4f70b25e23f66c1e82a40a3ea15b4063ad95859ccf242187a21e3d58ac27e44",
+      "policy": "ratchet",
+      "epoch": "1",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xe28f93638a725c30eaf7de1ce4ed52b2c50cb6a996dc17cc87bcd1f610abe8ea",
+      "policy": "plaintext",
+      "epoch": "2",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xa3cbbbc029408e4d3c073ebf4fc99cc7e10c876c358d293facf56323a4fe7136",
+      "policy": "static_key",
+      "epoch": "2",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xc3523301296080aff28989213b71cc0052ac981e7af0d9297826236fa0b19030",
+      "policy": "ratchet",
+      "epoch": "2",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x9d527a80ec9202ae7b00d49570701fc66df9e3fc79dd5749b1e55a19a51506c7",
+      "policy": "plaintext",
+      "epoch": "2",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x11b2b5e8bafa098921a00ab88de5a9d8b41bfe2cb5250acf2c643fef23926e83",
+      "policy": "static_key",
+      "epoch": "2",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x213d3e3528d9a6b88093004c600c93608f921b32bd370382e9b8a51a08e478f1",
+      "policy": "ratchet",
+      "epoch": "2",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x32f4dc93c1831d2619d0b7a6498820997b19d8e7aa12a882d8ec1b10456ab6a3",
+      "policy": "plaintext",
+      "epoch": "2",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xaa01572baca1dae5b2fec32cc51aad813fe16b0a6f264395557e8b69558605ca",
+      "policy": "static_key",
+      "epoch": "2",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xf621be217d2930b3c271a7faeace2de8bbc8b3395019f1135f9f1ccf0c047c69",
+      "policy": "ratchet",
+      "epoch": "2",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xe1fd8df306a9d4e7f8bba5003a4b657db5ddd3d55c20649b5d87b89761801521",
+      "policy": "plaintext",
+      "epoch": "2",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x01a36480178b03970d2bc7fc416582e8a4eebc3d0a16ac0719c1bc67275874b9",
+      "policy": "static_key",
+      "epoch": "2",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xf23ebe9dca8bc4809d5e706df5264b9c4aabd7968c3cdb82ff34f860e6a55e65",
+      "policy": "ratchet",
+      "epoch": "2",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xa7726f6b6b6627283a2f40d01ee6a9408e15130d7abe56a0640a658a73f5d436",
+      "policy": "plaintext",
+      "epoch": "3",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x213adda7f347683d706c02d8faa6d9ac72763e2361cb2b53b1ce5ea4aa006017",
+      "policy": "static_key",
+      "epoch": "3",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x46825427b2c98a9add361e9240902e00bc9e24f956200f9951474e31a8e697b8",
+      "policy": "ratchet",
+      "epoch": "3",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x1bebec5bda392cd1ee31186f9c8a9a479ba9fa118512e20db4ea5764670adc3a",
+      "policy": "plaintext",
+      "epoch": "3",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x205b7eb8607c33eb07eb44d88e99029640ce9c648789f9a41a1b6a49d10155e8",
+      "policy": "static_key",
+      "epoch": "3",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xdae7ef83e3e8f61a9f6d2aa01c19b2d4565ab9c577eab199edecbb3519216a15",
+      "policy": "ratchet",
+      "epoch": "3",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x241f272fee4f32c44ed550b419ce1e705879f0c4b197a077dba9bb2ba6a3cd18",
+      "policy": "plaintext",
+      "epoch": "3",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xb809533ba3c1556e854197b856c7c4fb861c9aa4cc22252dfad4539cb733598b",
+      "policy": "static_key",
+      "epoch": "3",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x173ca0381545cff0f6c904692bcbd7cb013c90b08064ad2e6c1c1bcd71ffcdb5",
+      "policy": "ratchet",
+      "epoch": "3",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xaa9570b42f2e79336e605373fd2b80ae5b19a0289035919975e921cb9531811e",
+      "policy": "plaintext",
+      "epoch": "3",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xa70b143e808c4351df11ce4d463785782894567381183c230083b2f02976a85b",
+      "policy": "static_key",
+      "epoch": "3",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x5445922d7a6f18b74bb035cbf9adfb944695565bba3c708d4ab28af0482b2355",
+      "policy": "ratchet",
+      "epoch": "3",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x1f0ce8ef924e098033aca3411dd74b91eb92f0eaa336ae56100620e650a8d027",
+      "policy": "plaintext",
+      "epoch": "4",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xde7e7002d652683eeaa4a07c59ec040b04ec36f58d631646604be6b294d13a80",
+      "policy": "static_key",
+      "epoch": "4",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xeee7f872007dfbce2b42359f05aabb3f48650bbe5fb08a435a8adf8ed99614ab",
+      "policy": "ratchet",
+      "epoch": "4",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x3da638514635c7f4ebf146fae2d7fda48965f059abb2fd94a4848265fbdee530",
+      "policy": "plaintext",
+      "epoch": "4",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xd158649df16e7bcfaa0bd8ab7923fa19147122cb52cd24b07bb71db601b5d18b",
+      "policy": "static_key",
+      "epoch": "4",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x699d99f7dbaf60fd2d0eb85ed17d94f62e71c4e09a4c661f7a900a7f1270e4e7",
+      "policy": "ratchet",
+      "epoch": "4",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x4aec00d7089598d24541bc0ecf204a6f670e018ea745faad23318a0cbac5b5cc",
+      "policy": "plaintext",
+      "epoch": "4",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xc36b3d7c21d1d0261bf9829cca5bd24100135c72e8c6804d5788537f51015944",
+      "policy": "static_key",
+      "epoch": "4",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x0c6f485a6c5bfb5a134a6f186fb6f9795f29e8579ab528efab114ddef523b9b0",
+      "policy": "ratchet",
+      "epoch": "4",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x5e548c5341da3cbee115169a1d69799a86f3bd12dcb6575dfac2924875b2df4c",
+      "policy": "plaintext",
+      "epoch": "4",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x43922dd35f9f536e3e4ca1faa364e56f5f39b7f05e45275ec59fc5ade530c3b8",
+      "policy": "static_key",
+      "epoch": "4",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x325cf9f22c9f8197f67f617e483fe2ac184c709774b95aff14cd89ad50fbf871",
+      "policy": "ratchet",
+      "epoch": "4",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x7cae71e96e0d0f4e22592f7614cb5c2e38c2304a9994f1e89026befc0afe4422",
+      "policy": "plaintext",
+      "epoch": "5",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x4ca4b0c7a4e201a7f5dca4e571bacb00ff2032f66b2135716566e35de50f35ad",
+      "policy": "static_key",
+      "epoch": "5",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x0b9c594ff1624265bbfb1528d7b9daca62a5a5a3fdc16c15864ebdf467efd326",
+      "policy": "ratchet",
+      "epoch": "5",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x54718c87c6d9dc69dead4f4e0e424c2adaecae9437a33e906f4f7b13b7700407",
+      "policy": "plaintext",
+      "epoch": "5",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x7c0e7227260edbdf1f45847f9f074912878215fe92d3091e9965d88506f4fcc8",
+      "policy": "static_key",
+      "epoch": "5",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xabdd06642baee6e2c329b589a512572072ad4f7a2ddcee4251d1c80998a90b90",
+      "policy": "ratchet",
+      "epoch": "5",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xa59831b211e885811ddb6fa0614f3b3cdeb812473462d7e2210dea9ad8be46be",
+      "policy": "plaintext",
+      "epoch": "5",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x704cf3b65cb5a5d67182321126d0cf5c00d63affe7eb57fcfcd74a972b0c150f",
+      "policy": "static_key",
+      "epoch": "5",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x3c4f9131f66fb755beaf6668a16a862739a3d57df52f477c02be91b220fff27b",
+      "policy": "ratchet",
+      "epoch": "5",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x2a89903da2cc81b730bacfed828087a1693abcb0b13dfa9f813d5de2f54d5b62",
+      "policy": "plaintext",
+      "epoch": "5",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x10e3217d18ed8a8c57389b5ae74d082fc81b45700c0d57960bc68f6c28d45b05",
+      "policy": "static_key",
+      "epoch": "5",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xaab787a1e9426ec9cb49845e2bb07cdf2c78bab7049fe99827109ee862f12925",
+      "policy": "ratchet",
+      "epoch": "5",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xed31c3a19b46e44175907fe4f0c19af0b3be4ad7b18151b736ce0120a2462a01",
+      "policy": "plaintext",
+      "epoch": "6",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x617afff2b110007fd81366b887f421dae8b9c248eed2b6367f316787605f2ce1",
+      "policy": "static_key",
+      "epoch": "6",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x62a343fc4bce4032d8e026f75b59aeabddeb2df896b1b0be64833b8f847907ff",
+      "policy": "ratchet",
+      "epoch": "6",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xd9925a484e982a02f25a270d2be9e1a7daa70f76a43a4a10e6b87cc8ab202e2a",
+      "policy": "plaintext",
+      "epoch": "6",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x425bd1d10ebcc4bf8cce634bacf346cc19ac4078cdfc68925f2d02a931abb2ed",
+      "policy": "static_key",
+      "epoch": "6",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xa2da1221639d7ce804060142d4a4df7a87f577de60e9759acd0b23844a6b59b1",
+      "policy": "ratchet",
+      "epoch": "6",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0xcfc7007182fb41a3e5e13e99495b2ea323abc69d9583f60530505a760d2677ea",
+      "policy": "plaintext",
+      "epoch": "6",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xe1bdd62fc6b9663fe5ac155844f7c860e0765aeeea95b84bb1ec09420447249a",
+      "policy": "static_key",
+      "epoch": "6",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x8de192d70fc6630743913f0cf55877425225a2d652b32ca9cd3802c0a0b410ef",
+      "policy": "ratchet",
+      "epoch": "6",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x54fb40feb9861a20dd184425b4fa1fab3de8db6616d7722a5f518d41b8037f73",
+      "policy": "plaintext",
+      "epoch": "6",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x0ce546025e758db9639d12f7cffa4bdc5d252abb3d391fa27a83ab5de8eb9251",
+      "policy": "static_key",
+      "epoch": "6",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x75583b4ad829df5a6b50602e048d4fb4f6aa8ca808ab9724fa6a02db7e4fc2aa",
+      "policy": "ratchet",
+      "epoch": "6",
+      "exposed": false,
+      "why": "sealed under an epoch whose key was erased; no backward derivation exists"
+    },
+    {
+      "key": "0x227603dc67ab18852cd2bb548cd8abb0d37020d02e57df1a0b09f301de00ad53",
+      "policy": "plaintext",
+      "epoch": "7",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xd19d38754e18e4d8557d5c98e14f34a369102be38af311c9286af85a1c162625",
+      "policy": "static_key",
+      "epoch": "7",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x75ada0787fb6043c98f884cf0263f220c8f96188660b9a48c125ac5e393772e1",
+      "policy": "ratchet",
+      "epoch": "7",
+      "exposed": true,
+      "why": "sealed under the current or a later epoch: readable, as designed"
+    },
+    {
+      "key": "0x38306f869266963383822bbe375f6ee0bd915fe064ca61092b8e6e99b83de282",
+      "policy": "plaintext",
+      "epoch": "7",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0xc97d499547ecc8c565a1b4e1e7cffb2567a5400193139b1de70c202434ac05b2",
+      "policy": "static_key",
+      "epoch": "7",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x613e9bc034645e0b5cf00755f05bc4e73c9e07867c2000e473094891f6269889",
+      "policy": "ratchet",
+      "epoch": "7",
+      "exposed": true,
+      "why": "sealed under the current or a later epoch: readable, as designed"
+    },
+    {
+      "key": "0xb4eb966ec69d106bde11392c8c3de9f7cd91ea02fac713a5c0840349cbd1d350",
+      "policy": "plaintext",
+      "epoch": "7",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x670b5563e90b71dc4455a6d9820c22ae81bae349cdb2783a6cf2eab4a9226d99",
+      "policy": "static_key",
+      "epoch": "7",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0x40436222ee286e27998b608b922d2ab84675df1fced126568a250a794e08736b",
+      "policy": "ratchet",
+      "epoch": "7",
+      "exposed": true,
+      "why": "sealed under the current or a later epoch: readable, as designed"
+    },
+    {
+      "key": "0x8af5dfc4dd429f68bdebe177ae98e81769714b10109f88a4ad234abc24a91f23",
+      "policy": "plaintext",
+      "epoch": "7",
+      "exposed": true,
+      "why": "payload is plaintext in the creation transaction"
+    },
+    {
+      "key": "0x7d4275e118d34f89bb0f1903a1c1b1bace09fcc7e45112907356f24c4fc4feb9",
+      "policy": "static_key",
+      "epoch": "7",
+      "exposed": true,
+      "why": "the phone's one key opens every past record"
+    },
+    {
+      "key": "0xc230a81c4895fbb49c89cbdaddd2a96d1979b4c2dd3eff8a21aaa590d88ad3ab",
+      "policy": "ratchet",
+      "epoch": "7",
+      "exposed": true,
+      "why": "sealed under the current or a later epoch: readable, as designed"
+    }
+  ],
+  "zoneTagExample": "abe3f2169dc2a89ed9408dea0eb84a55"
+}

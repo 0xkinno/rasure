@@ -8,7 +8,7 @@
 
 Rasure is a ride board for volunteers who drive survivors of domestic violence to safety. It truly forgets: a phone taken tonight cannot read last night's pickups, even by someone holding the whole chain.
 
-On Tiramisu, **294 of 300** public entities that have since expired returned their full payload when read from history. An expired record is gone from the board. It is not gone from the chain.
+On Tiramisu, **300 of 300** public entities that have since expired returned their full payload when read from history. An expired record is gone from the board. It is not gone from the chain.
 
 A night dispatcher posts pickups for volunteer drivers. Each pickup is sealed under a key that every phone erases at the same block where Arkiv expires the record. We found that on Arkiv an expired entity's payload stays in its creation transaction, so expiry hides a record and does not forget it. Rasure binds Entity Expiration to key destruction to close that gap.
 
@@ -63,6 +63,9 @@ The law already knows a shared database is dangerous for survivors. US victim-se
 | Read from history this long ago | Sampled | Returned their payload | Readable as plain text or JSON |
 |---|---|---|---|
 | about 20 minutes (partial run) | 300 | 294 | 12 |
+| about 1 hour | 300 | 300 | 9 |
+| about 6 hours | 300 | 294 | 12 |
+| about 24 hours | 300 | 300 | 9 |
 
 Arkiv's own agent guidance warns builders not to promise erasure. Rasure is the first app we know of that acts on it.
 
@@ -249,7 +252,14 @@ Every feature below changes something a dispatcher, a driver or a stranger sees.
 
 - D1: expired entity absent from live state, payload recovered from calldata byte for byte: true (tx `0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6`).
 - D2: node answered a history query at block 1; payload returned at the last live block: true.
-- Cost: about 115072 gas and 0.00011507 GLM per ride.
+- Seizure drill, plaintext: 32 of 32 records exposed.
+- Seizure drill, static_key: 32 of 32 records exposed.
+- Seizure drill, ratchet: 4 of 32 records exposed.
+- Seizure drill, rekey: 0 of 2 records exposed.
+- Error directions: attacker opened 0 past records; legitimate member refused 0 of 8 live records.
+- Calldata on the wild set: of 39 sampled public entities, 39 creation transactions were found and 39 payloads were recovered from calldata, 39 identical to the history read.
+- Cost: about 115072 gas and 0.00011507 GLM per ride; 0.00023014 GLM per batch; 0.00016701 GLM per rekey.
+- Key-death timing: 13 demo rides checked, expiresAt equals keyDeathBlock for 13 (I1).
 
 **Three boards, one seized phone.** The same rides were written three ways on Tiramisu and attacked with what a seized phone holds plus the full history. Plaintext and a single key leak everything. Rasure leaks only the current and grace epoch, by design, and nothing after a rekey.
 

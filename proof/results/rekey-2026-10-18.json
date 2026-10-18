@@ -1,0 +1,78 @@
+{
+  "experiment": "rekey on Tiramisu: seized then rekeyed",
+  "date": "2026-10-18",
+  "circle": "4f3d985832bf5d52e3f22f610c7ffaaf",
+  "epochBlocks": "30",
+  "seizedEpoch": "1",
+  "effectEpoch": "2",
+  "membersReadFromArkiv": 2,
+  "remainingMembers": 1,
+  "memberAAdopted": true,
+  "memberAOpenedRides": 2,
+  "ridesAfterRekey": 2,
+  "removedMemberRekeyEntry": "not_for_me",
+  "removedMemberOpenedAfterForwardDerivation": 0,
+  "totals": {
+    "plaintext": {
+      "exposed": 0,
+      "total": 0
+    },
+    "static_key": {
+      "exposed": 0,
+      "total": 0
+    },
+    "ratchet": {
+      "exposed": 0,
+      "total": 2
+    }
+  },
+  "rekeyTotals": {
+    "exposed": 0,
+    "total": 2
+  },
+  "pass": true,
+  "records": [
+    {
+      "key": "0xf207ff2421d8dbda9e16214da5bb60534892c1ddbb069cd20f4b6e5b9b4af335",
+      "txHash": "0xe56a59feb8c4accf9754005b344c4665cd227419ba7e417a33d69bacc326cce7",
+      "circle": "4f3d985832bf5d52e3f22f610c7ffaaf",
+      "epoch": "0",
+      "type": "circle"
+    },
+    {
+      "key": "0xc5a85b4207e4f2b9fc745c20d77d117001ac9c8729d9a8c9c8ebd6c613d045e9",
+      "txHash": "0x0905c8a606664537c28f300a706827ab9591c463c15207ee026b577c553aba68",
+      "circle": "4f3d985832bf5d52e3f22f610c7ffaaf",
+      "epoch": "0",
+      "type": "member"
+    },
+    {
+      "key": "0xd2cc8a68efc076c5fd249c68aaee5484d17771a8556d6744123cc3d713f828e3",
+      "txHash": "0x7c28f70a80f290c82bd6380ff4cd177e16dfa350bd5b5628e788afb67e43de25",
+      "circle": "4f3d985832bf5d52e3f22f610c7ffaaf",
+      "epoch": "0",
+      "type": "member"
+    },
+    {
+      "key": "0x23289f42115cbc840dfc00b1c3582b1bac584eb3d0e84c30046b88c596008f73",
+      "txHash": "0x3a5e8af3a93a67a2c308e80a30c5838dacad6cf5d6efdf2d94c632fd26af6458",
+      "circle": "4f3d985832bf5d52e3f22f610c7ffaaf",
+      "epoch": "2",
+      "type": "rekey"
+    },
+    {
+      "key": "0x984ca06f78178a105b662cc1c060200e9bf1ccc5ca232fd562f9fbbc08dd2aa6",
+      "txHash": "0x9fabb8ae86b4c6addeb196ac0c2d271c6fd99ab697441ea613b11c99a71515cf",
+      "circle": "4f3d985832bf5d52e3f22f610c7ffaaf",
+      "epoch": "2",
+      "type": "ride"
+    },
+    {
+      "key": "0x03925817a13278f1d7496b1feb4368d55c23ea97aab96e5f511bc3636a0cfb79",
+      "txHash": "0x600757de566ea40dd5d9f518a16f99ffee1199f32b7cdc5281f92753f8c74ba2",
+      "circle": "4f3d985832bf5d52e3f22f610c7ffaaf",
+      "epoch": "2",
+      "type": "ride"
+    }
+  ]
+}

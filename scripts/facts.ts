@@ -82,7 +82,7 @@ writeFileSync(
   resolve(ROOT, "docs/wild-table.md"),
   ww.length ? ["| Read from history this long ago | Sampled | Returned their payload | Readable as plain text or JSON |", "|---|---|---|---|", ...wildRows, ""].join(NL) : "",
 );
-const big = ww.length ? ww.reduce((a, b) => (b.sampled > a.sampled ? b : a)) : null;
+const big = ww.length ? ww.reduce((a, b) => (b.approxMinutes > a.approxMinutes ? b : a)) : null;
 writeFileSync(
   resolve(ROOT, "docs/headline.md"),
   big ? `On Tiramisu, **${big.stillReturnPayload} of ${big.sampled}** public entities that have since expired returned their full payload when read from history. An expired record is gone from the board. It is not gone from the chain.` + NL : "",

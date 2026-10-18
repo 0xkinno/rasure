@@ -1,3 +1,10 @@
 - D1: expired entity absent from live state, payload recovered from calldata byte for byte: true (tx `0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6`).
 - D2: node answered a history query at block 1; payload returned at the last live block: true.
-- Cost: about 115072 gas and 0.00011507 GLM per ride.
+- Seizure drill, plaintext: 32 of 32 records exposed.
+- Seizure drill, static_key: 32 of 32 records exposed.
+- Seizure drill, ratchet: 4 of 32 records exposed.
+- Seizure drill, rekey: 0 of 2 records exposed.
+- Error directions: attacker opened 0 past records; legitimate member refused 0 of 8 live records.
+- Calldata on the wild set: of 39 sampled public entities, 39 creation transactions were found and 39 payloads were recovered from calldata, 39 identical to the history read.
+- Cost: about 115072 gas and 0.00011507 GLM per ride; 0.00023014 GLM per batch; 0.00016701 GLM per rekey.
+- Key-death timing: 13 demo rides checked, expiresAt equals keyDeathBlock for 13 (I1).

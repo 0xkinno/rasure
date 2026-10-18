@@ -1,0 +1,23 @@
+{
+  "experiment": "wild-set expiry audit (aggregate only)",
+  "date": "2026-10-18",
+  "sdk": "@arkiv-network/sdk@0.8.1",
+  "head": "747411",
+  "pastBlock": "704211",
+  "windowBlocks": "43200",
+  "predicate": "$expiresAt > lo AND $expiresAt <= lo + 40, windows from past to head, read atBlock(past)",
+  "windows": 8,
+  "sampled": 300,
+  "stillReturnPayload": 300,
+  "readableText": 9,
+  "kinds": {
+    "empty": 0,
+    "json": 9,
+    "text": 0,
+    "binary": 291
+  },
+  "pagesRead": 8,
+  "liveNow": 0,
+  "error": null,
+  "note": "Counts only. No content, keys, creators or project names are printed or stored."
+}
