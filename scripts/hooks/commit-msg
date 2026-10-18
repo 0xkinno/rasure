@@ -1,0 +1,3 @@
+#!/bin/sh
+# Strip any AI co-author or session trailer before the commit is written.
+sed -i.bak -E '/^[[:space:]]*[Cc]o-[Aa]uthored-[Bb]y:.*([Cc]laude|[Aa]nthropic)/d; /^[[:space:]]*[Cc]laude-[Ss]ession:/d; /[Gg]enerated with.*[Cc]laude [Cc]ode/d' "$1" && rm -f "$1.bak"

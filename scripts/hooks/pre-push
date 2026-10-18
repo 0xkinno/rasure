@@ -1,0 +1,5 @@
+#!/bin/sh
+# Refuse to push any commit not authored and committed by 0xkinno.
+bad="$(git log --format='%an|%cn|%ae|%ce' --all --not --remotes 2>/dev/null | grep -viE '^0xkinno\|0xkinno\|' | head -1)"
+if [ -n "$bad" ]; then echo "pre-push: non-0xkinno commit found ($bad)"; exit 1; fi
+if git log --format=%B --not --remotes 2>/dev/null | grep -qiE 'co-authored-by|claude-session|generated with.*claude'; then echo "pre-push: attribution trailer found"; exit 1; fi

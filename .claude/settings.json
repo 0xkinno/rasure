@@ -1,0 +1,9 @@
+{
+  "includeCoAuthoredBy": false,
+  "attribution": { "commit": "", "pr": "", "sessionUrl": false },
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "sh scripts/setup-git.sh" } ] }
+    ]
+  }
+}

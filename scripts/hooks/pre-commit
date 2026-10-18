@@ -1,0 +1,9 @@
+#!/bin/sh
+# Refuse to commit unless author AND committer are 0xkinno, and no AI identity is in play.
+name="$(git config user.name)"
+email="$(git config user.email)"
+if [ "$name" != "0xkinno" ]; then echo "pre-commit: git user.name must be 0xkinno (is '$name')"; exit 1; fi
+for v in "$GIT_AUTHOR_NAME" "$GIT_COMMITTER_NAME"; do
+  if [ -n "$v" ] && [ "$v" != "0xkinno" ]; then echo "pre-commit: author/committer env must be 0xkinno (is '$v')"; exit 1; fi
+done
+if echo "$email $GIT_AUTHOR_EMAIL $GIT_COMMITTER_EMAIL" | grep -qiE 'claude|anthropic'; then echo "pre-commit: AI identity in email refused"; exit 1; fi
