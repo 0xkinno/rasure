@@ -29,15 +29,22 @@
   <input id="circle" placeholder="46123014e78f511adb2fb383b4db365b">
   <label for="disp">Trusted dispatcher addresses (comma separated)</label>
   <input id="disp" placeholder="0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771">
+  <label for="at">Rewind: read at block (optional, uses atBlock)</label>
+  <input id="at" placeholder="empty = latest, or a block number such as 741500">
   <button id="go">Read the board</button>
+  <p class="note">Opens from disk too. Prefill with ?rpc=, ?circle=, ?disp=, ?at= in the address.</p>
   <p id="status" class="note" role="status"></p>
   <div id="out"></div>
+  <h2 style="font:700 16px ui-monospace, monospace">What a stranger can and cannot open</h2>
+  <p class="note">Can: the public attributes (project, type, circle, epoch, tag, ref), who wrote each entity, who holds it, when it dies, and how many bytes of ciphertext it carries. Cannot: any landmark, window, seat count or note. Those are AES-256-GCM sealed under a key this page never sees, and the key of an older epoch no longer exists on any member phone.</p>
   <h2 style="font:700 16px ui-monospace, monospace">Queries this page runs</h2>
   <pre id="queries">(press Read the board)</pre>
 </main>
 <script>
 "use strict";
 const $ = (id) => document.getElementById(id);
+const qs = new URLSearchParams(location.search);
+for (const [p, id] of [["rpc", "rpc"], ["circle", "circle"], ["disp", "disp"], ["at", "at"]]) if (qs.get(p)) $(id).value = qs.get(p);
 const hex = (n) => "0x" + n.toString(16);
 const num = (v) => (typeof v === "string" && v.startsWith("0x") ? BigInt(v) : BigInt(v));
 let rid = 1;
@@ -73,10 +80,12 @@ $("go").onclick = async () => {
   if (!/^[0-9a-f]{32}$/.test(circle) || !disp.length) { $("status").textContent = "Enter a 32 hex circle id and at least one dispatcher address."; return; }
   $("status").textContent = "Reading..."; $("out").innerHTML = "";
   try {
-    const sel = { key: true, creator: true, expiresAt: true, attributes: true };
+    const sel = { key: true, creator: true, owner: true, expiresAt: true, attributes: true };
     const base = `project = str('rasure/v1') AND circle = str('${circle}')`;
     const q6 = `${base} AND type = str('circle')`;
-    const anchorRes = await query(url, q6, sel);
+    const atRaw = $("at").value.trim();
+    const rewind = /^\d+$/.test(atRaw) ? hex(BigInt(atRaw)) : undefined;
+    const anchorRes = await query(url, q6, sel, rewind);
     const dset = new Set(disp.map(lc));
     const anchor = anchorRes.data.find((e) => dset.has(lc(e.creator)));
     if (!anchor) { $("status").textContent = "No circle anchor created by a trusted dispatcher at block " + num(anchorRes.block); return; }
@@ -89,7 +98,8 @@ $("go").onclick = async () => {
     const q3b = `${base} AND ${epochs} AND (type = str('claim') OR ((type = str('assign') OR type = str('closeout')) AND (${creators})))`;
     const q4 = `${base} AND type = str('ride') AND NOT (${creators})`;
     $("queries").textContent = [`Q6  ${q6}`, `Q1  ${q1}`, `Q3b ${q3b}`, `Q4  ${q4}`].join("\n\n");
-    const [rides, related, forged] = await Promise.all([query(url, q1, sel, anchorRes.block), query(url, q3b, sel, anchorRes.block), query(url, q4, sel, anchorRes.block)]);
+    const selP = { ...sel, payload: true };
+    const [rides, related, forged] = await Promise.all([query(url, q1, selP, anchorRes.block), query(url, q3b, sel, anchorRes.block), query(url, q4, sel, anchorRes.block)]);
     const rideCreator = new Map(rides.data.map((e) => [e.key, lc(e.creator)]));
     const rows = [];
     for (const r of rides.data) {
@@ -97,13 +107,14 @@ $("go").onclick = async () => {
       const rel = related.data.filter((e) => attrs(e).ref === r.key);
       const byOwner = (t) => rel.filter((e) => attrs(e).type === t && lc(e.creator) === lc(r.creator));
       const status = byOwner("closeout").length ? "closed" : byOwner("assign").length ? "assigned" : rel.some((e) => attrs(e).type === "claim") ? "claimed" : "open";
-      rows.push(`<tr><td>${r.key}</td><td>${num(ra.epoch)}</td><td>${status}</td><td>${num(r.expiresAt)}</td></tr>`);
+      const pl = r.payload ? (r.payload.length - 2) / 2 : 0;
+      rows.push(`<tr><td>${r.key}</td><td>${num(ra.epoch)}</td><td>${status}</td><td>${num(r.expiresAt)}</td><td>${r.creator}</td><td>${r.owner}</td><td>${pl} bytes sealed: ${(r.payload || "0x").slice(0, 18)}...</td></tr>`);
     }
     const badAssign = related.data.filter((e) => { const x = attrs(e); return x.type === "assign" && rideCreator.has(x.ref) && lc(e.creator) !== rideCreator.get(x.ref); });
     $("out").innerHTML =
-      `<p>Head block ${head}, epoch ${epoch}. Circle genesis ${genesis}, epoch length ${eb} blocks.</p>` +
+      `<p>${rewind ? "Rewound to block" : "Head block"} ${head}, epoch ${epoch}. Circle genesis ${genesis}, epoch length ${eb} blocks.</p>` +
       `<h2 style="font:700 16px ui-monospace,monospace">Counted rides (${rows.length})</h2>` +
-      `<table><tr><th>Ride key</th><th>Epoch</th><th>Status</th><th>Expires at block</th></tr>${rows.join("")}</table>` +
+      `<table><tr><th>Ride key</th><th>Epoch</th><th>Status</th><th>Expires at block</th><th>Written by</th><th>Held by</th><th>Payload a stranger sees</th></tr>${rows.join("")}</table>` +
       `<h2 class="bad" style="font:700 16px ui-monospace,monospace">Ignored (${forged.data.length + badAssign.length})</h2>` +
       `<table><tr><th>Entity</th><th>Creator</th><th>Why</th></tr>` +
       forged.data.map((e) => `<tr><td>${e.key}</td><td>${e.creator}</td><td>ride not created by a trusted dispatcher</td></tr>`).join("") +

@@ -1,0 +1,19 @@
+| Arkiv feature | Transaction | What it shows |
+|---|---|---|
+| Entity Expiration per type | [0xf237ec8751...](https://tiramisu.explorer.arkiv.network/tx/0xf237ec87519f1c631213045646c4cd943120135748de461507dab51029e15b57) | A sealed ride whose expiry block equals the key-death block (invariant I1). |
+| Creation flags (`readonly`) | [0xf237ec8751...](https://tiramisu.explorer.arkiv.network/tx/0xf237ec87519f1c631213045646c4cd943120135748de461507dab51029e15b57) | The same ride is created `readonly` with no permissionless extension. |
+| Attributes vs payload | [0xf237ec8751...](https://tiramisu.explorer.arkiv.network/tx/0xf237ec87519f1c631213045646c4cd943120135748de461507dab51029e15b57) | Six public attributes and a padded ciphertext payload; open it in the stranger view. |
+| Direct JSON-RPC and calldata | [0xf3f506c014...](https://tiramisu.explorer.arkiv.network/tx/0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6) | An expired probe whose payload is recovered from this transaction's input. |
+| Lifetime Extension | [0x84e2a6bc61...](https://tiramisu.explorer.arkiv.network/tx/0x84e2a6bc616e552f1ef073d31ea7c5dbe6b34eae8c3ce82c6a0158a0bd315d52) | The circle lease moved to a later block, read back from the node. |
+| Batch writes (`executeBatch`) | [0x39d6f8d2e3...](https://tiramisu.explorer.arkiv.network/tx/0x39d6f8d2e3717e59ffc557560062e81986d7c5078c5130793003fa957db98dba) | Assign and closeout created in one transaction: both land or neither. |
+| Batch: circle plus first ride | [0x31c606980e...](https://tiramisu.explorer.arkiv.network/tx/0x31c606980e3b71a13d97708d4308aa579d3209e82c132a37ac00191ed8d4cbe8) | "Open tonight's network": the circle and the first ride in one transaction. |
+| `deleteEntity` (cancel a ride) | [0x5703329028...](https://tiramisu.explorer.arkiv.network/tx/0x5703329028930066d4f3b6fc264f193f2ca9b11343ac13d68d8bb5dbc9ced6c7) | The ride leaves live state at once; its ciphertext stays in the creation transaction until the key dies. |
+| `deleteEntity` (withdraw a claim) | [0x05f7cd5f9f...](https://tiramisu.explorer.arkiv.network/tx/0x05f7cd5f9f4bc3b4296b47e8298206c55208d3395883843c4c8b00b17ce3f9b3) | A volunteer removes their own claim. |
+| `patchEntity` (circle `gen`) | [0x8cc250e691...](https://tiramisu.explorer.arkiv.network/tx/0x8cc250e69125c6dd1570db23361c435fa57579f4865dd31af93a0648c1e476ea) | A rekey entity is created and the circle's public `gen` patched in one transaction. |
+| `changeOwnership` (shift handover) | [0xd66625e0ce...](https://tiramisu.explorer.arkiv.network/tx/0xd66625e0ce69dd05ad39a112ad09cf886897f8a6d353d6200a3fa7450739971d) | The circle anchor moves to the morning dispatcher with a sealed handover record (rule I9). |
+| `$creator` and `$owner` (rule I9) | [0x8af057ced6...](https://tiramisu.explorer.arkiv.network/tx/0x8af057ced6f213d013a696c04044c908afe531e78dfd55a1baf33a3411617982) | A ride by the previous holder after the handover: on chain, and ignored by the board. |
+| `permissionlessExtension` (tally) | [0x6359aae7de...](https://tiramisu.explorer.arkiv.network/tx/0x6359aae7de622702a7bbb86e13d143784f34913786e5930aad10e60ff7911f24) | An auditor wallet that does not own the tally extends it; the same wallet is refused on a ride. |
+| WebSocket entity events | read-only | `watchEntityEvents` observed 34 EntityDeleted and 1 OwnershipTransferred events during the feature run. |
+| Historical queries (`atBlock`) | read-only | Reads at blocks 739910, 739911, 739939 returned the entity; at the expiry block and after it did not (read-only, no transaction). |
+| `$expiresAt` range query | read-only | Q13 found 3 rides dying within 300 blocks (read-only). |
+| Arkiv MCP (outside the product) | read-only | The Arkiv MCP confirmed 34 of 34 transactions and agreed with our reader on 33 of 34 entities. |

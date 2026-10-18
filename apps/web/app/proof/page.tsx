@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 import { renderedPredicates } from "@rasure/core";
 import { hasFacts, useFacts } from "@/lib/facts";
+import { dataExplorerQuery } from "@/lib/dataExplorer";
 import { DEMO_CIRCLE, RPC_HTTP, TRUSTED_DISPATCHERS, addrUrl, txUrl, REPO } from "@/lib/config";
 
 const INVARIANTS = [
@@ -98,7 +99,7 @@ export default function Proof() {
           <div style={{ display: "grid", gap: 18 }}>
             {Object.entries(preds).map(([k, q]) => (
               <div key={k}>
-                <div className="mono" style={{ fontWeight: 700, marginBottom: 4 }}>{k}</div>
+                <div className="mono" style={{ fontWeight: 700, marginBottom: 4 }}>{k} · <a href={dataExplorerQuery(q)} target="_blank" rel="noreferrer">Open in Arkiv Data Explorer</a></div>
                 <Copyable text={q} label={`${k} predicate`} />
                 <div style={{ height: 6 }} />
                 <Copyable text={curl(q)} label={`${k} curl`} />

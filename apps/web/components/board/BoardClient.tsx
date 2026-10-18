@@ -11,11 +11,14 @@ import { key } from "@arkiv-network/sdk/attr";
 import {
   q5Claims, EpochTooLateError, advance, assignClaim, assignAndClosePrevious, claimRide, closeRide, createCircle, currentKey, epochAt, extendCircle,
   fetchAll, guarded, keyDeathBlock, keyFor, newChain, open, partitionRides, postRide, q1OpenBoard, q2Zone, q3bRelated, q4Forged, q6Circle,
-  rideStatus, toChainEntity, visibleRecords, zoneTag, aad, detectRateLimit, openRekey, isValidDeviceKey, postMember, postRekey, q9Members, q10Rekeys,
+  rideStatus, toChainEntity, visibleRecords, zoneTag, aad, detectRateLimit, openRekey, isValidDeviceKey, postMember, q9Members, q10Rekeys,
+  cancelRide, withdrawClaim, deleteNotice, handOver, rekeyAndPatch, publishTally, extendTally, openNetwork, q11Handovers, q12Tallies, q13DyingSoon,
+  q14Circles, partitionRidesAt, holders, ownerAt, type OwnerTimeline, type MoreWriter,
   type ArkivWriter, type ChainEntity, type EntityType,
 } from "@rasure/core";
 import { useWallet, fmtGlm } from "@/lib/wallet";
 import { reader, readWithRelay } from "@/lib/chain";
+import { dataExplorerKey } from "@/lib/dataExplorer";
 import { RPC_WS, FAUCET, txUrl, addrUrl, short, TRUSTED_DISPATCHERS, DEMO_CIRCLE } from "@/lib/config";
 import {
   type Ring, advanceAndSave, createDispatcherRing, encodeJoin, deleteDeviceKey, ensureDeviceKey, listCircles, loadDeviceKey, loadRing, saveRing,
@@ -65,6 +68,15 @@ export function BoardClient() {
   const [keepSet, setKeepSet] = useState<Set<string>>(new Set());
   const [rekeyNote, setRekeyNote] = useState<string | null>(null);
   const [myClaims, setMyClaims] = useState<number | null>(null);
+  const [anchorInfo, setAnchorInfo] = useState<{ key: Hex; creator: string; owner: string; gen: bigint; updatedAt: bigint | null } | null>(null);
+  const [timeline, setTimeline] = useState<OwnerTimeline | null>(null);
+  const [handoverBlock, setHandoverBlock] = useState<bigint | null>(null);
+  const [handoverTo, setHandoverTo] = useState("");
+  const [tallies, setTallies] = useState<{ key: Hex; creator: string; owner: string; epoch: bigint; served: bigint; expiresAt: bigint }[]>([]);
+  const [heldNetworks, setHeldNetworks] = useState<string[]>([]);
+  const [dyingSoon, setDyingSoon] = useState<number | null>(null);
+  const [banner, setBanner] = useState<string | null>(null);
+  const [deleteMsg, setDeleteMsg] = useState<string | null>(null);
   const accountRef = useRef<string | null>(null);
   accountRef.current = w.account;
   const [form, setForm] = useState({ landmark: LANDMARKS[0], zone: ZONES[0], window: WINDOWS[0], seats: 2, note: "SYN-note: two passengers, one small bag" });
@@ -74,7 +86,8 @@ export function BoardClient() {
   const cardsRef = useRef<Card[] | null>(null);
   cardsRef.current = cards;
 
-  const isDispatcher = !!ring && !!w.account && ring.dispatchers.map((d) => d.toLowerCase()).includes(w.account.toLowerCase());
+  const holderNow = (anchorInfo?.owner ?? ring?.dispatchers[0] ?? "").toLowerCase();
+  const isDispatcher = !!ring && !!w.account && w.account.toLowerCase() === holderNow;
   const dispatchers = ring?.dispatchers ?? TRUSTED_DISPATCHERS;
 
   // ---- circles known to this device
@@ -106,6 +119,14 @@ export function BoardClient() {
       stopEv = ws.watchEntityEvents({
         onEntityCreated: () => scheduleRefetch(),
         onExpiryExtended: () => scheduleRefetch(),
+        onOwnershipTransferred: (ev) => {
+          setBanner(`Ownership of entity ${ev.entityKey.slice(0, 10)}... moved to ${ev.newOwner ?? "a new holder"} (live event).`);
+          scheduleRefetch();
+        },
+        onEntityDeleted: (ev) => {
+          setCards((cs) => (cs ? cs.filter((c) => c.entity.key.toLowerCase() !== ev.entityKey.toLowerCase()) : cs)); // disappears from every board at once
+          scheduleRefetch();
+        },
         onError: () => setLive("down"),
       });
     } catch { setLive("down"); }
@@ -146,7 +167,7 @@ export function BoardClient() {
     try {
       const h = await reader.getBlockNumber({ cacheTime: 0 });
       const epoch = epochAt(r.state.clock, h < r.state.clock.genesisBlock ? r.state.clock.genesisBlock : h);
-      const run = async (where: any, sel: Record<string, true>, extra: { createdBy?: string } = {}) => {
+      const run = async (where: any, sel: Record<string, true>, extra: { createdBy?: string; ownedBy?: string } = {}) => {
         try { return await fetchAll(reader as any, sel, where, { atBlock: h, ...extra }); }
         catch (e) {
           const rl = detectRateLimit(e);
@@ -156,44 +177,81 @@ export function BoardClient() {
           return fetchAll(relayReader() as any, sel, where, { atBlock: h, ...extra });
         }
       };
-      const sel = { key: true, creator: true, owner: true, expiresAt: true, attributes: true, payload: true } as const;
+      const sel = { key: true, creator: true, owner: true, createdAt: true, expiresAt: true, attributes: true, payload: true } as const;
+      const light = { key: true, creator: true, owner: true, createdAt: true, expiresAt: true, attributes: true } as const;
+      // 1. The anchor first: its $creator, current $owner and public `gen` decide who is trusted and whether a rekey happened.
+      const anchorRes = await run(q6Circle(r.state.circle), { key: true, creator: true, owner: true, createdAt: true, updatedAt: true, expiresAt: true, attributes: true }, { createdBy: r.dispatchers[0] });
+      const a = (anchorRes.entities as any[])[0];
+      if (!a) { setAnchorInfo(null); setTimeline(null); setCards([]); return; }
+      const aCreator = String(a.creator).toLowerCase();
+      const aOwner = String(a.owner).toLowerCase();
+      const gen = BigInt((toChainEntity(a).attributes.gen as string | bigint | undefined) ?? 1n);
+      setLeaseUntil({ key: a.key, expiresAt: BigInt(a.expiresAt) });
+      setAnchorInfo({ key: a.key, creator: aCreator, owner: aOwner, gen, updatedAt: a.updatedAt !== undefined ? BigInt(a.updatedAt) : null });
+      // 2. Handover timeline (I9). Each handover record's creation block is verified against the anchor's owner at that block.
+      const changes: { block: bigint; owner: string }[] = [];
+      let hBlock: bigint | null = null;
+      if (aOwner !== aCreator) {
+        const hs = await run(q11Handovers(r.state.circle), { key: true, creator: true, createdAt: true });
+        for (const hrec of (hs.entities as any[]).slice(0, 3)) {
+          const blk = BigInt(hrec.createdAt);
+          const at = await readWithRelay((rc) => rc.select({ key: true, owner: true }).where(eq("$key", key(a.key))).atBlock(blk).fetch()).catch(() => null);
+          const ownerThen = at?.value.entities[0]?.owner;
+          if (ownerThen) changes.push({ block: blk, owner: String(ownerThen).toLowerCase() });
+        }
+        if (changes.length === 0) changes.push({ block: 0n, owner: aOwner }); // handed over more than two epochs ago: all live rides are after it
+        hBlock = changes[changes.length - 1]?.block ?? null;
+      }
+      const tl: OwnerTimeline = { creator: aCreator, changes };
+      setTimeline(tl);
+      setHandoverBlock(hBlock && hBlock > 0n ? hBlock : null);
+      const trusted = holders(tl);
+
       let where;
       if (zone) {
         const pairs = r.state.keys.map((k) => ({ epoch: k.epoch, tag: zoneTag(k.chainKey, zone) }));
-        where = pairs.length ? q2Zone(r.state.circle, r.dispatchers, pairs) : q1OpenBoard(r.state.circle, epoch, r.dispatchers);
-      } else where = q1OpenBoard(r.state.circle, epoch, r.dispatchers);
-      const [rides, related, forged, anchor] = await Promise.all([
+        where = pairs.length ? q2Zone(r.state.circle, trusted, pairs) : q1OpenBoard(r.state.circle, epoch, trusted);
+      } else where = q1OpenBoard(r.state.circle, epoch, trusted);
+      const [rides, related, forged, tallyRes, soon] = await Promise.all([
         run(where, sel),
-        run(q3bRelated(r.state.circle, epoch, r.dispatchers), sel),
-        run(q4Forged(r.state.circle, r.dispatchers), { key: true, creator: true, owner: true, expiresAt: true, attributes: true }),
-        run(q6Circle(r.state.circle), { key: true, creator: true, expiresAt: true, attributes: true }, { createdBy: r.dispatchers[0] }),
+        run(q3bRelated(r.state.circle, epoch, trusted), sel),
+        run(q4Forged(r.state.circle, trusted), light),
+        run(q12Tallies(r.state.circle, trusted), light),
+        run(q13DyingSoon(r.state.circle, epoch, trusted, h + 300n), { key: true }),
       ]);
-      const a = (anchor.entities as any[]).find((e) => r.dispatchers.map((d) => d.toLowerCase()).includes(String(e.creator).toLowerCase()));
-      setLeaseUntil(a ? { key: a.key, expiresAt: BigInt(a.expiresAt) } : null);
+      setDyingSoon(soon.entities.length);
+      setTallies((tallyRes.entities as any[]).map((e) => {
+        const ce = toChainEntity(e);
+        return { key: e.key, creator: ce.creator, owner: ce.owner, epoch: BigInt(ce.attributes.epoch as string | bigint), served: BigInt(ce.attributes.served as string | bigint), expiresAt: ce.expiresAt };
+      }));
+      if (accountRef.current) {
+        const held = await run(q14Circles(), { key: true, attributes: true }, { ownedBy: accountRef.current });
+        setHeldNetworks((held.entities as any[]).map((e) => String(toChainEntity(e).attributes.circle)));
+      } else setHeldNetworks([]);
 
       // Q5: my claims, filtered by the SDK createdBy() on the connected wallet.
       if (accountRef.current && r.role === "member") {
         const mine = await run(q5Claims(r.state.circle), { key: true }, { createdBy: accountRef.current });
         setMyClaims(mine.entities.length);
       } else setMyClaims(null);
-      // Rekey: the dispatcher lists member device keys; a member looks for a rekey sealed to its own device key.
-      if (r.role === "dispatcher") {
+      // Rekey: the dispatcher lists member device keys; a member looks for a rekey only when the anchor's public `gen` moved.
+      if (r.role === "dispatcher" || accountRef.current?.toLowerCase() === aOwner) {
         const m = await run(q9Members(r.state.circle), { key: true, creator: true, payload: true });
         setMembers((m.entities as any[]).map((e) => ({ creator: String(e.creator), pub: e.payload as Uint8Array })));
-      } else {
+      } else if ((r.gen ?? 1n) < gen) {
         const dev = await loadDeviceKey(r.state.circle);
         if (dev) {
-          const rk = await run(q10Rekeys(r.state.circle, epoch, r.dispatchers), { key: true, creator: true, attributes: true, payload: true });
+          const rk = await run(q10Rekeys(r.state.circle, epoch, trusted), { key: true, creator: true, attributes: true, payload: true });
           for (const e of rk.entities as any[]) {
             const eff = BigInt(toChainEntity(e).attributes.epoch as string | bigint);
             if (r.pending && r.pending.epoch >= eff) continue;
             const got = await openRekey(r.state.circle, eff, e.payload as Uint8Array, dev);
             if (got.ok) {
-              const next = { ...r, pending: { epoch: got.epoch, chainKey: got.chainKey } };
+              const next = { ...r, gen, pending: { epoch: got.epoch, chainKey: got.chainKey } };
               await saveRing(next);
               await deleteDeviceKey(r.state.circle); // the secret that opened this entry is destroyed, so history cannot be unwrapped later
               setRing(next);
-              setRekeyNote(`A rekey for epoch ${got.epoch.toString()} was sealed to this device. The new chain starts at that epoch.`);
+              setRekeyNote(`A rekey for epoch ${got.epoch.toString()} was sealed to this device (generation ${gen.toString()}). The new chain starts at that epoch.`);
             }
           }
         }
@@ -201,7 +259,7 @@ export function BoardClient() {
 
       const live = new Set(r.state.keys.map((k) => k.epoch));
       const rideEnts = (rides.entities as any[]).map(toChainEntity);
-      const { counted } = partitionRides(rideEnts, r.dispatchers); // I4
+      const { counted, ignored: ignoredByTime } = partitionRidesAt(rideEnts, tl); // I4 and I9: the creator held the circle at the ride's block
       const visible = visibleRecords(counted, live, h);
       const relEnts = (related.entities as any[]).map(toChainEntity);
       const relRaw = new Map((related.entities as any[]).map((e) => [String(e.key), e]));
@@ -212,7 +270,7 @@ export function BoardClient() {
         const ck = keyFor(r.state, ep);
         const raw = rawRides.get(ent.key);
         const opened = raw?.payload ? await open<any>(ck, { circle: r.state.circle, epoch: ep, type: "ride" }, raw.payload) : { ok: false as const };
-        const st = rideStatus(ent, relEnts); // I7
+        const st = rideStatus(ent, relEnts, tl); // I7 with handover
         const claims = [];
         for (const c of relEnts.filter((x) => x.attributes.type === "claim" && String(x.attributes.ref) === ent.key)) {
           const rawc = relRaw.get(c.key);
@@ -226,9 +284,9 @@ export function BoardClient() {
       }
       out.sort((x, y) => Number(y.epoch - x.epoch) || (x.entity.key < y.entity.key ? -1 : 1));
       setCards(out);
-      setIgnoredRides((forged.entities as any[]).map(toChainEntity));
+      setIgnoredRides([...(forged.entities as any[]).map(toChainEntity), ...ignoredByTime]);
       const rideCreator = new Map(rideEnts.map((x) => [x.key, x.creator.toLowerCase()]));
-      setIgnoredAssigns(relEnts.filter((x) => x.attributes.type === "assign" && rideCreator.has(String(x.attributes.ref)) && x.creator.toLowerCase() !== rideCreator.get(String(x.attributes.ref))));
+      setIgnoredAssigns(relEnts.filter((x) => x.attributes.type === "assign" && rideCreator.has(String(x.attributes.ref)) && x.createdAt !== undefined && x.creator.toLowerCase() !== ownerAt(tl, x.createdAt)));
     } catch (e: any) {
       const rl = detectRateLimit(e);
       setError(rl ? rl.message : (e?.message ?? String(e)).slice(0, 300));
@@ -318,6 +376,52 @@ export function BoardClient() {
     void aad;
   }
 
+  const asMore = (wc: ArkivWriter) => wc as unknown as MoreWriter;
+  const doCancel = async (c: Card) => {
+    if (!ring) return;
+    const res = await guardWrite("Cancel ride", (wc) => cancelRide(asMore(wc), c.entity.key as Hex));
+    if (res) {
+      setCards((cs) => (cs ? cs.filter((x) => x.entity.key !== c.entity.key) : cs));
+      setDeleteMsg(deleteNotice(keyDeathBlock(ring.state.clock, c.epoch)));
+    }
+  };
+  const doWithdraw = async (c: Card, claimKey: string) => {
+    if (!ring) return;
+    const res = await guardWrite("Withdraw claim", (wc) => withdrawClaim(asMore(wc), claimKey as Hex));
+    if (res) setDeleteMsg(deleteNotice(keyDeathBlock(ring.state.clock, c.epoch)));
+  };
+  async function doOpenNetwork() {
+    if (!w.account) return w.openModal();
+    const h0 = await reader.getBlockNumber({ cacheTime: 0 });
+    const id = hex16();
+    const r = createDispatcherRing(id, h0, BigInt(epochBlocks), w.account);
+    r.gen = 1n;
+    const res = await guardWrite("Open tonight's network", async (wc, h) => {
+      const st = advance(r.state, h < r.state.clock.genesisBlock ? r.state.clock.genesisBlock : h).state;
+      return openNetwork(asMore(wc), st, h, 0n, { landmark: form.landmark, window: form.window, seats: form.seats, note: form.note }, form.zone);
+    });
+    if (res) {
+      await saveRing(r);
+      setCircles(await listCircles());
+      setCircle(id);
+      setRing(r);
+    }
+  }
+  async function doHandover() {
+    if (!ring || !anchorInfo) return;
+    if (!/^0x[0-9a-fA-F]{40}$/.test(handoverTo)) return setRekeyNote("Enter the morning dispatcher's wallet address (0x and 40 hex characters).");
+    const h0 = await reader.getBlockNumber({ cacheTime: 0 });
+    const res = await guardWrite("Hand over the network", (wc, h) => handOver(asMore(wc), advance(ring.state, h).state, h, epochAt(ring.state.clock, h), anchorInfo.key, handoverTo as Hex));
+    if (res) setBanner(`Handed over at about block ${h0.toString()}: rides written by the previous holder after the handover no longer count.`);
+  }
+  const doTally = (epoch: bigint) => {
+    if (!ring) return;
+    const served = BigInt((cards ?? []).filter((c) => c.epoch === epoch && c.status === "closed").length);
+    return guardWrite("Publish tally", (wc) => publishTally(asMore(wc), ring.state.circle, epoch, served));
+  };
+  const doExtendTally = (t: { key: Hex; expiresAt: bigint }) =>
+    guardWrite("Keep tally alive", (wc, h) => extendTally(asMore(wc), t.key, h, t.expiresAt));
+
   const doPublishDevice = () => ring && guardWrite("Publish device key", async (wc, h) => {
     const dk = await ensureDeviceKey(ring.state.circle);
     return postMember(wc, ring.state.circle, dk.publicKey, epochAt(ring.state.clock, h));
@@ -329,12 +433,14 @@ export function BoardClient() {
     const fresh = crypto.getRandomValues(new Uint8Array(32));
     const h0 = await reader.getBlockNumber({ cacheTime: 0 });
     const effect = epochAt(ring.state.clock, h0) + 1n;
-    const res = await guardWrite("Rekey", (wc, h) => postRekey(wc, ring.state, h, effect, fresh, remaining));
+    if (!anchorInfo) return setRekeyNote("The circle anchor has not loaded yet.");
+    const nextGen = anchorInfo.gen + 1n;
+    const res = await guardWrite("Rekey", (wc, h) => rekeyAndPatch(asMore(wc), ring.state, h, anchorInfo.key, effect, fresh, remaining, nextGen));
     if (res) {
-      const next = { ...ring, pending: { epoch: effect, chainKey: fresh } };
+      const next = { ...ring, gen: nextGen, pending: { epoch: effect, chainKey: fresh } };
       await saveRing(next);
       setRing(next);
-      setRekeyNote(`Rekey posted: the new chain starts at epoch ${effect.toString()} for ${remaining.length} remaining member(s). Removed members read nothing sealed from then on.`);
+      setRekeyNote(`Rekey posted in one transaction (rekey entity and circle generation ${nextGen.toString()}): the new chain starts at epoch ${effect.toString()} for ${remaining.length} remaining member(s). Removed members read nothing sealed from then on.`);
     }
   }
 
@@ -364,7 +470,7 @@ export function BoardClient() {
               ? `Key for epoch ${erased!.epochs.map(String).join(", ")} erased on this phone. ${erased!.count} record${erased!.count === 1 ? "" : "s"} now unreadable to everyone, here and on chain.`
               : strip ? `epoch ${strip.epoch.toString()} now · epoch ${strip.oldest.toString()} key dies in ${mmss(strip.left)} (block ${strip.death.toString()})` : "No circle loaded: key-death countdown starts when you open or create one."}
           </span>
-          <span>head {head?.toString() ?? "..."} · {live === "socket" ? "live socket" : live === "down" ? "socket unavailable, polling every 6 s" : "connecting"}</span>
+          <span>{dyingSoon !== null ? `dies in the next 10 minutes: ${dyingSoon} ride${dyingSoon === 1 ? "" : "s"} · ` : ""}head {head?.toString() ?? "..."} · {live === "socket" ? "live socket" : live === "down" ? "socket unavailable, polling every 6 s" : "connecting"}</span>
         </div>
       </div>
 
@@ -377,6 +483,16 @@ export function BoardClient() {
         </div>
 
         {relayNote && <p className="notice" style={{ color: "var(--ink)" }}>{relayNote}</p>}
+        {anchorInfo && timeline && timeline.changes.length > 0 && (
+          <p className="notice" role="status" style={{ color: "var(--ink)" }}>
+            Network held by <a className="hash" href={addrUrl(anchorInfo.owner)} target="_blank" rel="noreferrer">{anchorInfo.owner}</a>{handoverBlock ? ` since block ${handoverBlock.toString()}` : ""} (handed over by <a className="hash" href={addrUrl(anchorInfo.creator)} target="_blank" rel="noreferrer">{short(anchorInfo.creator, 6)}</a>). Rides written by an earlier holder after the handover do not count.
+          </p>
+        )}
+        {anchorInfo && anchorInfo.gen > 1n && (
+          <p className="notice" role="status" style={{ color: "var(--ink)" }}>Circle rekeyed{anchorInfo.updatedAt ? ` at block ${anchorInfo.updatedAt.toString()}` : ""}, generation {anchorInfo.gen.toString()}.</p>
+        )}
+        {banner && <p className="notice" role="status" style={{ color: "var(--ink)" }}>{banner}</p>}
+        {deleteMsg && <p className="notice" role="status" style={{ color: "var(--ink)" }}>{deleteMsg}</p>}
         {error && <p className="notice err" role="alert">{error}</p>}
 
         <div className="grid g2" style={{ color: "var(--ink)", marginTop: 16 }}>
@@ -406,10 +522,12 @@ export function BoardClient() {
                 <option value="10800">production: 10,800 blocks (6 h)</option>
               </select>
               <button className="btn btn-ink" onClick={doCreateCircle}>Create circle</button>
+              <button className="btn btn-lime" onClick={doOpenNetwork}>Open tonight's network</button>
               {isDispatcher && <button className="btn" style={{ background: "var(--paper-2)", color: "var(--cobalt-ink)" }} onClick={showJoin}>Show join QR</button>}
             </div>
             {leaseUntil && <p className="label" style={{ marginBottom: 0 }}>Network active until block {leaseUntil.expiresAt.toString()}. {isDispatcher && <button className="btn" style={{ padding: "2px 8px", fontSize: 12 }} onClick={doExtend}>Renew lease</button>}</p>}
-            {ring && <p className="label" style={{ marginBottom: 0 }}>Role on this device: {ring.role}. Trusted dispatchers: {ring.dispatchers.map((d) => short(d, 4)).join(", ")}.</p>}
+            {ring && <p className="label" style={{ marginBottom: 0 }}>Role on this device: {ring.role}. Holder now: {holderNow ? short(holderNow, 4) : "..."}.</p>}
+            {heldNetworks.length > 0 && <p className="label" style={{ marginBottom: 0 }}>Networks I hold: {heldNetworks.map((n) => n.slice(0, 8)).join(", ")}</p>}
           </div>
         </div>
 
@@ -449,6 +567,32 @@ export function BoardClient() {
               <label className="label" style={{ gridColumn: "span 2" }}>Note<input value={form.note} maxLength={120} onChange={(e) => setForm({ ...form, note: e.target.value })} /></label>
             </div>
             <button className="btn btn-lime" style={{ marginTop: 12 }} onClick={doPost}>Post ride (wallet popup)</button>
+          </div>
+        )}
+
+        {ring && isDispatcher && (
+          <div className="card" style={{ color: "var(--ink)", marginTop: 20 }}>
+            <div className="mono" style={{ fontWeight: 700 }}>Shift handover</div>
+            <p className="label">Hand the network to the morning dispatcher in one transaction (changeOwnership plus a sealed handover record). From that block, rides written by you no longer count. The morning dispatcher should join with a join link first so they hold the keys.</p>
+            <input aria-label="Morning dispatcher wallet" placeholder="0x... morning dispatcher wallet" value={handoverTo} onChange={(e) => setHandoverTo(e.target.value.trim())} />
+            <button className="btn btn-ink" style={{ marginTop: 10 }} onClick={doHandover}>Hand over (wallet popup)</button>
+          </div>
+        )}
+
+        {ring && (
+          <div className="card" style={{ color: "var(--ink)", marginTop: 20 }}>
+            <div className="mono" style={{ fontWeight: 700 }}>Service record (tallies)</div>
+            <p className="label">One count per closed epoch, signed by the dispatcher, with no person, place or time finer than an epoch. Anyone with a wallet, such as a funder, can extend a tally without owning it. Rides refuse that on purpose.</p>
+            {tallies.length === 0 && <p className="label">No tally published yet.</p>}
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {tallies.map((t) => (
+                <li key={t.key} className="label" style={{ marginBottom: 6 }}>
+                  epoch {t.epoch.toString()}: {t.served.toString()} ride{t.served === 1n ? "" : "s"} served · written by {short(t.creator, 4)} · held by {short(t.owner, 4)} · lives until block {t.expiresAt.toString()}{" "}
+                  {!isDispatcher && <button className="btn" style={{ padding: "2px 8px", fontSize: 12 }} onClick={() => doExtendTally(t)}>Keep alive (wallet popup)</button>}
+                </li>
+              ))}
+            </ul>
+            {isDispatcher && strip && <button className="btn btn-ink" onClick={() => doTally(strip.epoch > 0n ? strip.epoch - 1n : 0n)}>Publish tally for epoch {(strip.epoch > 0n ? strip.epoch - 1n : 0n).toString()} (wallet popup)</button>}
           </div>
         )}
 
@@ -518,7 +662,8 @@ export function BoardClient() {
                           </div>
                         ) : <p className="label">This device holds no key for epoch {c.epoch.toString()}, so the contents stay sealed here.</p>}
                         <div className="label">Fixed since creation (readonly) · dies at block {c.entity.expiresAt.toString()}</div>
-                        <div className="label">creator <a href={addrUrl(c.entity.creator)} target="_blank" rel="noreferrer">{short(c.entity.creator, 4)}</a></div>
+                        <div className="label"><a href={dataExplorerKey(c.entity.key)} target="_blank" rel="noreferrer">Open in Arkiv Data Explorer</a></div>
+                        <div className="label">written by ($creator) <a href={addrUrl(c.entity.creator)} target="_blank" rel="noreferrer">{short(c.entity.creator, 4)}</a> · held by ($owner) <a href={addrUrl(c.entity.owner)} target="_blank" rel="noreferrer">{short(c.entity.owner, 4)}</a></div>
                         {isDispatcher && c.claims.map((cl) => (
                           <div key={cl.entity.key} style={{ marginTop: 8, padding: 8, border: "1.5px solid var(--cobalt-ink)", borderRadius: 8 }}>
                             <div className="label">claim by {short(cl.entity.creator, 4)} · {cl.body?.eta} · {cl.body?.vehicle}</div>
@@ -528,6 +673,10 @@ export function BoardClient() {
                         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
                           {!isDispatcher && c.status !== "closed" && c.body && <button className="btn btn-ink" onClick={() => doClaim(c)}>Claim (wallet popup)</button>}
                           {isDispatcher && c.status === "assigned" && <button className="btn btn-ink" onClick={() => doClose(c)}>Close out</button>}
+                          {isDispatcher && (c.status === "open" || c.status === "claimed") && <button className="btn" style={{ background: "var(--paper-2)", color: "var(--cobalt-ink)" }} onClick={() => doCancel(c)}>Cancel ride</button>}
+                          {!isDispatcher && c.claims.filter((cl) => cl.entity.creator.toLowerCase() === (w.account ?? "").toLowerCase()).map((cl) => (
+                            <button key={cl.entity.key} className="btn" style={{ background: "var(--paper-2)", color: "var(--cobalt-ink)" }} onClick={() => doWithdraw(c, cl.entity.key)}>Withdraw claim</button>
+                          ))}
                         </div>
                       </div>
                     </motion.div>

@@ -443,15 +443,55 @@
     "tx": "0xc4b8d78bccd66e1fc5feba8a4bb9ef3d7a3c9546985379e5438e319bf5875299"
   },
   {
-    "label": "executeBatch: assign plus closeout in one transaction",
-    "tx": "0x39d6f8d2e3717e59ffc557560062e81986d7c5078c5130793003fa957db98dba"
+    "label": "deleteEntity: cancelRideTx",
+    "tx": "0x5703329028930066d4f3b6fc264f193f2ca9b11343ac13d68d8bb5dbc9ced6c7"
   },
   {
-    "label": "Lifetime Extension: circle lease created",
+    "label": "deleteEntity: withdrawClaimTx",
+    "tx": "0x05f7cd5f9f4bc3b4296b47e8298206c55208d3395883843c4c8b00b17ce3f9b3"
+  },
+  {
+    "label": "patchEntity batch: memberTx",
+    "tx": "0x4cb10cbdbc4a4df4e53dd25a95bf3c992aebadefd1a7a2c9e9998dd06efba791"
+  },
+  {
+    "label": "patchEntity batch: batchTx",
+    "tx": "0x8cc250e69125c6dd1570db23361c435fa57579f4865dd31af93a0648c1e476ea"
+  },
+  {
+    "label": "changeOwnership batch: batchTx",
+    "tx": "0xd66625e0ce69dd05ad39a112ad09cf886897f8a6d353d6200a3fa7450739971d"
+  },
+  {
+    "label": "changeOwnership batch: rideByNewHolderTx",
+    "tx": "0x3e3eb772b54303636f8eed295ec542f32baecd09e701db8d1dfe9178196789fb"
+  },
+  {
+    "label": "changeOwnership batch: rideByOldHolderAfterHandoverTx",
+    "tx": "0x8af057ced6f213d013a696c04044c908afe531e78dfd55a1baf33a3411617982"
+  },
+  {
+    "label": "changeOwnership batch: newHolderLeaseExtendTx",
+    "tx": "0xa288fe9cfa323aa956104e1a662021db144b845804f0351b1f88d36471227e1f"
+  },
+  {
+    "label": "circle plus first ride: txHash",
+    "tx": "0x31c606980e3b71a13d97708d4308aa579d3209e82c132a37ac00191ed8d4cbe8"
+  },
+  {
+    "label": "tally: publishTx",
+    "tx": "0xb201f7e665755f5e4a38217682a09aea9173605d44f976415b9e1efa9e4d88e1"
+  },
+  {
+    "label": "tally: auditorExtendTx",
+    "tx": "0x6359aae7de622702a7bbb86e13d143784f34913786e5930aad10e60ff7911f24"
+  },
+  {
+    "label": "Lifetime Extension: createTx",
     "tx": "0x47462e7fe45c4860a2226014c5166e0bd3cce20ecedfa60f7248f102ba53b9de"
   },
   {
-    "label": "Lifetime Extension: lease extended to a later block",
+    "label": "Lifetime Extension: extendTx",
     "tx": "0x84e2a6bc616e552f1ef073d31ea7c5dbe6b34eae8c3ce82c6a0158a0bd315d52"
   }
 ]

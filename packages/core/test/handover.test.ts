@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deleteNotice, extendTally, holders, ownerAt, partitionRidesAt, tallyParams, TALLY_BLOCKS, toChainEntity, type OwnerTimeline } from "../src";
+import { rideStatus, deleteNotice, extendTally, holders, ownerAt, partitionRidesAt, tallyParams, TALLY_BLOCKS, toChainEntity, type OwnerTimeline } from "../src";
 
 const OLD = "0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771";
 const NEW = "0x9257991047D23e58EF1b90e893924f9eB5AB25e3";
@@ -48,5 +48,19 @@ describe("tally, delete notice", () => {
   });
   it("createdAt survives toChainEntity", () => {
     expect(toChainEntity({ key: "0x1", creator: "0xa", owner: "0xa", expiresAt: 1n, createdAt: 77n, attributes: {} }).createdAt).toBe(77n);
+  });
+});
+
+describe("I7 with a handover timeline", () => {
+  const r = { key: "0xr", creator: OLD, owner: OLD, expiresAt: 9999n, attributes: { type: "ride" }, createdAt: 900n };
+  const asg = (creator: string, createdAt: bigint) => ({ key: "0xa", creator, owner: creator, expiresAt: 9999n, attributes: { type: "assign", ref: "0xr" }, createdAt });
+  it("the morning dispatcher can assign a night ride after the handover", () => {
+    expect(rideStatus(r, [asg(NEW, 1200n)], T).status).toBe("assigned");
+  });
+  it("the previous holder cannot assign after the handover", () => {
+    expect(rideStatus(r, [asg(OLD, 1200n)], T).status).toBe("open");
+  });
+  it("without a timeline the original rule holds", () => {
+    expect(rideStatus(r, [asg(NEW, 1200n)]).status).toBe("open");
   });
 });

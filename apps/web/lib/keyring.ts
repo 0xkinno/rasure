@@ -12,6 +12,7 @@ interface Stored {
   role: "dispatcher" | "member";
   keys: { epoch: string; chainKey: Uint8Array }[];
   pending?: { epoch: string; chainKey: Uint8Array };
+  gen?: string;
 }
 const id = (circle: string) => `rasure:ring:${circle}`;
 
@@ -21,6 +22,8 @@ export interface Ring {
   role: "dispatcher" | "member";
   /** A rekey received or issued whose effect epoch has not started yet. Adopted at that epoch's first block. */
   pending?: { epoch: bigint; chainKey: Uint8Array };
+  /** The circle's public chain generation this device has caught up to. */
+  gen?: bigint;
 }
 
 function pack(r: Ring): Stored {
@@ -32,6 +35,7 @@ function pack(r: Ring): Stored {
     role: r.role,
     keys: r.state.keys.map((k) => ({ epoch: k.epoch.toString(), chainKey: k.chainKey })),
     pending: r.pending ? { epoch: r.pending.epoch.toString(), chainKey: r.pending.chainKey } : undefined,
+    gen: r.gen?.toString(),
   };
 }
 function unpack(s: Stored): Ring {
@@ -44,6 +48,7 @@ function unpack(s: Stored): Ring {
     dispatchers: s.dispatchers,
     role: s.role,
     pending: s.pending ? { epoch: BigInt(s.pending.epoch), chainKey: s.pending.chainKey } : undefined,
+    gen: s.gen ? BigInt(s.gen) : undefined,
   };
 }
 

@@ -25,10 +25,18 @@ export function partitionRides(rides: ChainEntity[], dispatchers: string[]) {
 
 export type RideStatus = "open" | "claimed" | "assigned" | "closed";
 
-/** I7: an assignment counts only if the dispatcher that created the ride created it. */
-export function rideStatus(ride: ChainEntity, related: ChainEntity[]): { status: RideStatus; assignedClaim?: string } {
+/**
+ * I7: an assignment counts only if the dispatcher that created the ride created it. With a handover timeline (I9) the rule is
+ * relaxed to: its creator held the circle at the assignment's own block, so a morning dispatcher can close a night ride.
+ */
+export function rideStatus(ride: ChainEntity, related: ChainEntity[], timeline?: OwnerTimeline): { status: RideStatus; assignedClaim?: string } {
   const ofRide = related.filter((e) => String(e.attributes.ref) === ride.key);
-  const byRideOwner = (t: string) => ofRide.filter((e) => e.attributes.type === t && lc(e.creator) === lc(ride.creator));
+  const byRideOwner = (t: string) =>
+    ofRide.filter((e) => {
+      if (e.attributes.type !== t) return false;
+      if (timeline && e.createdAt !== undefined) return lc(e.creator) === ownerAt(timeline, e.createdAt);
+      return lc(e.creator) === lc(ride.creator);
+    });
   if (byRideOwner(TYPES.closeout).length) return { status: "closed" };
   const assign = byRideOwner(TYPES.assign)[0];
   if (assign) return { status: "assigned", assignedClaim: String(assign.key) };

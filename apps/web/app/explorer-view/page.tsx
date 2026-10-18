@@ -4,11 +4,13 @@ import { eq } from "@arkiv-network/sdk/query";
 import { auditAttributes, detectRateLimit, recoverCreates, toChainEntity } from "@rasure/core";
 import { reader, readWithRelay } from "@/lib/chain";
 import { entropy, findCreationTx, toHex } from "@/lib/creationTx";
-import { txUrl, EXPLORER } from "@/lib/config";
+import { txUrl, EXPLORER, addrUrl } from "@/lib/config";
+import { dataExplorerKey } from "@/lib/dataExplorer";
 
 interface Detail {
   key: string;
   creator: string;
+  owner?: string;
   attributes: Record<string, string>;
   payloadHex: string;
   payloadBytes: number;
@@ -30,7 +32,7 @@ export default function StrangerView() {
     (async () => {
       try {
         const { value } = await readWithRelay((c) =>
-          c.select({ key: true, creator: true, createdAt: true, expiresAt: true, attributes: true, payload: true }).where(eq("project", "rasure/v1")).limit(20).fetch(),
+          c.select({ key: true, creator: true, owner: true, createdAt: true, expiresAt: true, attributes: true, payload: true }).where(eq("project", "rasure/v1")).limit(20).fetch(),
         );
         setList(value.entities as any[]);
       } catch (e) {
@@ -49,7 +51,7 @@ export default function StrangerView() {
       const payload = (e.payload ?? new Uint8Array()) as Uint8Array;
       const attrs: Record<string, string> = {};
       for (const [k, v] of Object.entries(ce.attributes)) attrs[k] = String(v);
-      const d: Detail = { key: e.key, creator: e.creator, attributes: attrs, payloadHex: toHex(payload), payloadBytes: payload.length, entropy: entropy(payload), outside: auditAttributes(ce) };
+      const d: Detail = { key: e.key, creator: e.creator, owner: e.owner, attributes: attrs, payloadHex: toHex(payload), payloadBytes: payload.length, entropy: entropy(payload), outside: auditAttributes(ce) };
       setDetail(d);
       try {
         const tx = await findCreationTx(e.key, BigInt(e.createdAt));
@@ -119,7 +121,9 @@ export default function StrangerView() {
               <div className="card">
                 <p className="mono" style={{ fontWeight: 700, marginTop: 0 }}>{verdict}</p>
                 <div className="hash">key {detail.key}</div>
-                <div className="hash">creator {detail.creator}</div>
+                <div className="hash">written by ($creator) <a href={addrUrl(detail.creator)} target="_blank" rel="noreferrer">{detail.creator}</a></div>
+                {detail.owner && <div className="hash">held by ($owner) <a href={addrUrl(detail.owner)} target="_blank" rel="noreferrer">{detail.owner}</a></div>}
+                {detail.key.startsWith("0x") && detail.key.length === 66 && <p className="label"><a href={dataExplorerKey(detail.key)} target="_blank" rel="noreferrer">Open in Arkiv Data Explorer</a>: an independent Arkiv tool shows the same attributes and ciphertext.</p>}
                 <h4 className="mono" style={{ marginBottom: 4 }}>raw attributes</h4>
                 <pre className="hash" style={{ whiteSpace: "pre-wrap", margin: 0 }}>{json(detail.attributes)}</pre>
                 {detail.outside.length > 0 && <p className="notice err">Attributes outside the allowlist: {detail.outside.join(", ")}</p>}
