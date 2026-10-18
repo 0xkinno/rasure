@@ -24,15 +24,21 @@ Every item below was hit or measured by us. Items that depend on a funded write 
 
 ## 3. Expiry is not erasure: payload recoverable from calldata (D1)
 
-NOT YET RUN. The claim under test: the payload of an expired entity is recoverable byte for byte from its creation transaction input, and the entity is absent from live state.
-- **Source evidence already read:** SDK 0.8.1 `src/attr/attributes.ts` (payload is the `$payload` system attribute), `src/entity/operations.ts` (`execute((uint8 operation, bytes operationData)[] ops)`), `src/consts.ts` (target `0x4400000000000000000000000000000000000044`).
-- **Reproduce:** `npx tsx scripts/discovery/d1-calldata.ts` (needs a funded probe wallet). Output: `proof/results/d1-<date>.json`.
-- **What would fix it:** a callout on the Entity Expiration docs page, and an optional SDK helper for sealed payloads.
+- **Surface:** Entity Expiration, `getEntity`, `eth_getTransactionByHash`.
+- **Expected:** an expired entity's payload is gone.
+- **Actual:** the entity was absent from live state (`getEntity` threw `NoEntityFoundError`) and its payload was recovered byte for byte from the creation transaction input. The transaction target was the Arkiv system address `0x4400000000000000000000000000000000000044`.
+- **Run:** 2026-10-18. Probe wallet `0x03a85A77ee3b49d9DC59451279620426c26879Fe` created a synthetic entity (`SYN-probe-...`, 30 blocks) in transaction `0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6`, block 739910, expiry block 739940. After head 739942 `getEntity` returned nothing and the decoded calldata payload matched.
+- **Reproduce:** `npx tsx scripts/discovery/d1-calldata.ts`. Output: `proof/results/d1-2026-10-18.json`.
+- **What would fix it:** a callout on the Entity Expiration docs page saying expiry removes live state only, and an optional SDK helper for sealed payloads.
 
-## 4. Historical queries return expired entities; retention boundary (D2)
+## 4. Historical queries return an entity up to its last live block; no retention limit observed (D2)
 
-NOT YET RUN. The claim under test: `select(...).where(eq("$key", key)).atBlock(createdBlock + 1)` returns the expired entity and its payload while the block is inside the node's retention window, and a block outside it throws `QueryError` with kind `"block"`.
-- **Reproduce:** `npx tsx scripts/discovery/d2-atblock.ts` after D1. Output: `proof/results/d2-<date>.json` including the oldest answered block.
+- **Surface:** `select(...).where(eq("$key", key)).atBlock(n)`.
+- **Expected:** history may be unavailable or short; a query after expiry may still return the entity.
+- **Actual on the D1 entity:** `atBlock` 739910, 739911 and 739939 (before expiry) returned the entity with its payload. `atBlock` 739940 (the expiry block), 739941 and the head returned no entity. So history reads return a payload for every block up to `expiresAt - 1`, and nothing from `expiresAt` on, matching the "live while `queryBlock < expiresAt`" rule.
+- **Retention:** block 1 answered a historical query (no `QueryError` of kind `"block"`), so the node held the full history of about 411 hours at the time of the run. We did not find a retention boundary. The boundary may exist on other nodes or later.
+- **Reproduce:** `npx tsx scripts/discovery/d2-atblock.ts` after D1. Output: `proof/results/d2-2026-10-18.json`.
+- **Reading:** an expired entity is readable at any earlier block, and always from calldata. Confidentiality therefore needs encryption, not expiry.
 
 ## 5. Wild-set measurement of item 3 on other builders' entities
 

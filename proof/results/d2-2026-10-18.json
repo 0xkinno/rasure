@@ -1,0 +1,62 @@
+{
+  "experiment": "D2 historical queries return expired entities",
+  "date": "2026-10-18",
+  "sdk": "@arkiv-network/sdk@0.8.1",
+  "chainId": 7738577,
+  "d1Source": "d1-2026-10-18.json",
+  "entityKey": "0x95122de8d30ca2f25537e8c1ae7c853c5ab73652a00aacd1edd27ae45e44548f",
+  "createdBlock": "739910",
+  "expiresAt": "739940",
+  "headAtRun": "739947",
+  "samples": [
+    {
+      "block": "739910",
+      "answered": true,
+      "found": true,
+      "payloadText": "SYN-probe-1792329579632",
+      "expiresAt": "739940"
+    },
+    {
+      "block": "739911",
+      "answered": true,
+      "found": true,
+      "payloadText": "SYN-probe-1792329579632",
+      "expiresAt": "739940"
+    },
+    {
+      "block": "739939",
+      "answered": true,
+      "found": true,
+      "payloadText": "SYN-probe-1792329579632",
+      "expiresAt": "739940"
+    },
+    {
+      "block": "739940",
+      "answered": true,
+      "found": false,
+      "payloadText": null,
+      "expiresAt": null
+    },
+    {
+      "block": "739941",
+      "answered": true,
+      "found": false,
+      "payloadText": null,
+      "expiresAt": null
+    },
+    {
+      "block": "739947",
+      "answered": true,
+      "found": false,
+      "payloadText": null,
+      "expiresAt": null
+    }
+  ],
+  "payloadReturnedAfterExpiryAtLastLiveBlock": true,
+  "retention": {
+    "oldestAnsweredBlock": "1",
+    "windowBlocks": "739946",
+    "approxHours": 411.0811111111111,
+    "binarySearchSteps": 0
+  }
+}

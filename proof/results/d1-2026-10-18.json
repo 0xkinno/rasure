@@ -1,0 +1,25 @@
+{
+  "experiment": "D1 payload lives in calldata",
+  "date": "2026-10-18",
+  "sdk": "@arkiv-network/sdk@0.8.1",
+  "chainId": 7738577,
+  "prober": "0x03a85A77ee3b49d9DC59451279620426c26879Fe",
+  "txHash": "0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6",
+  "txUrl": "https://tiramisu.explorer.arkiv.network/tx/0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6",
+  "entityKey": "0x95122de8d30ca2f25537e8c1ae7c853c5ab73652a00aacd1edd27ae45e44548f",
+  "createdBlock": "739910",
+  "expiresAt": "739940",
+  "txTarget": "0x4400000000000000000000000000000000000044",
+  "targetIsArkivSystemAddress": true,
+  "liveAfterExpiry": false,
+  "payloadSent": "SYN-probe-1792329579632",
+  "payloadRecoveredFromCalldata": "SYN-probe-1792329579632",
+  "recoveredByteForByte": true,
+  "recoveredAttributeNames": [
+    "$contentType",
+    "$payload",
+    "project"
+  ],
+  "inputBytes": 996,
+  "verdict": "CONFIRMED: expired, gone from live state, payload still readable from calldata"
+}
