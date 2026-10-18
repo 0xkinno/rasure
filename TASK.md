@@ -15,7 +15,7 @@ done, in progress, next, live vs designed.
 - [ ] First commit and push to `github.com/0xkinno/rasure`; attribution workflow runs green
 
 ## Phase 1. Discovery gate (no UI before this passes)
-- [ ] `scripts/keys.ts`: dispatcher, volunteerA, volunteerB, forger, probe, drip keys into `.secrets/wallets.json` (mode 600), print addresses only
+- [x] `scripts/keys.ts`: dispatcher, volunteerA, volunteerB, forger, probe, drip keys into `.secrets/wallets.json` (mode 600), print addresses only
 - [ ] Kinnoski funds dispatcher and drip from the faucet; `scripts/fund.ts` splits GLM to the others
 - [ ] `scripts/discovery/d1-calldata.ts` live: payload recovered from the creation tx after expiry; `proof/results/d1-*.json`
 - [ ] `scripts/discovery/d2-atblock.ts` live: history query result and the node's retention boundary recorded
