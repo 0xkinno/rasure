@@ -31,6 +31,12 @@ for (const f of results.filter((x) => x.startsWith("batch-"))) {
   rows.push({ label: "executeBatch: assign plus closeout in one transaction", tx: d.batchTx });
 }
 
+for (const f of results.filter((x) => x.startsWith("extend-"))) {
+  const d = rd(`proof/results/${f}`);
+  rows.push({ label: "Lifetime Extension: circle lease created", tx: d.createTx });
+  rows.push({ label: "Lifetime Extension: lease extended to a later block", tx: d.extendTx });
+}
+
 const md = [
   "# Evidence",
   "",

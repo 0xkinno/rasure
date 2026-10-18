@@ -1,0 +1,12 @@
+{
+  "experiment": "Lifetime Extension of the circle lease",
+  "date": "2026-10-18",
+  "circle": "7346750769e1ed9e07e16403408932e7",
+  "createTx": "0x47462e7fe45c4860a2226014c5166e0bd3cce20ecedfa60f7248f102ba53b9de",
+  "extendTx": "0x84e2a6bc616e552f1ef073d31ea7c5dbe6b34eae8c3ce82c6a0158a0bd315d52",
+  "expiresAtBefore": "784642",
+  "expiresAtAfterReceipt": "2037443",
+  "expiresAtReadBack": "2037443",
+  "leaseBlocks": "1296000",
+  "pass": true
+}
