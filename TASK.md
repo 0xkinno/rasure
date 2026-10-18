@@ -26,9 +26,9 @@ done, in progress, next, live vs designed.
 - [ ] Start `arkiv/friction.md` with D1 and D2 (expected, actual, versions, steps, fix)
 
 ## Phase 2. Mechanism on chain
-- [ ] `packages/core/src/queries.ts` (Q1 to Q8) + unit tests that render each predicate string
-- [ ] `packages/core/src/writes.ts`: createCircle, postRide, claimRide, assignClaim (batch where two writes must land together), closeRide, extendCircle; every sealed write uses `ExpirationTime.atBlock(keyDeathBlock)` with a 20-block margin guard
-- [ ] `packages/core/src/read.ts`: retryCount 0, 429 detection with retry time, cursor pagination pinned by `atBlock`
+- [x] `packages/core/src/queries.ts` (Q1 to Q8) + unit tests that render each predicate string
+- [x] `packages/core/src/writes.ts`: createCircle, postRide, claimRide, assignClaim (batch where two writes must land together), closeRide, extendCircle; every sealed write uses `ExpirationTime.atBlock(keyDeathBlock)` with a 20-block margin guard
+- [x] `packages/core/src/read.ts`: retryCount 0, 429 detection with retry time, cursor pagination pinned by `atBlock`
 - [ ] `scripts/seed.ts` (demo circle, 300-block epochs): rides across at least 6 epochs, claims, assigns, a closeout, one forged ride and one forged assign (forger); `proof/seed-manifest.json`
 - [ ] `scripts/drill-run.ts`: same synthetic rides written three ways (plaintext, static key, ratchet) as separate circles; keys and tx hashes in `proof/drill-manifest.json`; wait until older epochs are dead; run `seizureDrill` from calldata; `proof/results/drill-*.json`
 - [ ] Both error directions measured: attacker opens a past record (target 0) and a legitimate member is refused a current or grace record (target 0)
