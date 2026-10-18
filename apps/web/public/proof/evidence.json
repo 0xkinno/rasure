@@ -239,5 +239,9 @@
   {
     "label": "board UI end-to-end run (probe wallet signed through the app)",
     "tx": "0x2892f1a1e6579b9bc8a2d771dfa4d5a3b6c8d8b541cd81023800ba0c32255c80"
+  },
+  {
+    "label": "executeBatch: assign plus closeout in one transaction",
+    "tx": "0x39d6f8d2e3717e59ffc557560062e81986d7c5078c5130793003fa957db98dba"
   }
 ]

@@ -60,6 +60,21 @@ Every item below was hit or measured by us. Items that depend on a funded write 
 - **Reproduce:** `apps/web/components/board/BoardClient.tsx`.
 - **What would fix it:** re-export viem's public actions on the Arkiv public client, or document the pairing.
 
+## 8. The anonymous query budget is spent quickly during normal development
+
+- **Surface:** anonymous `arkiv_query` on the public RPC.
+- **Expected:** a few hundred reads per hour is enough for development, per the 10,000 units at 100 per query documented budget.
+- **Actual:** after building and testing one board (5 queries per page load, plus scripts) the node answered `ANON_COST_LIMITED` with "Retry in 652 s". Our reader surfaces the retry time, and the web app falls back to a read-only relay that adds the Hub access key. The message is easy to detect once you look through the viem error cause chain (`detectRateLimit` in `packages/core/src/read.ts`); viem's default retry would otherwise repeat the call.
+- **Reproduce:** load `/board` repeatedly on an anonymous IP; the error appears in the page banner.
+- **What would fix it:** a typed `RateLimitError` in the SDK with a numeric `retryAfterSeconds`, and counting only the cost of the query's own scan so that cheap lookups by key cost less.
+
+## 9. Two shapes for the same attribute
+
+- **Expected:** one attribute shape across the SDK and raw JSON-RPC.
+- **Actual:** the SDK returns `attributes: { name: { type: "str", value: "ride" } }`, while raw `arkiv_query` returns `attributes: [{ name, type, value }]` with u64 as `"0x12c"`. Code written against raw output (our one-file reader) cannot be pasted into SDK code. Our first trust filter read `String(attribute)` and silently produced `[object Object]` until a live read exposed it; a unit test now pins the unwrap.
+- **Reproduce:** `packages/core/test/queries-writes.test.ts`, test "unwraps typed attributes"; `apps/web/public/reader.html` for the raw shape.
+- **What would fix it:** document both shapes side by side on the query page.
+
 ## Paths that worked, tested with the same rigour
 
 | Path | Expected | Result |
@@ -68,4 +83,7 @@ Every item below was hit or measured by us. Items that depend on a funded write 
 | Predicate rendering | A string the node accepts | `render()` produced `project = str('rasure/v1') AND ... AND ($creator = addr(0x..) OR $creator = addr(0x..))` and the node parsed it |
 | Public RPC reachability | Head block | `eth_blockNumber` answered, head about 739,500 on 2026-10-18, blocks about 2 s apart |
 | WebSocket heads in the browser | Live updates | `watchBlockNumber` over `wss://rpc.tiramisu.db-chain.testnet.arkiv.network` updated the board header without reload |
+| Real signed writes through the board UI | create circle, post ride, claim, assign | all landed; transaction hashes in `proof/results/e2e-write-2026-10-18.json` and `arkiv/evidence.md` |
+| `executeBatch` (assign plus closeout) | both entities in one transaction | `scripts/batch-run.ts`: one transaction, 2 entities created, receipt success; `proof/results/batch-2026-10-18.json` |
+| `readonly` flags, absolute `atBlock` expiry, `createdBy()` | accepted by the node | seen in the drill, rekey and board runs |
 | Official Arkiv MCP (`https://mcp.arkiv.network/devfolio`) | Docs and rubric retrieval | `initialize`, `tools/list` and `search_knowledge` answered; it has no faucet or funding tool |

@@ -16,7 +16,12 @@ All entities carry `project = "rasure/v1"` (str), `v = 1` (i32) and `circle = <r
 | `assign` | dispatcher of that ride | `type`, `circle`, `epoch` (u64), `ref` (key of the ride) | which claim, short instruction | same block as its ride | `readonly` |
 | `closeout` | dispatcher of that ride | `type`, `circle`, `epoch` (u64), `ref` (key of the ride) | outcome code | same block as its ride | `readonly` |
 
-Sealed payload content type: `application/vnd.rasure.sealed.v1`.
+| `member` | volunteer (their wallet) | `type`, `circle`, `epoch` (u64) | a 33 byte compressed secp256k1 device public key (not the wallet key; public by definition) | 1 day (43,200 blocks) | `readonly` |
+| `rekey` | dispatcher | `type`, `circle`, `epoch` (u64, the epoch the new chain takes effect) | a fresh chain key sealed to each remaining member's device key (ECIES), padded to 1 KiB steps | start of the epoch after its effect epoch | `readonly` |
+
+Sealed payload content type: `application/vnd.rasure.sealed.v1`. Member payload: `application/vnd.rasure.devicekey.v1`. Rekey payload: `application/vnd.rasure.rekey.v1`.
+
+A `member` entity publicly links a wallet to a circle. That is metadata we cannot hide, because `$creator` is public; it is listed under Honest notes in the README.
 
 ## Entity Expiration rules
 
@@ -24,6 +29,7 @@ Sealed payload content type: `application/vnd.rasure.sealed.v1`.
 - `keyDeathBlock(e) = genesis + (e + 2) * epoch_blocks`. One grace epoch lets a ride posted late still be served.
 - Invariant I1: for `ride`, `claim`, `assign` and `closeout`, `expiresAt == keyDeathBlock(epoch)`. A claim, assign or closeout uses the epoch of the ride it points at, so it dies in the same block as the ride.
 - Writes are refused client-side when fewer than 20 blocks remain before key death, because an absolute `ExpirationTime.atBlock` must still be in the future at inclusion.
+- `rekey` for effect epoch `r` is posted during epoch `r-1` and expires at `genesis + (r+1) * epoch_blocks`; `member` entities expire after one day.
 - The `circle` anchor is a lease: Lifetime Extension sets a deadline 30 days after the current head, and only ever to a later block.
 
 ## Flags and why
@@ -36,6 +42,8 @@ Sealed payload content type: `application/vnd.rasure.sealed.v1`.
 Allowed public attribute names (any other name on a Rasure entity fails the leak audit, invariant I3): `project`, `type`, `v`, `circle`, `epoch`, `tag`, `ref`, `epoch_blocks`, `genesis`. The last two appear on the `circle` entity only.
 
 `tag` is `hex(HMAC-SHA256(idxKey_e, "zone:" + normalized zone))` truncated to 32 hex characters. `idxKey_e` is derived from the epoch's chain key, so the same zone has a different tag every epoch and an outsider cannot link the same place across epochs.
+
+Rekey key schedule: the dispatcher draws a fresh 32 byte chain key `K`, then for each remaining member derives `HKDF-SHA256(ECDH(ephemeral, devicePub), salt "rasure/v1/rekey", info "entry")` and seals `epoch (u64) | K` with AES-256-GCM, AAD `rasure/v1|<circle>|<epoch>|rekey`. Entry layout: `fingerprint(8) | ephemeralPub(33) | iv(12) | ciphertext+tag(56)`.
 
 Never on Arkiv: names, phone numbers, plates, addresses, landmarks or zones in plaintext, any chain key or seed, membership lists, plaintext of any record. All demo content is synthetic and every synthetic place string starts with `SYN-`.
 
@@ -81,6 +89,13 @@ Q5  my claims (builder adds .createdBy(me))
 Q6  circle anchor (builder adds .createdBy(dispatcher))
     project = str('rasure/v1') AND circle = str('C') AND type = str('circle')
 
+Q9  member device keys of a circle (the dispatcher builds the rekey from these)
+    project = str('rasure/v1') AND circle = str('C') AND type = str('member')
+
+Q10 rekeys taking effect at the given epoch or the next two, trusted dispatchers only
+    project = str('rasure/v1') AND circle = str('C') AND type = str('rekey')
+    AND (epoch = u64(E) OR epoch = u64(E+1) OR epoch = u64(E+2)) AND ($creator = addr(D1) OR ...)
+
 Q7  leak audit, every Rasure entity, cursor-paginated, pinned with .atBlock(head)
     project = str('rasure/v1')
 
@@ -101,6 +116,7 @@ curl -s -X POST https://rpc.tiramisu.db-chain.testnet.arkiv.network -H 'content-
 
 - Entities expire at their key-death block. A missing ride is normal, not an error.
 - `payload` is ciphertext. Without a circle join link you can read attributes only. That is the privacy property, not a defect.
+- Over the SDK, attributes come back as `{ type, value }`; over raw JSON-RPC they come back as an array of `{ name, type, value }` with u64 values as hex strings. `apps/web/public/reader.html` shows the raw handling.
 - Page with the cursor and pin every page to one block with `atBlock`; the node returns at most 200 entities per page.
 - Anonymous queries cost 100 of 10,000 units per hour per IP. The app issues 3 to 5 queries per board load.
 - `reader.html` in `apps/web/public` is a one-file reader written from this document alone.

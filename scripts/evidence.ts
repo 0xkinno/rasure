@@ -21,9 +21,14 @@ for (const s of drill?.scenarios ?? []) for (const r of s.records) rows.push({ l
 const rekey = rd("proof/rekey-manifest.json");
 for (const r of rekey?.records ?? []) rows.push({ label: `rekey run ${r.type}`, tx: r.txHash, key: r.key });
 
-for (const f of results.filter((x) => x.startsWith("e2e-write-"))) {
+for (const f of results.filter((x) => x.startsWith("e2e-"))) {
   const d = rd(`proof/results/${f}`);
   for (const t of d.transactions) rows.push({ label: `board UI end-to-end run (${t.who} wallet signed through the app)`, tx: t.hash });
+}
+
+for (const f of results.filter((x) => x.startsWith("batch-"))) {
+  const d = rd(`proof/results/${f}`);
+  rows.push({ label: "executeBatch: assign plus closeout in one transaction", tx: d.batchTx });
 }
 
 const md = [

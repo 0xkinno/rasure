@@ -1,0 +1,18 @@
+{
+  "experiment": "executeBatch: assign + closeout in one transaction",
+  "date": "2026-10-18",
+  "circle": "799703eeeecc2cc03451be1b4bed32ba",
+  "anchorTx": "0x31f0c28d8a47abe9319269ca39b1fd6e0139ba7e9fb15872e3f921d48769c35d",
+  "batchTx": "0x39d6f8d2e3717e59ffc557560062e81986d7c5078c5130793003fa957db98dba",
+  "entitiesCreatedByBatch": 2,
+  "receiptStatus": "success",
+  "typesLiveForCircle": [
+    "assign",
+    "circle",
+    "closeout",
+    "ride",
+    "ride"
+  ],
+  "pass": true,
+  "currentKeyEpoch": "0"
+}
