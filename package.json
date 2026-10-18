@@ -12,7 +12,8 @@
   "scripts": {
     "test": "npm test --workspace @rasure/core",
     "typecheck": "npm run typecheck --workspace @rasure/core",
-    "qa": "playwright test"
+    "qa": "playwright test",
+    "qa:live": "playwright test -c playwright.live.config.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",

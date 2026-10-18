@@ -80,7 +80,7 @@ export function BoardClient() {
   useEffect(() => {
     listCircles().then((l) => {
       setCircles(l);
-      const want = params.get("circle") || DEMO_CIRCLE || l[0] || "";
+      const want = params.get("circle") || l[0] || DEMO_CIRCLE || "";
       if (want) setCircle(want);
     });
   }, [params]);

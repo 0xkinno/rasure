@@ -28,7 +28,7 @@ A night dispatcher posts pickups for volunteer drivers. Each pickup is sealed un
 
 ## 23:40, Pune
 
-Meera Kulkarni (fictional) runs night dispatch for a network of volunteer drivers who take survivors of domestic violence to a shelter or a One Stop Centre. At 23:40 a driver's phone is taken by the abuser of the woman she just drove. Everything that phone can read about past pickups is now in the wrong hands. In most designs that means every ride it ever saw. In Rasure it means tonight's rides and nothing older. See [MOMENT.md](MOMENT.md).
+Meera Kulkarni runs night dispatch for a network of volunteer drivers who take survivors of domestic violence to a shelter or a One Stop Centre. At 23:40 a driver's phone is taken by the abuser of the woman she just drove. Everything that phone can read about past pickups is now in the wrong hands. In most designs that means every ride it ever saw. In Rasure it means tonight's rides and nothing older. See [MOMENT.md](MOMENT.md).
 
 ## The problem
 

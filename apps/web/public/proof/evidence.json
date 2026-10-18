@@ -223,5 +223,21 @@
     "label": "rekey run ride",
     "tx": "0x9453b59dc10a46c1ded9dbbc0bf61e869b91faa24bb7f0eaa954232b5b594b63",
     "key": "0x3241079b50863ac27ac9ad770ab5de91514f1babbd817c52896dd327e47af956"
+  },
+  {
+    "label": "board UI end-to-end run (probe wallet signed through the app)",
+    "tx": "0x4ed4551bbc71cf753b74b99562239ea9c7df40d4da681899b0ec715f4e4ac39b"
+  },
+  {
+    "label": "board UI end-to-end run (probe wallet signed through the app)",
+    "tx": "0x892074dd9616b647671b8fc105f7c434b9d12f95b4093fd9766849e36e108f56"
+  },
+  {
+    "label": "board UI end-to-end run (drip wallet signed through the app)",
+    "tx": "0x97129d99b2ea5e19334d29c597a980bdaa05f2f34c8d6d3e977a9707b91370fb"
+  },
+  {
+    "label": "board UI end-to-end run (probe wallet signed through the app)",
+    "tx": "0x2892f1a1e6579b9bc8a2d771dfa4d5a3b6c8d8b541cd81023800ba0c32255c80"
   }
 ]
