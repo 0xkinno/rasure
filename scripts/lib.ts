@@ -1,0 +1,45 @@
+// Shared helpers for scripts. Reads keys from .secrets/wallets.json (gitignored). Never prints keys.
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { createPublicClient, createWalletClient } from "@arkiv-network/sdk";
+import { http } from "viem";
+import { tiramisu } from "@arkiv-network/sdk/chains";
+import { privateKeyToAccount } from "viem/accounts";
+
+export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+export const RPC_HTTP = process.env.ARKIV_RPC ?? "https://rpc.tiramisu.db-chain.testnet.arkiv.network";
+export const EXPLORER = "https://tiramisu.explorer.arkiv.network";
+export const ROLES = ["dispatcher", "volunteerA", "volunteerB", "forger", "probe", "drip"] as const;
+export type Role = (typeof ROLES)[number];
+
+export function loadKeys(): Record<Role, `0x${string}`> {
+  const p = resolve(ROOT, ".secrets/wallets.json");
+  if (!existsSync(p)) throw new Error("missing .secrets/wallets.json: run `npx tsx scripts/keys.ts`");
+  return JSON.parse(readFileSync(p, "utf8"));
+}
+
+export function accountFor(role: Role) {
+  return privateKeyToAccount(loadKeys()[role]);
+}
+
+/** Optional Hub access key, from env ARKIV_ACCESS_KEY, sent as X-API-KEY. Never logged. */
+export function transport() {
+  const key = process.env.ARKIV_ACCESS_KEY;
+  return http(RPC_HTTP, key ? { retryCount: 0, fetchOptions: { headers: { "X-API-KEY": key } } } : { retryCount: 0 });
+}
+
+export const reader = () => createPublicClient({ chain: tiramisu, transport: transport() });
+export const walletFor = (role: Role) =>
+  createWalletClient({ chain: tiramisu, transport: transport(), account: accountFor(role) });
+
+export function writeResult(name: string, data: unknown) {
+  const dir = resolve(ROOT, "proof/results");
+  mkdirSync(dir, { recursive: true });
+  const file = resolve(dir, name);
+  writeFileSync(file, JSON.stringify(data, (_k, v) => (typeof v === "bigint" ? v.toString() : v), 2) + "\n");
+  return file;
+}
+
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+export const today = () => new Date().toISOString().slice(0, 10);

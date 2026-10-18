@@ -2,11 +2,18 @@
   "name": "rasure",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "license": "MIT",
   "author": "0xkinno",
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
     "test": "npm test --workspace @rasure/core",
     "typecheck": "npm run typecheck --workspace @rasure/core"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15"
   }
 }
