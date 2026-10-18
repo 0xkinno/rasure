@@ -106,7 +106,7 @@ export default function StrangerView() {
                 <li key={e.key}>
                   <button className="btn" style={{ width: "100%", justifyContent: "space-between", background: "var(--card)", color: "var(--ink)" }} onClick={() => inspect(e)}>
                     <span className="mono" style={{ fontSize: 12 }}>{String(e.key).slice(0, 18)}...</span>
-                    <span className="chip">{String((e.attributes?.type ?? e.attributes?.find?.((a: any) => a.key === "type")?.value) ?? "entity")}</span>
+                    <span className="chip">{String(toChainEntity(e).attributes.type ?? "entity")}</span>
                   </button>
                 </li>
               ))}
