@@ -6,8 +6,8 @@ MOMENT:     Meera (fictional) runs night dispatch for a survivor safe-transport 
             At 23:40 a volunteer driver's phone is taken by the abuser of the woman she just drove.
             Everything that phone can read about past pickups is now in the wrong hands.
 DISCOVERY:  everyone assumes Entity Expiration erases a record; in reality every payload travels
-            uncompressed in its creation transaction and stays recoverable forever, and the node
-            answers historical queries for expired entities. Expiry hides. It does not forget.
+            uncompressed in its creation transaction and stays recoverable from the chain, and history
+            queries return it for every block before the expiry. Expiry hides. It does not forget.
 THESIS:     Rasure binds each record's Entity Expiration to the destruction of the only key that
             can read it: a one-way key ratchet erases yesterday's key on every phone at the same
             block that Arkiv expires yesterday's records. A seized phone reads tonight, never last week.

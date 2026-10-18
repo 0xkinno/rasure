@@ -1,6 +1,6 @@
 {
   "generated": true,
-  "generatedAt": "2026-10-18T13:58:06.464Z",
+  "generatedAt": "2026-10-18T14:07:32.726Z",
   "sources": {
     "d1": "d1-2026-10-18.json",
     "d2": "d2-2026-10-18.json",
@@ -17,7 +17,7 @@
   },
   "d2": {
     "retentionHours": 411.0811111111111,
-    "payloadReturnedAfterExpiry": true
+    "payloadReturnedAtLastLiveBlock": true
   },
   "drill": {
     "plaintext": {

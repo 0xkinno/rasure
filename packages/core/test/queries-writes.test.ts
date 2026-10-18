@@ -90,7 +90,7 @@ describe("board visibility and zone query", () => {
     expect(s).toContain("tag = str('bb')");
   });
   it("Q3b covers claim, assign, closeout", () => {
-    const s = render(q3bRelated("abc", 5n));
+    const s = render(q3bRelated("abc", 5n, [D1]));
     for (const t of ["claim", "assign", "closeout"]) expect(s).toContain(`type = str('${t}')`);
   });
 });

@@ -23,6 +23,17 @@ export function generateDeviceKey(): DeviceKey {
   return { secret, publicKey: secp256k1.getPublicKey(secret, true) };
 }
 
+/** A member key is accepted only if it is 33 bytes and a valid curve point (anyone can post a member entity). */
+export function isValidDeviceKey(pub: Uint8Array): boolean {
+  if (pub.length !== 33) return false;
+  try {
+    secp256k1.ProjectivePoint.fromHex(pub);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Short public fingerprint so a member can find its own entry without trial-decrypting every one. */
 export function fingerprint(publicKey: Uint8Array): Uint8Array {
   return sha256(publicKey).slice(0, 8);
@@ -52,6 +63,7 @@ export async function sealRekey(
   if (newChainKey.length !== 32) throw new Error("chain key must be 32 bytes");
   const entries: Uint8Array[] = [];
   for (const devicePub of memberDeviceKeys) {
+    if (!isValidDeviceKey(devicePub)) throw new Error("member device key is not a valid 33 byte compressed secp256k1 point");
     const eph = secp256k1.utils.randomPrivateKey();
     const ephPub = secp256k1.getPublicKey(eph, true);
     const shared = secp256k1.getSharedSecret(eph, devicePub, true).slice(1);

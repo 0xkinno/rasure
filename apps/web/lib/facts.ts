@@ -6,7 +6,7 @@ export interface Facts {
   reason?: string;
   generatedAt?: string;
   d1?: { txHash: string; entityKey: string; recoveredByteForByte: boolean; liveAfterExpiry: boolean };
-  d2?: { retentionHours: number; payloadReturnedAfterExpiry: boolean };
+  d2?: { retentionHours: number; payloadReturnedAtLastLiveBlock: boolean };
   drill?: Record<string, { exposed: number; total: number }>;
   errorDirections?: { attackerOpenedPast: number; memberRefused: number; liveRecords: number };
   leakAudit?: { entities: number; maxPublicAttributes: number; plaintextTx: number; minEntropy: number };

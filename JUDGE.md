@@ -1,6 +1,6 @@
 # For judges
 
-Live app: see the README. All three walks use real Tiramisu data.
+Live app: the link is in the README once deployed (pending). All three walks use real Tiramisu data; until then, run the app locally.
 
 ## 60 seconds, no wallet
 

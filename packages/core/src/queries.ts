@@ -39,12 +39,13 @@ export function q2Zone(circle: string, dispatchers: readonly string[], pairs: re
 }
 
 /** Q3b everything pointing at any ride of this epoch pair, one query for the whole board. */
-export function q3bRelated(circle: string, epoch: bigint): Expression {
+export function q3bRelated(circle: string, epoch: bigint, dispatchers: readonly string[]): Expression {
   return and([
     eq("project", PROJECT),
     eq("circle", circle),
-    or([eq("type", TYPES.claim), eq("type", TYPES.assign), eq("type", TYPES.closeout)]),
     epochs(epoch),
+    // Claims may come from any member wallet (verified by opening them); assign and closeout only from a trusted dispatcher.
+    or([eq("type", TYPES.claim), and([or([eq("type", TYPES.assign), eq("type", TYPES.closeout)]), creatorsOf(dispatchers)])]),
   ]);
 }
 
@@ -95,7 +96,7 @@ export function renderedPredicates(circle: string, epoch: bigint, dispatchers: r
   return {
     Q1: render(q1OpenBoard(circle, epoch, dispatchers)),
     Q2: render(q2Zone(circle, dispatchers, [{ epoch, tag }, ...(epoch > 0n ? [{ epoch: epoch - 1n, tag }] : [])])),
-    Q3b: render(q3bRelated(circle, epoch)),
+    Q3b: render(q3bRelated(circle, epoch, dispatchers)),
     Q3: render(q3PointingAt(circle, rideKey)),
     Q4: render(q4Forged(circle, dispatchers)),
     Q5: render(q5Claims(circle)),

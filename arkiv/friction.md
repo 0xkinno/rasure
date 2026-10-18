@@ -36,7 +36,7 @@ Every item below was hit or measured by us. Items that depend on a funded write 
 - **Surface:** `select(...).where(eq("$key", key)).atBlock(n)`.
 - **Expected:** history may be unavailable or short; a query after expiry may still return the entity.
 - **Actual on the D1 entity:** `atBlock` 739910, 739911 and 739939 (before expiry) returned the entity with its payload. `atBlock` 739940 (the expiry block), 739941 and the head returned no entity. So history reads return a payload for every block up to `expiresAt - 1`, and nothing from `expiresAt` on, matching the "live while `queryBlock < expiresAt`" rule.
-- **Retention:** block 1 answered a historical query (no `QueryError` of kind `"block"`), so the node held the full history of about 411 hours at the time of the run. We did not find a retention boundary. The boundary may exist on other nodes or later.
+- **Retention:** block 1 answered a historical query (no `QueryError` of kind `"block"`). That single query is the evidence; we did not find a retention boundary. The hours figure in the result file is the block count times 2 seconds, not a measurement. A boundary may exist on other nodes or later.
 - **Reproduce:** `npx tsx scripts/discovery/d2-atblock.ts` after D1. Output: `proof/results/d2-2026-10-18.json`.
 - **Reading:** an expired entity is readable at any earlier block, and always from calldata. Confidentiality therefore needs encryption, not expiry.
 
@@ -44,7 +44,7 @@ Every item below was hit or measured by us. Items that depend on a funded write 
 
 - **Surface:** history reads on Tiramisu.
 - **Measured (aggregate only, no content, keys, creators or project names kept):** 300 entities that were alive at block 738,949 and had expired by block 739,549 were read `atBlock(738949)` on 2026-10-18; 294 returned a non-empty payload, 12 of those parsed as JSON or readable text, 282 were binary or encrypted, 6 were empty. See `proof/results/wild-2026-10-18.json`.
-- **Reading:** history queries do return payloads of entities that have expired, and some are plaintext. Expiry removes live state only.
+- **Reading:** history reads return the payload of an entity at any block where it was live, including entities that have since expired, and some of those payloads are plaintext. The run read 300 entities at block 738,949 that expired by block 739,549; it was partial (one window returned HTTP 504, see item 1). It does not show recovery after expiry; that is D1 (calldata). Expiry removes live state only.
 
 ## 6. `ExpirationTime.fromBlocks` takes a number, not a bigint
 

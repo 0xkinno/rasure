@@ -4,7 +4,7 @@
 
 **The dispatch board that forgets on schedule.**
 
-![Live](https://img.shields.io/badge/live-see%20Links-0a2fb3) ![CI](https://img.shields.io/badge/CI-no--claude--attribution-0b1a5e) ![MIT](https://img.shields.io/badge/license-MIT-d7f25a)
+![Live](https://img.shields.io/badge/live-pending%20deployment-0a2fb3) ![CI](https://img.shields.io/badge/CI-no--claude--attribution-0b1a5e) ![MIT](https://img.shields.io/badge/license-MIT-d7f25a)
 
 Rasure is a ride board for survivor safe-transport volunteers that truly forgets: a phone taken tonight cannot read last night's pickups, even with the whole chain in hand.
 
@@ -12,10 +12,10 @@ A night dispatcher posts pickups for volunteer drivers. Each pickup is sealed un
 
 | Link | Where |
 |---|---|
-| Live app | PENDING: set after the Vercel deployment (see [Run it locally](#run-it-locally) until then) |
+| Live app | PENDING: set after the Vercel deployment (until then, [Run it locally](#run-it-locally)) |
 | For judges | `/judge` and [JUDGE.md](JUDGE.md) |
 | Seizure Drill | `/drill` (no wallet) |
-| Demo video (2:50) | PENDING: recorded after deployment |
+| Demo video | PENDING: recorded after deployment (script in [VIDEO_SCRIPT.md](VIDEO_SCRIPT.md)) |
 | Schema | [arkiv/schema.md](arkiv/schema.md) |
 | Friction report | [arkiv/friction.md](arkiv/friction.md) |
 | Evidence | [arkiv/evidence.md](arkiv/evidence.md) |
@@ -45,7 +45,7 @@ US law already tells victim service providers not to put survivor data into shar
 
 1. **D1.** Every write is a transaction to `0x4400000000000000000000000000000000000044` and the payload travels uncompressed in its input. After a probe entity expired, `getEntity` found nothing and the payload was recovered byte for byte from the creation transaction `0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6`.
 2. **D2.** `atBlock` queries returned the entity and payload up to its last live block; the node answered a query at block 1, so no retention boundary was found.
-3. **Wild set.** Other builders' expired entities are readable the same way (aggregate counts below).
+3. **Wild set.** Other builders' entities that have since expired were readable through history reads while they were live (aggregate counts below; a partial run).
 
 Reproduce:
 
@@ -126,7 +126,7 @@ Who is censored today: a shelter whose board lives on one operator's server. Wha
 
 ## Why Arkiv
 
-On Postgres or our own API the operator holds the clock and the data, and nobody can show that expired means expired. IPFS has no expiry. A subgraph indexes forever. Arkiv gives Entity Expiration that the user sets, `$creator` that no one can forge, queries on typed attributes, and live events. What stays off Arkiv: names, places, keys, membership, plaintext.
+On Postgres or our own API the operator holds the clock and the data, and nobody can show that expired means expired. IPFS has no expiry. A subgraph indexes forever. Arkiv gives Entity Expiration that the user sets, `$creator` set by the chain rather than by a field anyone can write, queries on typed attributes, and live events. What stays off Arkiv: names, places, keys, membership, plaintext.
 
 ## How we use Arkiv
 
@@ -136,14 +136,14 @@ See [SDK_SURFACE.md](SDK_SURFACE.md) for each feature with file and line, and th
 
 <!-- facts:start -->
 - D1: expired entity absent from live state, payload recovered from calldata byte for byte: true (tx `0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6`).
-- D2: node answered history down to block 1 (411 hours of history); payload returned at the last live block: true.
+- D2: node answered a history query at block 1; payload returned at the last live block: true.
 - Seizure drill, plaintext: 12 of 12 records exposed.
 - Seizure drill, static_key: 12 of 12 records exposed.
 - Seizure drill, ratchet: 2 of 12 records exposed.
 - Seizure drill, rekey: 0 of 2 records exposed.
 - Error directions: attacker opened 0 past records; legitimate member refused 0 of 4 live records.
 - Leak audit: 11 entities, at most 6 public attributes, 0 plaintext creation transactions, pass: true.
-- Wild-set expiry audit (aggregate): 300 expired public entities sampled at block 738949; 294 still return a payload; 12 parse as readable text or JSON.
+- Wild-set audit (aggregate, partial run): 300 public entities that were live at block 738949 and have since expired were read at that block; 294 returned a payload; 12 parse as readable text or JSON.
 <!-- facts:end -->
 
 Misses named: the current and grace epoch are readable by design; the 7.5 bits per byte entropy bar in the plan is not reachable on 256 byte payloads (random bytes of that size measure about 7.2), so thresholds are per length and printed in the leak audit result.
@@ -179,7 +179,8 @@ npx tsx scripts/rasure.ts drill
 - A leaked join link exposes its epoch and every later one until the circle is rekeyed.
 - Public metadata remains: wallet addresses, timing, rides per epoch, padded length bucket, and which wallets published a device key.
 - Erasure is only as good as the phone's storage.
-- Tiramisu is a testnet; the node held full history when measured.
+- A phone's device key can unwrap the rekey entries sealed to it. The app deletes that secret as soon as it adopts a rekey, and a member must publish a new device key to be rekeyable again; a phone seized before adoption holds the key for the pending entry only.
+- Tiramisu is a testnet; the node answered a query at block 1 when measured (one query, not a retention guarantee).
 
 ## Disclosures
 

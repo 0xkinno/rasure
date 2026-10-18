@@ -54,7 +54,9 @@ Never on Arkiv: names, phone numbers, plates, addresses, landmarks or zones in p
 ## Trust rules
 
 - I4: a ride counts only if its `$creator` is in the circle's trusted dispatcher list.
-- I7: an assign or closeout counts only if its `$creator` equals the `$creator` of the ride it points at.
+- I7: an assign or closeout counts only if its `$creator` equals the `$creator` of the ride it points at (Q3b already restricts both to trusted dispatchers).
+- A claim counts only if it opens in the circle and epoch AND its sealed body names the ride key and the claimant address that equals the claim's `$creator`. A copied ciphertext or an unreadable spam claim therefore changes nothing.
+- The dispatcher seals a rekey only to member wallets it ticks in the UI. A `member` entity can be posted by anyone, so unknown wallets are never included by default, and keys are validated as 33 byte curve points first.
 - A third party reading without the app should apply exactly these two rules and treat every other entity as untrusted data.
 
 ## Queries
@@ -73,8 +75,8 @@ Q2  board filtered by zone (one (epoch, tag) pair per epoch on screen)
 
 Q3b everything pointing at any ride of the epoch pair (one query for the whole board)
     project = str('rasure/v1') AND circle = str('C')
-    AND (type = str('claim') OR type = str('assign') OR type = str('closeout'))
     AND (epoch = u64(E) OR epoch = u64(E-1))
+    AND (type = str('claim') OR ((type = str('assign') OR type = str('closeout')) AND ($creator = addr(D1) OR ...)))
 
 Q3  everything pointing at one ride
     project = str('rasure/v1') AND circle = str('C') AND ref = key(R)

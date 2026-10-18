@@ -61,11 +61,11 @@ export default function Proof() {
               <tbody>
                 <tr><th>Generated</th><td className="mono">{facts.generatedAt}</td></tr>
                 {d1 && <tr><th>D1: payload recovered from calldata after expiry</th><td className="mono">{String(d1.recoveredByteForByte)} · <a href={txUrl(d1.txHash)}>{d1.txHash}</a></td></tr>}
-                {facts.d2 && <tr><th>D2: node history reach (hours answered)</th><td className="mono">{facts.d2.retentionHours} h · payload returned at the last live block: {String(facts.d2.payloadReturnedAfterExpiry)}</td></tr>}
+                {facts.d2 && <tr><th>D2: node history reach (block 1 answered; blocks times 2 s)</th><td className="mono">{facts.d2.retentionHours} h · payload returned at the last live block: {String(facts.d2.payloadReturnedAtLastLiveBlock)}</td></tr>}
                 {facts.drill && Object.entries(facts.drill).map(([k, v]) => <tr key={k}><th>Drill: {k}</th><td className="mono">{v.exposed}/{v.total} exposed</td></tr>)}
                 {facts.errorDirections && <tr><th>Error directions</th><td className="mono">attacker opened past: {facts.errorDirections.attackerOpenedPast} · member refused: {facts.errorDirections.memberRefused} of {facts.errorDirections.liveRecords}</td></tr>}
                 {facts.leakAudit && <tr><th>Leak audit</th><td className="mono">{facts.leakAudit.entities} entities · max public attributes {facts.leakAudit.maxPublicAttributes} · plaintext transactions {facts.leakAudit.plaintextTx}</td></tr>}
-                {facts.wild && <tr><th>Wild-set expiry audit (aggregate)</th><td className="mono">{facts.wild.sampled} sampled · {facts.wild.stillReturnPayload} still return a payload · {facts.wild.readableText} parse as text</td></tr>}
+                {facts.wild && <tr><th>Wild-set audit (aggregate, partial run)</th><td className="mono">{facts.wild.sampled} read at a past block · {facts.wild.stillReturnPayload} returned a payload · {facts.wild.readableText} parse as text</td></tr>}
               </tbody>
             </table></div>
           )}

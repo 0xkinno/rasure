@@ -116,6 +116,10 @@ export function decodeJoin(fragment: string) {
   const k = p.get("k");
   const d = p.get("d");
   if (!c || !g || !b || !e || !k || k.length !== 64) return null;
+  if (!/^[0-9a-f]{32}$/.test(c) || !/^[0-9a-f]{64}$/.test(k) || !/^\d+$/.test(g) || !/^\d+$/.test(b) || !/^\d+$/.test(e)) return null;
+  if (BigInt(b) < 10n || BigInt(b) > 100_000n) return null;
+  const dl = (d ?? "").split(",").filter(Boolean);
+  if (dl.length === 0 || dl.some((a) => !/^0x[0-9a-fA-F]{40}$/.test(a))) return null;
   const chainKey = new Uint8Array(32);
   for (let i = 0; i < 32; i++) chainKey[i] = parseInt(k.slice(i * 2, i * 2 + 2), 16);
   return {
@@ -132,6 +136,10 @@ export function decodeJoin(fragment: string) {
 export async function loadDeviceKey(circle: string): Promise<DeviceKey | null> {
   const s = await get<{ secret: Uint8Array; publicKey: Uint8Array }>(`rasure:dev:${circle}`);
   return s ?? null;
+}
+/** Destroyed after a rekey is adopted: rekey entries stay in calldata forever, so the key that opens them must not. */
+export async function deleteDeviceKey(circle: string) {
+  await del(`rasure:dev:${circle}`);
 }
 export async function ensureDeviceKey(circle: string): Promise<DeviceKey> {
   const have = await loadDeviceKey(circle);

@@ -33,7 +33,7 @@ export default function Landing() {
         <div className="wrap">
           <h2>Expiry hides. It does not forget.</h2>
           <p style={{ maxWidth: 720, color: "var(--ink-2)", margin: "14px 0 28px" }}>
-            On Arkiv, an expired record is gone from the board, not from the chain. Rasure lets a shelter's volunteers share live pickups that become unreadable on every phone the moment they expire.
+            On Arkiv, an expired record is gone from the board, not from the chain. Rasure lets a shelter's volunteers share live pickups that become unreadable on every phone when the key dies, at the block they expire.
           </p>
           <TodayVsRasure />
         </div>

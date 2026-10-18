@@ -26,7 +26,7 @@ The law already tells shelters that survivor data must not sit in a shared datab
 
 ## Assumption versus reality
 
-Everyone building on Arkiv assumes an expired entity is gone. In reality its payload lives in the creation transaction, and history queries return it inside the node's retention window. See DISCOVERY.md.
+Everyone building on Arkiv assumes an expired entity is gone. In reality its payload lives in the creation transaction, and a history query at any block before the expiry returns it too (measured, see DISCOVERY.md). See DISCOVERY.md.
 
 ## What we measure for "expose as little user data as possible"
 

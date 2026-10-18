@@ -21,7 +21,7 @@ export default function Join() {
         const { value: head } = await readWithRelay((c) => c.getBlockNumber({ cacheTime: 0 }));
         await advanceAndSave(ring, head);
         setMsg("Joined. The key is stored on this device only. Opening the board...");
-        setTimeout(() => router.replace(`/board?circle=${j.circle}`), 700);
+        setTimeout(() => router.replace(`/board?circle=${encodeURIComponent(j.circle)}`), 700);
       } catch (e) { setBad(true); setMsg((e as Error).message.slice(0, 250)); }
     })();
   }, [router]);

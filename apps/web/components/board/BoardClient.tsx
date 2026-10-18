@@ -10,14 +10,14 @@ import { eq } from "@arkiv-network/sdk/query";
 import {
   q5Claims, EpochTooLateError, advance, assignClaim, assignAndClosePrevious, claimRide, closeRide, createCircle, currentKey, epochAt, extendCircle,
   fetchAll, guarded, keyDeathBlock, keyFor, newChain, open, partitionRides, postRide, q1OpenBoard, q2Zone, q3bRelated, q4Forged, q6Circle,
-  rideStatus, toChainEntity, visibleRecords, zoneTag, aad, detectRateLimit, openRekey, postMember, postRekey, q9Members, q10Rekeys,
+  rideStatus, toChainEntity, visibleRecords, zoneTag, aad, detectRateLimit, openRekey, isValidDeviceKey, postMember, postRekey, q9Members, q10Rekeys,
   type ArkivWriter, type ChainEntity, type EntityType,
 } from "@rasure/core";
 import { useWallet, fmtGlm } from "@/lib/wallet";
 import { reader } from "@/lib/chain";
 import { RPC_WS, FAUCET, txUrl, addrUrl, short, TRUSTED_DISPATCHERS, DEMO_CIRCLE } from "@/lib/config";
 import {
-  type Ring, advanceAndSave, createDispatcherRing, encodeJoin, ensureDeviceKey, listCircles, loadDeviceKey, loadRing, saveRing,
+  type Ring, advanceAndSave, createDispatcherRing, encodeJoin, deleteDeviceKey, ensureDeviceKey, listCircles, loadDeviceKey, loadRing, saveRing,
 } from "@/lib/keyring";
 
 const LANDMARKS = ["SYN-gate-4", "SYN-temple-steps", "SYN-bus-bay-2", "SYN-clinic-side-door", "SYN-market-arch"];
@@ -61,7 +61,7 @@ export function BoardClient() {
   const [leaseUntil, setLeaseUntil] = useState<{ key: Hex; expiresAt: bigint } | null>(null);
   const [replayMsg, setReplayMsg] = useState<string | null>(null);
   const [members, setMembers] = useState<{ creator: string; pub: Uint8Array }[]>([]);
-  const [removeSet, setRemoveSet] = useState<Set<string>>(new Set());
+  const [keepSet, setKeepSet] = useState<Set<string>>(new Set());
   const [rekeyNote, setRekeyNote] = useState<string | null>(null);
   const [myClaims, setMyClaims] = useState<number | null>(null);
   const accountRef = useRef<string | null>(null);
@@ -162,7 +162,7 @@ export function BoardClient() {
       } else where = q1OpenBoard(r.state.circle, epoch, r.dispatchers);
       const [rides, related, forged, anchor] = await Promise.all([
         run(where, sel),
-        run(q3bRelated(r.state.circle, epoch), sel),
+        run(q3bRelated(r.state.circle, epoch, r.dispatchers), sel),
         run(q4Forged(r.state.circle, r.dispatchers), { key: true, creator: true, owner: true, expiresAt: true, attributes: true }),
         run(q6Circle(r.state.circle), { key: true, creator: true, expiresAt: true, attributes: true }, { createdBy: r.dispatchers[0] }),
       ]);
@@ -189,6 +189,7 @@ export function BoardClient() {
             if (got.ok) {
               const next = { ...r, pending: { epoch: got.epoch, chainKey: got.chainKey } };
               await saveRing(next);
+              await deleteDeviceKey(r.state.circle); // the secret that opened this entry is destroyed, so history cannot be unwrapped later
               setRing(next);
               setRekeyNote(`A rekey for epoch ${got.epoch.toString()} was sealed to this device. The new chain starts at that epoch.`);
             }
@@ -214,9 +215,12 @@ export function BoardClient() {
         for (const c of relEnts.filter((x) => x.attributes.type === "claim" && String(x.attributes.ref) === ent.key)) {
           const rawc = relRaw.get(c.key);
           const oc = rawc?.payload ? await open<any>(ck, { circle: r.state.circle, epoch: ep, type: "claim" }, rawc.payload) : { ok: false as const };
-          claims.push({ entity: c, body: oc.ok ? oc.body : null });
+          // A claim counts only if it opens AND names this ride AND this claimant (blocks replayed or spam claims).
+          const okBody = oc.ok && String(oc.body?.ride ?? "").toLowerCase() === ent.key.toLowerCase() && String(oc.body?.by ?? "").toLowerCase() === c.creator.toLowerCase();
+          if (okBody) claims.push({ entity: c, body: oc.body });
         }
-        out.push({ entity: ent, epoch: ep, body: opened.ok ? opened.body : null, status: st.status, claims });
+        const status = st.status === "claimed" && claims.length === 0 ? "open" : st.status;
+        out.push({ entity: ent, epoch: ep, body: opened.ok ? opened.body : null, status, claims });
       }
       out.sort((x, y) => Number(y.epoch - x.epoch) || (x.entity.key < y.entity.key ? -1 : 1));
       setCards(out);
@@ -283,7 +287,7 @@ export function BoardClient() {
     return postRide(wc, advance(ring.state, h).state, h, epoch, { landmark: form.landmark, window: form.window, seats: form.seats, note: form.note }, form.zone);
   });
   const doClaim = (c: Card) => ring && guardWrite("Claim ride", (wc, h) =>
-    claimRide(wc, ring.state, h, c.entity.key as Hex, c.epoch, { eta: "SYN-eta-15min", vehicle: "SYN-hatchback" }));
+    claimRide(wc, ring.state, h, c.entity.key as Hex, c.epoch, { eta: "SYN-eta-15min", vehicle: "SYN-hatchback", ride: c.entity.key, by: w.account }));
   const doAssign = (c: Card, claimKey: string, closePrev?: Card) => ring && guardWrite("Assign claim", (wc, h) =>
     closePrev
       ? assignAndClosePrevious(wc, ring.state, h, { rideKey: c.entity.key as Hex, epoch: c.epoch, body: { claim: claimKey, instruction: "SYN-instruction: wait at the landmark, hazard lights on" } }, { rideKey: closePrev.entity.key as Hex, epoch: closePrev.epoch, body: { outcome: "SYN-done" } })
@@ -317,7 +321,8 @@ export function BoardClient() {
   });
   async function doRekey() {
     if (!ring) return;
-    const remaining = members.filter((m) => !removeSet.has(m.creator.toLowerCase())).map((m) => m.pub);
+    const remaining = members.filter((m) => keepSet.has(m.creator.toLowerCase()) && isValidDeviceKey(m.pub)).map((m) => m.pub);
+    if (ring.pending) return setRekeyNote("A rekey is already pending for epoch " + ring.pending.epoch.toString() + ". Wait for it to take effect.");
     const fresh = crypto.getRandomValues(new Uint8Array(32));
     const h0 = await reader.getBlockNumber({ cacheTime: 0 });
     const effect = epochAt(ring.state.clock, h0) + 1n;
@@ -456,15 +461,15 @@ export function BoardClient() {
               </>
             ) : (
               <>
-                <p className="label">Members who published a device key. Tick the phones to remove, then rekey. The new chain is sealed only to the rest.</p>
+                <p className="label">Wallets that published a device key. Tick only the members you recognise and want to keep, then rekey. The new chain is sealed only to the ticked wallets, so a removed or unknown wallet gets nothing.</p>
                 {members.length === 0 && <p className="label">No member has published a device key yet.</p>}
                 <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
                   {members.map((m) => (
                     <li key={m.creator}>
                       <label className="label" style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
-                        <input type="checkbox" style={{ width: 18 }} checked={removeSet.has(m.creator.toLowerCase())}
-                          onChange={(e) => { const n = new Set(removeSet); if (e.target.checked) n.add(m.creator.toLowerCase()); else n.delete(m.creator.toLowerCase()); setRemoveSet(n); }} />
-                        remove {short(m.creator, 6)}
+                        <input type="checkbox" style={{ width: 18 }} checked={keepSet.has(m.creator.toLowerCase())}
+                          onChange={(e) => { const n = new Set(keepSet); if (e.target.checked) n.add(m.creator.toLowerCase()); else n.delete(m.creator.toLowerCase()); setKeepSet(n); }} />
+                        keep {m.creator}
                       </label>
                     </li>
                   ))}

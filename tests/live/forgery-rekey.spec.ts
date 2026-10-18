@@ -98,8 +98,8 @@ test("closeout, zone filter, forged ride ignored, replay refused, rekey", async 
   await D.page.getByRole("button", { name: /Replay a ciphertext/ }).click();
   await expect(D.page.getByText(/Refused \(auth_failed\)/)).toBeVisible({ timeout: 30_000 });
 
-  await expect(D.page.getByText(/remove 0x/).first()).toBeVisible({ timeout: 60_000 });
-  await D.page.getByLabel(/remove 0x/).first().check();
+  // Members are opt-in: tick nobody to remove everyone, so an unknown wallet that published a key gets nothing.
+  await expect(D.page.getByText(/keep 0x/).first()).toBeVisible({ timeout: 60_000 });
   await D.page.getByRole("button", { name: /Rekey now/ }).click();
   await confirmed(D.page, "Rekey");
   await expect(D.page.getByText(/Rekey posted/)).toBeVisible();

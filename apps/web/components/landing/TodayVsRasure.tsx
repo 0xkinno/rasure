@@ -87,7 +87,7 @@ export function TodayVsRasure() {
         <div>
           <h3 className="mono" style={{ fontWeight: 700, display: "flex", gap: 8, alignItems: "center" }}><XIcon size={18} color="#a3230f" aria-hidden="true" /> What happens today</h3>
           <p style={{ color: "var(--ink-2)" }}>
-            Entity Expiration removes a record from the board. The payload still sits, uncompressed, in the transaction that created it, and the node answers historical queries for expired entities inside its retention window. Add one static key and one lost phone opens every past pickup.
+            Entity Expiration removes a record from the board. The payload still sits, uncompressed, in the transaction that created it, and a historical query at any block before the expiry still returns the entity and its payload. Add one static key and one lost phone opens every past pickup.
           </p>
         </div>
         <div>

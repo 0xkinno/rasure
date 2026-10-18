@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { adoptRekey, advance, currentKey, deriveForward, epochStart, generateDeviceKey, keyFor, newChain, open, openRekey, rekeyExpiry, rekeyParams, seal, sealRekey, seizureDrill } from "../src";
+import { isValidDeviceKey, adoptRekey, advance, currentKey, deriveForward, epochStart, generateDeviceKey, keyFor, newChain, open, openRekey, rekeyExpiry, rekeyParams, seal, sealRekey, seizureDrill } from "../src";
 
 const clock = { genesisBlock: 1000n, epochBlocks: 300n };
 
@@ -39,6 +39,12 @@ describe("rekey", () => {
       { ratchet: { epoch: seizedKey.epoch, chainKey: seizedKey.chainKey } },
     );
     expect(out[0]?.exposed).toBe(false);
+  });
+  it("rejects malformed member keys before sealing (anyone can post a member entity)", async () => {
+    expect(isValidDeviceKey(new Uint8Array(33))).toBe(false);
+    expect(isValidDeviceKey(new Uint8Array(10))).toBe(false);
+    expect(isValidDeviceKey(generateDeviceKey().publicKey)).toBe(true);
+    await expect(sealRekey("abc", 2n, new Uint8Array(32), [new Uint8Array(33)])).rejects.toThrow();
   });
   it("rekey entity expires at the start of the epoch after its effect epoch", async () => {
     expect(rekeyExpiry(clock, 4n)).toBe(epochStart(clock, 5n));

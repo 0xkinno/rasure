@@ -86,7 +86,7 @@ $("go").onclick = async () => {
     const creators = disp.map((d) => `$creator = addr(${d})`).join(" OR ");
     const epochs = epoch === 0n ? `epoch = u64(0)` : `(epoch = u64(${epoch}) OR epoch = u64(${epoch - 1n}))`;
     const q1 = `${base} AND type = str('ride') AND ${epochs} AND (${creators})`;
-    const q3b = `${base} AND (type = str('claim') OR type = str('assign') OR type = str('closeout')) AND ${epochs}`;
+    const q3b = `${base} AND ${epochs} AND (type = str('claim') OR ((type = str('assign') OR type = str('closeout')) AND (${creators})))`;
     const q4 = `${base} AND type = str('ride') AND NOT (${creators})`;
     $("queries").textContent = [`Q6  ${q6}`, `Q1  ${q1}`, `Q3b ${q3b}`, `Q4  ${q4}`].join("\n\n");
     const [rides, related, forged] = await Promise.all([query(url, q1, sel, anchorRes.block), query(url, q3b, sel, anchorRes.block), query(url, q4, sel, anchorRes.block)]);

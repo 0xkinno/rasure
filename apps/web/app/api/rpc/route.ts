@@ -9,6 +9,7 @@ const ALLOWED = new Set(["arkiv_query", "eth_getTransactionByHash", "eth_blockNu
 export async function POST(req: Request) {
   const key = process.env.ARKIV_ACCESS_KEY;
   if (!key) return NextResponse.json({ error: "relay not configured" }, { status: 503 });
+  if (Number(req.headers.get("content-length") ?? 0) > 16_384) return NextResponse.json({ error: "body too large" }, { status: 413 });
   let body: unknown;
   try {
     body = await req.json();

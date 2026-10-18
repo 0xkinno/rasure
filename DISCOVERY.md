@@ -18,8 +18,8 @@ So the payload of every entity ever created sits uncompressed in its creation tr
 ## Evidence
 
 - D1 (`scripts/discovery/d1-calldata.ts`): CONFIRMED. Probe entity created in tx `0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6` (block 739910, expiry 739940). After expiry `getEntity` found nothing; the payload `SYN-probe-1792329579632` was recovered byte for byte from the transaction input (target `0x4400...0044`). `proof/results/d1-2026-10-18.json`.
-- D2 (`scripts/discovery/d2-atblock.ts`): `atBlock` 739910, 739911, 739939 returned the entity and payload; 739940 and later returned none. Block 1 answered, so no retention boundary was found (about 411 hours of history). `proof/results/d2-2026-10-18.json`.
-- Wild set, live on 2026-10-18 (`scripts/expiry-audit.ts`, `proof/results/wild-2026-10-18.json`): 300 public entities alive at block 738,949 and expired by block 739,549, read `atBlock(738949)`: 294 returned a payload, 12 were readable JSON or text. Aggregate only.
+- D2 (`scripts/discovery/d2-atblock.ts`): `atBlock` 739910, 739911, 739939 returned the entity and payload; 739940 and later returned none. Block 1 answered, so no retention boundary was found (one query; the hours figure is blocks times 2 seconds). `proof/results/d2-2026-10-18.json`.
+- Wild set, live on 2026-10-18 (`scripts/expiry-audit.ts`, `proof/results/wild-2026-10-18.json`): 300 public entities alive at block 738,949 and expired by block 739,549, read `atBlock(738949)` (a partial run, one window returned HTTP 504): 294 returned a payload, 12 were readable JSON or text. This shows history reads expose payloads that were live then; it does not by itself show recovery after expiry, which D1 shows through calldata. Aggregate only.
 
 ## Why other designs fail
 

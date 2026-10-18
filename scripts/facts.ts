@@ -28,7 +28,7 @@ if (d1) {
 }
 if (d2) {
   const x = d2.data;
-  facts.d2 = { retentionHours: x.retention.approxHours, payloadReturnedAfterExpiry: x.payloadReturnedAfterExpiryAtLastLiveBlock };
+  facts.d2 = { retentionHours: x.retention.approxHours, payloadReturnedAtLastLiveBlock: x.payloadReturnedAfterExpiryAtLastLiveBlock };
   src.d2 = d2.file;
 }
 if (drill) {
@@ -60,11 +60,11 @@ console.log(text);
 const f = facts as any;
 const lines: string[] = [];
 if (f.d1) lines.push(`- D1: expired entity absent from live state, payload recovered from calldata byte for byte: ${f.d1.recoveredByteForByte} (tx \`${f.d1.txHash}\`).`);
-if (f.d2) lines.push(`- D2: node answered history down to block 1 (${Math.round(f.d2.retentionHours)} hours of history); payload returned at the last live block: ${f.d2.payloadReturnedAfterExpiry}.`);
+if (f.d2) lines.push(`- D2: node answered a history query at block 1; payload returned at the last live block: ${f.d2.payloadReturnedAtLastLiveBlock}.`);
 if (f.drill) for (const [k, v] of Object.entries(f.drill as Record<string, { exposed: number; total: number }>)) lines.push(`- Seizure drill, ${k}: ${v.exposed} of ${v.total} records exposed.`);
 if (f.errorDirections) lines.push(`- Error directions: attacker opened ${f.errorDirections.attackerOpenedPast} past records; legitimate member refused ${f.errorDirections.memberRefused} of ${f.errorDirections.liveRecords} live records.`);
 if (f.leakAudit) lines.push(`- Leak audit: ${f.leakAudit.entities} entities, at most ${f.leakAudit.maxPublicAttributes} public attributes, ${f.leakAudit.plaintextTx} plaintext creation transactions, pass: ${f.leakAudit.pass}.`);
-if (f.wild) lines.push(`- Wild-set expiry audit (aggregate): ${f.wild.sampled} expired public entities sampled at block ${f.wild.pastBlock}; ${f.wild.stillReturnPayload} still return a payload; ${f.wild.readableText} parse as readable text or JSON.`);
+if (f.wild) lines.push(`- Wild-set audit (aggregate, partial run): ${f.wild.sampled} public entities that were live at block ${f.wild.pastBlock} and have since expired were read at that block; ${f.wild.stillReturnPayload} returned a payload; ${f.wild.readableText} parse as readable text or JSON.`);
 if (f.cost) lines.push(`- Cost: about ${f.cost.gasPerRide} gas and ${f.cost.glmPerRide} GLM per ride.`);
 const rp = resolve(ROOT, "README.md");
 if (existsSync(rp) && lines.length) {
