@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-10-18T13:31:23.212Z",
+  "circle": "c1ea6f0c695043a6b4d74e881af2be44",
+  "records": [
+    {
+      "key": "0x397d6ca2f69529af4a0c120bbaecdd1a32d2ac48b0aea5a58d254c7939eb9786",
+      "txHash": "0x7df9903a8a9aaf99397dfb133ee8e90cc492ee506164e45e2f671d80482d22f6",
+      "circle": "c1ea6f0c695043a6b4d74e881af2be44",
+      "epoch": "0",
+      "type": "circle"
+    },
+    {
+      "key": "0xaa2e2fbc5e9921691eefdd9ebad0fb9da258e763cef9489abdc3078efd5ace57",
+      "txHash": "0x04e2dbeae5bc3e1dbcc5200a9049b7c6c4f5d7006b82f2e89ed54bf3ed4e6948",
+      "circle": "c1ea6f0c695043a6b4d74e881af2be44",
+      "epoch": "0",
+      "type": "member"
+    },
+    {
+      "key": "0x77b7aa2c1a8c73ab094f8365b865203c080640b27bb3e27999037d80d4b3d506",
+      "txHash": "0x6a1a56abeb2878e676699a79f93a27f6b6b58c6fd7beb0b44c2f63a7ec708fed",
+      "circle": "c1ea6f0c695043a6b4d74e881af2be44",
+      "epoch": "0",
+      "type": "member"
+    },
+    {
+      "key": "0x503a88435ecd247ad348b63c3a9641302a3958462516b5b60f76edfc991bbd70",
+      "txHash": "0x62b11d6d71c732700730ecf7153bc8792606e42eeda1f1c472b3cecc8ebddc89",
+      "circle": "c1ea6f0c695043a6b4d74e881af2be44",
+      "epoch": "2",
+      "type": "rekey"
+    },
+    {
+      "key": "0x598173e5f2f4940bfda31127e55016ab8cb46cf8721d1e793f1cd379b34a7eca",
+      "txHash": "0xe3708f3c0fa1851b6ea771f23814255e9c9a3f2c956e97011cab2be398f62a96",
+      "circle": "c1ea6f0c695043a6b4d74e881af2be44",
+      "epoch": "2",
+      "type": "ride"
+    },
+    {
+      "key": "0x3241079b50863ac27ac9ad770ab5de91514f1babbd817c52896dd327e47af956",
+      "txHash": "0x9453b59dc10a46c1ded9dbbc0bf61e869b91faa24bb7f0eaa954232b5b594b63",
+      "circle": "c1ea6f0c695043a6b4d74e881af2be44",
+      "epoch": "2",
+      "type": "ride"
+    }
+  ]
+}

@@ -291,6 +291,34 @@
           "type": "ride"
         }
       ]
+    },
+    {
+      "id": "rekey",
+      "title": "Seized, then rekeyed",
+      "policy": "ratchet",
+      "blurb": "The same phone was seized, then the dispatcher rekeyed to the remaining member. Records sealed after the rekey stay shut to the old phone.",
+      "seized": {
+        "ratchet": {
+          "epoch": "1",
+          "keyHex": "b23c762b1f325c0029de343b15d35ac309ad1a2509048020c53b70e933daccac"
+        }
+      },
+      "records": [
+        {
+          "key": "0x598173e5f2f4940bfda31127e55016ab8cb46cf8721d1e793f1cd379b34a7eca",
+          "txHash": "0xe3708f3c0fa1851b6ea771f23814255e9c9a3f2c956e97011cab2be398f62a96",
+          "circle": "c1ea6f0c695043a6b4d74e881af2be44",
+          "epoch": "2",
+          "type": "ride"
+        },
+        {
+          "key": "0x3241079b50863ac27ac9ad770ab5de91514f1babbd817c52896dd327e47af956",
+          "txHash": "0x9453b59dc10a46c1ded9dbbc0bf61e869b91faa24bb7f0eaa954232b5b594b63",
+          "circle": "c1ea6f0c695043a6b4d74e881af2be44",
+          "epoch": "2",
+          "type": "ride"
+        }
+      ]
     }
   ]
 }

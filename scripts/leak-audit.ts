@@ -14,7 +14,8 @@ import { ARKIV_ADDRESS, PUBLIC_ATTRIBUTE_ALLOWLIST, auditAttributes, fetchAll, r
 import { ROOT, reader, today, writeResult } from "./lib";
 
 const c = reader();
-const head = await c.getBlockNumber({ cacheTime: 0 });
+const atArg = process.argv.find((a) => a.startsWith("--at="));
+const head = atArg ? BigInt(atArg.slice(5)) : await c.getBlockNumber({ cacheTime: 0 });
 const { entities, pages } = await fetchAll(
   c as never,
   { key: true, creator: true, createdAt: true, expiresAt: true, attributes: true, payload: true },
@@ -86,6 +87,11 @@ for (const e of entities as any[]) {
   checkedTx++;
   const p = created?.payload;
   if (!p) { txFindings.push({ key: e.key, reason: "no payload recovered" }); continue; }
+  if (t === "member") {
+    // A device public key is public by definition: 33 bytes, compressed secp256k1 prefix. Not an entropy test.
+    if (p.length !== 33 || (p[0] !== 2 && p[0] !== 3)) txFindings.push({ key: e.key, reason: "member payload is not a 33 byte compressed public key" });
+    continue;
+  }
   const en = entropy(p);
   const b = String(p.length);
   perBucket[b] = { n: (perBucket[b]?.n ?? 0) + 1, minEntropy: Math.min(perBucket[b]?.minEntropy ?? 8, en) };

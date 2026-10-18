@@ -72,7 +72,11 @@ export function toChainEntity(e: any): ChainEntity {
   const attributes: ChainEntity["attributes"] = {};
   const raw = e.attributes ?? {};
   const list: [string, any][] = Array.isArray(raw) ? raw.map((a: any) => [a.key ?? a.name, a.value]) : Object.entries(raw);
-  for (const [k, v] of list) attributes[k] = typeof v === "bigint" || typeof v === "number" ? v : String(v);
+  for (const [k, raw] of list) {
+    // The SDK returns typed attributes as { type, value }. Unwrap to the plain value.
+    const v = raw && typeof raw === "object" && "value" in raw ? (raw as { value: unknown }).value : raw;
+    attributes[k] = typeof v === "bigint" || typeof v === "number" ? v : String(v);
+  }
   return {
     key: String(e.key),
     creator: String(e.creator ?? ""),

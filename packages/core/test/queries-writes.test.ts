@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { visibleRecords, q2Zone, q3bRelated, advance, keyDeathBlock, newChain, renderedPredicates, rideParams, claimParams, assertMargin, EpochTooLateError, q1OpenBoard, q4Forged, render, circleParams, detectRateLimit, RateLimitedError, extendCircle, CIRCLE_LEASE_BLOCKS } from "../src";
+import { toChainEntity, visibleRecords, q2Zone, q3bRelated, advance, keyDeathBlock, newChain, renderedPredicates, rideParams, claimParams, assertMargin, EpochTooLateError, q1OpenBoard, q4Forged, render, circleParams, detectRateLimit, RateLimitedError, extendCircle, CIRCLE_LEASE_BLOCKS } from "../src";
 
 const D1 = "0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771";
 const D2 = "0x31740a981E6c793907b51B877e2FBe518137c173";
@@ -92,5 +92,15 @@ describe("board visibility and zone query", () => {
   it("Q3b covers claim, assign, closeout", () => {
     const s = render(q3bRelated("abc", 5n));
     for (const t of ["claim", "assign", "closeout"]) expect(s).toContain(`type = str('${t}')`);
+  });
+});
+
+describe("SDK entity shape", () => {
+  it("unwraps typed attributes { type, value } to plain values", () => {
+    const e = toChainEntity({
+      key: "0x1", creator: "0xabc", owner: "0xabc", expiresAt: 9n,
+      attributes: { type: { type: "str", value: "ride" }, epoch: { type: "u64", value: 5n }, v: { type: "i32", value: 1 } },
+    });
+    expect(e.attributes).toEqual({ type: "ride", epoch: 5n, v: 1 });
   });
 });

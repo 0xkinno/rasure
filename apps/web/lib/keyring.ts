@@ -2,7 +2,7 @@
 // Keyring persistence: IndexedDB, one record per circle, overwritten on every advance.
 // Old key bytes are not kept anywhere. Never localStorage, never a cookie, never a URL after joining.
 import { get, set, del, keys } from "idb-keyval";
-import { advance, currentKey, joinChain, newChain, type KeyringState } from "@rasure/core";
+import { adoptRekey, advance, currentKey, epochStart, generateDeviceKey, joinChain, newChain, type DeviceKey, type KeyringState } from "@rasure/core";
 
 interface Stored {
   circle: string;
@@ -11,6 +11,7 @@ interface Stored {
   dispatchers: string[];
   role: "dispatcher" | "member";
   keys: { epoch: string; chainKey: Uint8Array }[];
+  pending?: { epoch: string; chainKey: Uint8Array };
 }
 const id = (circle: string) => `rasure:ring:${circle}`;
 
@@ -18,6 +19,8 @@ export interface Ring {
   state: KeyringState;
   dispatchers: string[];
   role: "dispatcher" | "member";
+  /** A rekey received or issued whose effect epoch has not started yet. Adopted at that epoch's first block. */
+  pending?: { epoch: bigint; chainKey: Uint8Array };
 }
 
 function pack(r: Ring): Stored {
@@ -28,6 +31,7 @@ function pack(r: Ring): Stored {
     dispatchers: r.dispatchers,
     role: r.role,
     keys: r.state.keys.map((k) => ({ epoch: k.epoch.toString(), chainKey: k.chainKey })),
+    pending: r.pending ? { epoch: r.pending.epoch.toString(), chainKey: r.pending.chainKey } : undefined,
   };
 }
 function unpack(s: Stored): Ring {
@@ -39,6 +43,7 @@ function unpack(s: Stored): Ring {
     },
     dispatchers: s.dispatchers,
     role: s.role,
+    pending: s.pending ? { epoch: BigInt(s.pending.epoch), chainKey: s.pending.chainKey } : undefined,
   };
 }
 
@@ -75,8 +80,14 @@ export function joinRing(
 
 /** Advance to `head`, destroy dead keys, overwrite the stored record. Returns epochs erased now. */
 export async function advanceAndSave(ring: Ring, head: bigint): Promise<{ ring: Ring; destroyed: bigint[] }> {
-  const { state, destroyed } = advance(ring.state, head);
-  const next = { ...ring, state };
+  let base = ring.state;
+  let pending = ring.pending;
+  if (pending && head >= epochStart(base.clock, pending.epoch)) {
+    base = adoptRekey(base, pending.epoch, pending.chainKey); // the new chain takes effect
+    pending = undefined;
+  }
+  const { state, destroyed } = advance(base, head);
+  const next = { ...ring, state, pending };
   await saveRing(next);
   return { ring: next, destroyed };
 }
@@ -115,4 +126,17 @@ export function decodeJoin(fragment: string) {
     chainKey,
     dispatchers: (d ?? "").split(",").filter(Boolean),
   };
+}
+
+/** The device key (secp256k1, not the wallet key) is kept per circle in IndexedDB. */
+export async function loadDeviceKey(circle: string): Promise<DeviceKey | null> {
+  const s = await get<{ secret: Uint8Array; publicKey: Uint8Array }>(`rasure:dev:${circle}`);
+  return s ?? null;
+}
+export async function ensureDeviceKey(circle: string): Promise<DeviceKey> {
+  const have = await loadDeviceKey(circle);
+  if (have) return have;
+  const k = generateDeviceKey();
+  await set(`rasure:dev:${circle}`, { secret: k.secret, publicKey: k.publicKey });
+  return k;
 }

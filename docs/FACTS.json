@@ -1,8 +1,53 @@
 {
   "generated": true,
-  "generatedAt": "2026-10-18T13:18:18.351Z",
+  "generatedAt": "2026-10-18T13:33:26.014Z",
   "sources": {
+    "d1": "d1-2026-10-18.json",
+    "d2": "d2-2026-10-18.json",
+    "drill": "drill-2026-10-18.json",
+    "rekey": "rekey-2026-10-18.json",
+    "leakAudit": "leak-audit-2026-10-18.json",
     "wild": "wild-2026-10-18.json"
+  },
+  "d1": {
+    "txHash": "0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6",
+    "entityKey": "0x95122de8d30ca2f25537e8c1ae7c853c5ab73652a00aacd1edd27ae45e44548f",
+    "recoveredByteForByte": true,
+    "liveAfterExpiry": false
+  },
+  "d2": {
+    "retentionHours": 411.0811111111111,
+    "payloadReturnedAfterExpiry": true
+  },
+  "drill": {
+    "plaintext": {
+      "exposed": 12,
+      "total": 12
+    },
+    "static_key": {
+      "exposed": 12,
+      "total": 12
+    },
+    "ratchet": {
+      "exposed": 2,
+      "total": 12
+    },
+    "rekey": {
+      "exposed": 0,
+      "total": 2
+    }
+  },
+  "errorDirections": {
+    "attackerOpenedPast": 0,
+    "memberRefused": 0,
+    "liveRecords": 4
+  },
+  "leakAudit": {
+    "entities": 11,
+    "maxPublicAttributes": 6,
+    "plaintextTx": 0,
+    "minEntropy": 7.172619261800955,
+    "pass": true
   },
   "wild": {
     "sampled": 300,

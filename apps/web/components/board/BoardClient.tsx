@@ -10,13 +10,14 @@ import { eq } from "@arkiv-network/sdk/query";
 import {
   EpochTooLateError, advance, assignClaim, assignAndClosePrevious, claimRide, closeRide, createCircle, currentKey, epochAt, extendCircle,
   fetchAll, guarded, keyDeathBlock, keyFor, newChain, open, partitionRides, postRide, q1OpenBoard, q2Zone, q3bRelated, q4Forged, q6Circle,
-  rideStatus, toChainEntity, visibleRecords, zoneTag, aad, detectRateLimit, type ArkivWriter, type ChainEntity, type EntityType,
+  rideStatus, toChainEntity, visibleRecords, zoneTag, aad, detectRateLimit, openRekey, postMember, postRekey, q9Members, q10Rekeys,
+  type ArkivWriter, type ChainEntity, type EntityType,
 } from "@rasure/core";
 import { useWallet, fmtGlm } from "@/lib/wallet";
 import { reader } from "@/lib/chain";
 import { RPC_WS, FAUCET, txUrl, addrUrl, short, TRUSTED_DISPATCHERS, DEMO_CIRCLE } from "@/lib/config";
 import {
-  type Ring, advanceAndSave, createDispatcherRing, encodeJoin, listCircles, loadRing, saveRing,
+  type Ring, advanceAndSave, createDispatcherRing, encodeJoin, ensureDeviceKey, listCircles, loadDeviceKey, loadRing, saveRing,
 } from "@/lib/keyring";
 
 const LANDMARKS = ["SYN-gate-4", "SYN-temple-steps", "SYN-bus-bay-2", "SYN-clinic-side-door", "SYN-market-arch"];
@@ -59,6 +60,9 @@ export function BoardClient() {
   const [joinQr, setJoinQr] = useState<{ url: string; png: string } | null>(null);
   const [leaseUntil, setLeaseUntil] = useState<{ key: Hex; expiresAt: bigint } | null>(null);
   const [replayMsg, setReplayMsg] = useState<string | null>(null);
+  const [members, setMembers] = useState<{ creator: string; pub: Uint8Array }[]>([]);
+  const [removeSet, setRemoveSet] = useState<Set<string>>(new Set());
+  const [rekeyNote, setRekeyNote] = useState<string | null>(null);
   const [form, setForm] = useState({ landmark: LANDMARKS[0], zone: ZONES[0], window: WINDOWS[0], seats: 2, note: "SYN-note: two passengers, one small bag" });
   const [epochBlocks, setEpochBlocks] = useState("300");
   const ringRef = useRef<Ring | null>(null);
@@ -161,6 +165,28 @@ export function BoardClient() {
       ]);
       const a = (anchor.entities as any[]).find((e) => r.dispatchers.map((d) => d.toLowerCase()).includes(String(e.creator).toLowerCase()));
       setLeaseUntil(a ? { key: a.key, expiresAt: BigInt(a.expiresAt) } : null);
+
+      // Rekey: the dispatcher lists member device keys; a member looks for a rekey sealed to its own device key.
+      if (r.role === "dispatcher") {
+        const m = await run(q9Members(r.state.circle), { key: true, creator: true, payload: true });
+        setMembers((m.entities as any[]).map((e) => ({ creator: String(e.creator), pub: e.payload as Uint8Array })));
+      } else {
+        const dev = await loadDeviceKey(r.state.circle);
+        if (dev) {
+          const rk = await run(q10Rekeys(r.state.circle, epoch, r.dispatchers), { key: true, creator: true, attributes: true, payload: true });
+          for (const e of rk.entities as any[]) {
+            const eff = BigInt(toChainEntity(e).attributes.epoch as string | bigint);
+            if (r.pending && r.pending.epoch >= eff) continue;
+            const got = await openRekey(r.state.circle, eff, e.payload as Uint8Array, dev);
+            if (got.ok) {
+              const next = { ...r, pending: { epoch: got.epoch, chainKey: got.chainKey } };
+              await saveRing(next);
+              setRing(next);
+              setRekeyNote(`A rekey for epoch ${got.epoch.toString()} was sealed to this device. The new chain starts at that epoch.`);
+            }
+          }
+        }
+      }
 
       const live = new Set(r.state.keys.map((k) => k.epoch));
       const rideEnts = (rides.entities as any[]).map(toChainEntity);
@@ -277,6 +303,25 @@ export function BoardClient() {
     void aad;
   }
 
+  const doPublishDevice = () => ring && guardWrite("Publish device key", async (wc, h) => {
+    const dk = await ensureDeviceKey(ring.state.circle);
+    return postMember(wc, ring.state.circle, dk.publicKey, epochAt(ring.state.clock, h));
+  });
+  async function doRekey() {
+    if (!ring) return;
+    const remaining = members.filter((m) => !removeSet.has(m.creator.toLowerCase())).map((m) => m.pub);
+    const fresh = crypto.getRandomValues(new Uint8Array(32));
+    const h0 = await reader.getBlockNumber({ cacheTime: 0 });
+    const effect = epochAt(ring.state.clock, h0) + 1n;
+    const res = await guardWrite("Rekey", (wc, h) => postRekey(wc, ring.state, h, effect, fresh, remaining));
+    if (res) {
+      const next = { ...ring, pending: { epoch: effect, chainKey: fresh } };
+      await saveRing(next);
+      setRing(next);
+      setRekeyNote(`Rekey posted: the new chain starts at epoch ${effect.toString()} for ${remaining.length} remaining member(s). Removed members read nothing sealed from then on.`);
+    }
+  }
+
   async function showJoin() {
     if (!ring || head === null) return;
     const adv = (await advanceAndSave(ring, head)).ring;
@@ -388,6 +433,38 @@ export function BoardClient() {
               <label className="label" style={{ gridColumn: "span 2" }}>Note<input value={form.note} maxLength={120} onChange={(e) => setForm({ ...form, note: e.target.value })} /></label>
             </div>
             <button className="btn btn-lime" style={{ marginTop: 12 }} onClick={doPost}>Post ride (wallet popup)</button>
+          </div>
+        )}
+
+        {ring && (
+          <div className="card" style={{ color: "var(--ink)", marginTop: 20 }}>
+            <div className="mono" style={{ fontWeight: 700 }}>Rekey: recover from a lost phone</div>
+            {rekeyNote && <p className="notice" role="status">{rekeyNote}</p>}
+            {ring.role === "member" ? (
+              <>
+                <p className="label">Publish a device key (generated here, not your wallet key) so the dispatcher can seal a new chain key to this phone if a rekey is needed.</p>
+                <button className="btn btn-ink" onClick={doPublishDevice}>Publish my device key (wallet popup)</button>
+                {ring.pending && <p className="label">Pending rekey for epoch {ring.pending.epoch.toString()}.</p>}
+              </>
+            ) : (
+              <>
+                <p className="label">Members who published a device key. Tick the phones to remove, then rekey. The new chain is sealed only to the rest.</p>
+                {members.length === 0 && <p className="label">No member has published a device key yet.</p>}
+                <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                  {members.map((m) => (
+                    <li key={m.creator}>
+                      <label className="label" style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
+                        <input type="checkbox" style={{ width: 18 }} checked={removeSet.has(m.creator.toLowerCase())}
+                          onChange={(e) => { const n = new Set(removeSet); if (e.target.checked) n.add(m.creator.toLowerCase()); else n.delete(m.creator.toLowerCase()); setRemoveSet(n); }} />
+                        remove {short(m.creator, 6)}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+                <button className="btn btn-ink" style={{ marginTop: 10 }} disabled={!isDispatcher} onClick={doRekey}>Rekey now (wallet popup)</button>
+                {ring.pending && <p className="label">Pending: new chain starts at epoch {ring.pending.epoch.toString()}.</p>}
+              </>
+            )}
           </div>
         )}
 
