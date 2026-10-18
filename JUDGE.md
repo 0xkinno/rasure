@@ -1,6 +1,6 @@
 # For judges
 
-Live app: the link is in the README once deployed (pending). All three walks use real Tiramisu data; until then, run the app locally.
+Live app: https://rasure.vercel.app. All three walks use real Tiramisu data.
 
 ## 60 seconds, no wallet
 

@@ -15,6 +15,7 @@ const walks = [
     steps: [
       ["Do the 60 second walk.", "/"],
       ["On the proof page, copy one curl and run it in a terminal. The answer is the same entities the board shows.", "/proof"],
+      ["Paste the D1 creation transaction 0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6 in the stranger view: the entity is long expired and its payload is still in the transaction input.", "/explorer-view"],
       ["Read the schema: every entity type, attribute, Entity Expiration rule and query.", `${REPO}/blob/main/arkiv/schema.md`],
       ["Open the friction report: the discovery that expiry is not erasure, with the script that reproduces it.", `${REPO}/blob/main/arkiv/friction.md`],
     ],
@@ -27,6 +28,8 @@ const walks = [
       ["Open the join link in a second browser profile, claim the ride, then assign it as the dispatcher.", "/board"],
       ["Press Post as a stranger from a second wallet. It lands in the Ignored panel with its creator address.", "/board"],
       ["Wait for key death. The strip flips, the cards dissolve, and the explorer shows the same block as the expiry.", "/board"],
+      ["Wait for key death on a demo circle (10 minute epochs): the strip flips, the card dissolves, and the explorer shows the same block as the expiry.", "/board"],
+      ["Publish a device key as the volunteer, then rekey as the dispatcher without that member: later rides stay sealed to the removed phone.", "/board"],
       ["Read it without the site: run the CLI.", `${REPO}/blob/main/scripts/rasure.ts`],
     ],
   },

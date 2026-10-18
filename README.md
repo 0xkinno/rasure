@@ -210,7 +210,7 @@ Every feature below changes something a dispatcher, a driver or a stranger sees.
 | Arkiv feature | How Rasure uses it, and why | What the user sees |
 |---|---|---|
 | **Entity Expiration per type** | rides, claims and assignments expire at `keyDeathBlock(epoch)` with `ExpirationTime.atBlock`; the circle is a 30-day lease; tallies live 90 days; rekeys live one epoch | cards scrape away at the same block the key dies |
-| **Lifetime Extension** | the dispatcher's activity renews the circle lease; a network that stops operating disappears by itself | "Network active until block N" |
+| **Lifetime Extension** | the holder renews the circle lease (a button; the night watch does it when under 7 days remain); a network that stops operating disappears by itself | "Network active until block N" |
 | **Creation flags** | every sealed record is `readonly`; rides refuse `permissionlessExtension` (stretching a ride past its key keeps only noise); tallies allow it so a funder can keep the service record alive | "Only the dispatcher sets lifetimes"; funder's extension shown |
 | **Attributes vs payload** | at most six public attributes; `epoch` and `served` as `u64`; the area only as a rotating HMAC tag; all content sealed and padded | the stranger view: nothing personal |
 | **Queries** | compound predicates, `$creator` OR-lists, `NOT` for forgeries, ranges on `epoch` and `$expiresAt` ("dies in the next 10 minutes") | board, ignored panel, countdown strip |
@@ -224,7 +224,7 @@ Every feature below changes something a dispatcher, a driver or a stranger sees.
 | **WebSocket entity events** | `watchEntityEvents` with no `fromBlock`; heads drive key death; transfers and deletes move the board | the board and the keys change live |
 | **Direct JSON-RPC** | calldata recovery with `eth_getTransactionByHash`; a `curl` for every query | drill and proof pages |
 
-**Outside the product, used to check it:** the Arkiv Data Explorer shows the same entities from Arkiv's own tool, and the Arkiv MCP server independently confirms every demo entity ([`proof/results/mcp-*.json`](proof/results)).
+**Outside the product, used to check it:** the Arkiv Data Explorer shows the same entities from Arkiv's own tool, and the Arkiv MCP server independently observed the demo transactions and entities and agreed with our reader ([`proof/results/mcp-*.json`](proof/results)).
 
 ### One transaction per feature
 
@@ -243,7 +243,7 @@ Every feature below changes something a dispatcher, a driver or a stranger sees.
 | `changeOwnership` (shift handover) | [0xd66625e0ce...](https://tiramisu.explorer.arkiv.network/tx/0xd66625e0ce69dd05ad39a112ad09cf886897f8a6d353d6200a3fa7450739971d) | The circle anchor moves to the morning dispatcher with a sealed handover record (rule I9). |
 | `$creator` and `$owner` (rule I9) | [0x8af057ced6...](https://tiramisu.explorer.arkiv.network/tx/0x8af057ced6f213d013a696c04044c908afe531e78dfd55a1baf33a3411617982) | A ride by the previous holder after the handover: on chain, and ignored by the board. |
 | `permissionlessExtension` (tally) | [0x6359aae7de...](https://tiramisu.explorer.arkiv.network/tx/0x6359aae7de622702a7bbb86e13d143784f34913786e5930aad10e60ff7911f24) | An auditor wallet that does not own the tally extends it; the same wallet is refused on a ride. |
-| WebSocket entity events | read-only | `watchEntityEvents` observed 34 EntityDeleted and 1 OwnershipTransferred events network-wide while the feature run executed, including its own cancel, withdraw and handover. |
+| WebSocket entity events | read-only | `watchEntityEvents` observed 34 EntityDeleted and 1 OwnershipTransferred events network-wide while the feature run executed (not filtered to our entities). |
 | Historical queries (`atBlock`) | read-only | Reads at blocks 739910, 739911, 739939 returned the entity; at the expiry block and after it did not (read-only, no transaction). |
 | `$expiresAt` range query | read-only | Q13 found 3 rides dying within 300 blocks (read-only). |
 | Arkiv MCP (outside the product) | read-only | The Arkiv MCP confirmed 34 of 34 transactions and agreed with our reader on 33 of 34 entities. |

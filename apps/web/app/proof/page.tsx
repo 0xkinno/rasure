@@ -68,7 +68,8 @@ export default function Proof() {
                 {facts.drill && Object.entries(facts.drill).map(([k, v]) => <tr key={k}><th>Drill: {k}</th><td className="mono">{v.exposed}/{v.total} exposed</td></tr>)}
                 {facts.errorDirections && <tr><th>Error directions</th><td className="mono">attacker opened past: {facts.errorDirections.attackerOpenedPast} · member refused: {facts.errorDirections.memberRefused} of {facts.errorDirections.liveRecords}</td></tr>}
                 {facts.leakAudit && <tr><th>Leak audit</th><td className="mono">{facts.leakAudit.entities} entities · max public attributes {facts.leakAudit.maxPublicAttributes} · plaintext transactions {facts.leakAudit.plaintextTx}</td></tr>}
-                {facts.wild && <tr><th>Wild-set audit (aggregate, partial run)</th><td className="mono">{facts.wild.sampled} read at a past block · {facts.wild.stillReturnPayload} returned a payload · {facts.wild.readableText} parse as text</td></tr>}
+                {(facts as any).wildWindows?.map((w: any) => <tr key={w.windowBlocks}><th>Wild-set audit, read {w.approxMinutes} min back{w.partial ? " (partial run)" : ""}</th><td className="mono">{w.sampled} sampled · {w.stillReturnPayload} returned a payload · {w.readableText} parse as text</td></tr>)}
+                {(facts as any).wildCalldata && <tr><th>Wild-set calldata</th><td className="mono">{(facts as any).wildCalldata.creationTxFound} creation transactions found of {(facts as any).wildCalldata.sampled} · {(facts as any).wildCalldata.payloadRecoveredFromCalldata} payloads recovered from calldata · {(facts as any).wildCalldata.payloadMatchesHistoryRead} identical to the history read</td></tr>}
               </tbody>
             </table></div>
           )}

@@ -81,7 +81,7 @@ if (tl) {
   feat.push({ feature: "`permissionlessExtension` (tally)", tx: tl.d.auditorExtendTx, shows: "An auditor wallet that does not own the tally extends it; the same wallet is refused on a ride." });
 }
 const wsr = newest("events-");
-if (wsr) feat.push({ feature: "WebSocket entity events", tx: undefined, shows: `\`watchEntityEvents\` observed ${wsr.d.deleted} EntityDeleted and ${wsr.d.ownershipTransferred} OwnershipTransferred events network-wide while the feature run executed, including its own cancel, withdraw and handover.` });
+if (wsr) feat.push({ feature: "WebSocket entity events", tx: undefined, shows: `\`watchEntityEvents\` observed ${wsr.d.deleted} EntityDeleted and ${wsr.d.ownershipTransferred} OwnershipTransferred events network-wide while the feature run executed (not filtered to our entities).` });
 const d2 = newest("d2-");
 if (d2) feat.push({ feature: "Historical queries (`atBlock`)", tx: undefined, shows: `Reads at blocks ${d2.d.samples?.[0]?.block}, ${d2.d.samples?.[1]?.block}, ${d2.d.samples?.[2]?.block} returned the entity; at the expiry block and after it did not (read-only, no transaction).` });
 const er = newest("expiresRange-");

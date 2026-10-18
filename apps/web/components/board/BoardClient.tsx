@@ -19,6 +19,7 @@ import {
 import { useWallet, fmtGlm } from "@/lib/wallet";
 import { reader, readWithRelay } from "@/lib/chain";
 import { dataExplorerKey } from "@/lib/dataExplorer";
+import { DemoView } from "./DemoView";
 import { RPC_WS, FAUCET, txUrl, addrUrl, short, TRUSTED_DISPATCHERS, DEMO_CIRCLE } from "@/lib/config";
 import {
   type Ring, advanceAndSave, createDispatcherRing, encodeJoin, deleteDeviceKey, ensureDeviceKey, listCircles, loadDeviceKey, loadRing, saveRing,
@@ -701,6 +702,7 @@ export function BoardClient() {
             </div>
           </div>
         )}
+        {!ring && DEMO_CIRCLE && <DemoView />}
         {!ring && <p className="notice" style={{ color: "var(--ink)", marginTop: 24 }}>No circle on this device yet. A dispatcher can create one above; a volunteer opens a join link from the dispatcher, in person.</p>}
       </div>
     </div>

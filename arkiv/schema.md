@@ -26,11 +26,11 @@ All Arkiv entities carry `project = "rasure/v1"` (str) and `circle = <random 16 
 
 Sealed payload content type: `application/vnd.rasure.sealed.v1`. Member payload: `application/vnd.rasure.devicekey.v1`. Rekey payload: `application/vnd.rasure.rekey.v1`.
 
-Lifetime Extension is used on the `circle` and the `tally` and refused on every sealed record. A `member` entity publicly links a wallet to a circle. That is metadata we cannot hide, because `$creator` is public; it is listed under Honest notes in the README.
+Lifetime Extension is used on the `circle` and the `tally` and never called on sealed records. A `member` entity publicly links a wallet to a circle. That is metadata we cannot hide, because `$creator` is public; it is listed under Honest notes in the README.
 
 ## Entity Expiration per type
 
-- `circle`: 30 days (1,296,000 blocks) from creation, extended by the holder with Lifetime Extension whenever fewer than 7 days remain. A network that stops operating disappears.
+- `circle`: 30 days (1,296,000 blocks) from creation, extended by the holder with Lifetime Extension (a Renew lease button, and the night watch when fewer than 7 days remain). A network that stops operating disappears.
 - `ride`, `claim`, `assign`, `closeout`, `handover`: the absolute block `keyDeathBlock(epoch) = genesis + (epoch + 2) * epoch_blocks`, which is two epochs after the epoch begins (about 20 minutes with 300 block epochs, about 12 hours with 10,800 block epochs).
 - `member`: 1 day (43,200 blocks).
 - `rekey`: the block `genesis + (r + 1) * epoch_blocks` for effect epoch `r`, one epoch after it takes effect.
