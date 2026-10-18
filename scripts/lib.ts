@@ -8,12 +8,24 @@ import { tiramisu } from "@arkiv-network/sdk/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+
+// Load .env.local (gitignored) into process.env without overriding real environment variables.
+const envFile = resolve(ROOT, ".env.local");
+if (existsSync(envFile)) {
+  for (const line of readFileSync(envFile, "utf8").split(/?
+/)) {
+    const m = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
+    if (m && m[2] !== "" && process.env[m[1]] === undefined) process.env[m[1]] = m[2];
+  }
+}
 export const RPC_HTTP = process.env.ARKIV_RPC ?? "https://rpc.tiramisu.db-chain.testnet.arkiv.network";
 export const EXPLORER = "https://tiramisu.explorer.arkiv.network";
 export const ROLES = ["dispatcher", "volunteerA", "volunteerB", "forger", "probe", "drip"] as const;
 export type Role = (typeof ROLES)[number];
 
 export function loadKeys(): Record<Role, `0x${string}`> {
+  const fromEnv = Object.fromEntries(ROLES.map((r) => [r, process.env[`${r.toUpperCase()}_PRIVATE_KEY`]]));
+  if (ROLES.every((r) => fromEnv[r])) return fromEnv as Record<Role, `0x${string}`>;
   const p = resolve(ROOT, ".secrets/wallets.json");
   if (!existsSync(p)) throw new Error("missing .secrets/wallets.json: run `npx tsx scripts/keys.ts`");
   return JSON.parse(readFileSync(p, "utf8"));
