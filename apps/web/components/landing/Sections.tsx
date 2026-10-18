@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { hasFacts, useFacts } from "@/lib/facts";
-import { reader } from "@/lib/chain";
+import { readWithRelay } from "@/lib/chain";
 import { auditAttributes, detectRateLimit, recoverCreates, toChainEntity } from "@rasure/core";
 import { eq } from "@arkiv-network/sdk/query";
 import { REPO, EXPLORER } from "@/lib/config";
@@ -121,7 +121,7 @@ export function StrangerPreview() {
   useEffect(() => {
     (async () => {
       try {
-        const r = await reader.select({ key: true, creator: true, expiresAt: true, attributes: true, payload: true }).where(eq("project", "rasure/v1")).limit(1).fetch();
+        const { value: r } = await readWithRelay((c) => c.select({ key: true, creator: true, expiresAt: true, attributes: true, payload: true }).where(eq("project", "rasure/v1")).limit(1).fetch());
         const e = r.entities[0];
         if (!e) return setState({ status: "none" });
         const ce = toChainEntity(e);
