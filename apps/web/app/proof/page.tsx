@@ -55,7 +55,7 @@ export default function Proof() {
       <div className="wrap">
         <section className="sec" style={{ paddingBottom: 24 }}>
           <h2>Facts</h2>
-          {!hasFacts(facts) && <p className="notice">{facts?.reason ?? "Loading facts..."} Until then this table is empty on purpose.</p>}
+          {!hasFacts(facts) && <p className="notice">{(facts as { reason?: string } | null)?.reason ?? "Loading facts..."} Until then this table is empty on purpose.</p>}
           {hasFacts(facts) && (
             <div style={{ overflowX: "auto" }}><table>
               <tbody>

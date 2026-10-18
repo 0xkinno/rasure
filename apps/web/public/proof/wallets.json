@@ -1,0 +1,8 @@
+[
+  { "role": "dispatcher", "address": "0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771", "note": "Creates circle, ride, assign and closeout entities; the only trusted dispatcher wallet" },
+  { "role": "volunteerA", "address": "0x31740a981E6c793907b51B877e2FBe518137c173", "note": "Creates claim entities" },
+  { "role": "volunteerB", "address": "0x9257991047D23e58EF1b90e893924f9eB5AB25e3", "note": "Creates claim entities" },
+  { "role": "forger", "address": "0xEa7b820BC735D519D2927658CD71bc1363578cAA", "note": "Writes a forged ride and a forged assign to show they are ignored" },
+  { "role": "probe", "address": "0x03a85A77ee3b49d9DC59451279620426c26879Fe", "note": "Discovery experiments D1 and D2 (synthetic probe entity)" },
+  { "role": "drip", "address": "0x4efb9C1bFC33b2079F117f05EB6a5CCdAd38a970", "note": "Sends test GLM to new visitors; signs no entity" }
+]

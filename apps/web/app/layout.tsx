@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${instrument.variable} ${geist.variable} ${geistMono.variable}`}>
       <body>
         <WalletProvider>
-          <a href="#main" style={{ position: "absolute", left: -999 }} onFocus={(e) => (e.currentTarget.style.left = "8px")}>
+          <a href="#main" className="skip">
             Skip to content
           </a>
           <Nav />

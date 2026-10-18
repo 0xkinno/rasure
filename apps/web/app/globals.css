@@ -47,3 +47,4 @@ th { font-family: var(--font-chain); font-size: 13px; }
 select, input, textarea { font: inherit; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--cobalt-ink); background: var(--card); color: var(--ink); width: 100%; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 @media (max-width: 720px) { .sec { padding: 56px 0; } body { font-size: 16px; } }
+.skip{position:absolute;left:-999px;top:8px;z-index:300;background:var(--signal);color:var(--cobalt-ink);padding:8px 12px;border-radius:8px}.skip:focus{left:8px}
