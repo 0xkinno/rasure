@@ -14,3 +14,9 @@ test-results/
 
 # private working docs (list sample repos; never public)
 RASURE_BUILD_INSTRUCTION.md
+*.stackdump
+test-results/
+RASURE_UPGRADE.md
+
+.vercel
+.env*

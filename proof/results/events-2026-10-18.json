@@ -1,0 +1,200 @@
+{
+  "date": "2026-10-18",
+  "circle": "4afb45d9dffa190f1829e2450481c032",
+  "observed": [
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x0ab482b5cf3ecff516eb5820f0d81b5c8ff42ae509dc42ffb9c4d269d137ab9b"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0xa414cc328386e99321a5d47842ba7440186b3fdda1ca39e93699374e21c777fc"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xb41753edc6e3e660c0fabe378ce9f8473eacd07e5d353fb4ecdbcb654ad6602a"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xd86e102e3f2a1e049e39b5c25f3e7b5c46bea5c768d7ff4af8ec40469bb097fd"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0xa712c211be89417dfc638a984423a15c037f2752b4d1b0f4807fad391660b94f"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x2d9b6c84a9ccb4ed071d866ece3903a40ca0c571e9f3fc3c69c1a07ea23a0322"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x44e0acc1ad7dee004262adc355dc3be41e88656db527ac93f72a16818632477a"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x4377c9533295ba45c2bd3f2b5537d6fbc009f4491222926e3af77c3bd7e4d3be"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xe33602fa29b40810223bdbaceec7a22185a161c0c040d6727b13bbfb70960b16"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x3441deb8770fdfd3d543823a2e41f8cee1158d81e4ca69f119c7cb58db1ca6fc"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xd6097559c9dde005f27c61422a24b9e6409642a3eaa351c64c6c0a63950ef826"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x17594043c44924b5f5ef3acededf28a15993927a4712f4f0d1d1c009f41cf3b9"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x3306d7d4e72de7cae82abb9b120d1f779397a1f2ad59425347b2d3d46ef0d825"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x89e168bb76207ec50cd346e723bc758da2f4c917f46b327dffc29b337e8d81e9"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x4c527ea07c6fdf95b0b2eff7a5e7be2853964f349fdf115b130751de8ae6c6ec"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x928e22c55af1a0baae38b16761025fb1159222dc808a7dd6e7f6f16957f6a6b7"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xcb4dd917b8ad584a85e9fe91bc70e1e2418864e3d8bacefa55dd72d8731421c3"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x64b7cbfe0ce19cc076b2674771091efc1b9c84cdb06f5e1fbd09314c7c1684f4"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x005f8590105456f619ba3e68b834627b434fc7217fa997c2c4c8a6f44733ce14"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xb77da198272bca7c668518a34b468c2a2d804152add48c2618041f4655c876e2"
+    },
+    {
+      "type": "OwnershipTransferred",
+      "entityKey": "0x324a1502c489c5278e07f3e5c7b2cc8327cab946cff1e226a49d02c3209adb15"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xaa1b6eb6d33ffee4e8efd2da041c70b710c7fdc9c51c287bf9ec502d5f8d2a7b"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x24f4559a5565fd59718168996281340b6fb5f12c456888c4721570e9e3b7d3eb"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x7d73e2b9de874765463546c972c04a7081fa7d4a8f671f8b59f6168a943647ca"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xb651c653b62742a589fb25f0ba1a5ae1d375f4c86e6e3c031fd7498725329307"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x4377c9533295ba45c2bd3f2b5537d6fbc009f4491222926e3af77c3bd7e4d3be"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x7b173e1b5c2d56191077a99477aed2f84d863b995bb069f1178c73f1a599cd26"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x4448d74aee39dc7fb26cd55811d4e246d72c1695fa47d6014251e4b3100627aa"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xd43dcf567fac23d83c75f43743c5ae88b6a91ca11847faad9fc1c6e7f4882fd5"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x32c86be51520ac54e18e8e3be3047c0249107f66c4765e89e65abe93a4fde20d"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x324a1502c489c5278e07f3e5c7b2cc8327cab946cff1e226a49d02c3209adb15"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x43dd67026c7eb65ffaa1eec0784c6a8576d965f6c35f5b62ca583ef98cb58465"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x0fddaaffaa5dfa83fa2a6df928c61f13f29356962a742d29b2a7803425816089"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x842452f4e4d14e973e18800ef9e583ddae23ca7c80658d621d0ef975b3c215d3"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xc3eda9c305285dc7f02561dd705a3f9f16638105c1d170e38ee6f8506b50a373"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x00f805fa2bd63eb7490c22cb27b71d8a03d5144524f23c5220e4041ca7c1865a"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x757c9b3f6d5913929c7c7fb27be5edbce97cb0ade67c529d9bb7056396253a3f"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x42f209f9fef044fae7cdfa4afd43c78fc352915fe867c3f39fcfa5b34fc31536"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x2daff4674540647789c7599f4e65aa7f7eab08eed47bed33640366d1b25f2353"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x6aa145cc38f9621572573de1935272cd5b1d1101d995fa551360d0b61fdd94fe"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x42ffeca8b69971c982be4c6b40f812e76716073a16053528f40c05c0c971b931"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x912887a3517096b6cc2d4e1cdb85606aa0558ff86c5f3e6f520a062e59b828cd"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xb627451b50da3da0f0fa66db39f80e96dce14a12c5f016928af347d79c1e0e48"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x9fafc686f99243411227421e6e16d6220c6ea310be5ce56188d64ddfb6dd636f"
+    },
+    {
+      "type": "ExpiryExtended",
+      "entityKey": "0x4377c9533295ba45c2bd3f2b5537d6fbc009f4491222926e3af77c3bd7e4d3be"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0xa4f7f5c4b086f4fa9843f4f3bfa7bc807b1878bf55a569ea29e3a30485c396ad"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x41256356439d32075dfbbd26943bd0668db4daff315c28343321e83509f12bd7"
+    },
+    {
+      "type": "EntityDeleted",
+      "entityKey": "0x6a770678b1c9172907beb4c939df96b71a32aeee29c8c14c3edc40490aaeabeb"
+    }
+  ],
+  "deleted": 34,
+  "ownershipTransferred": 1
+}

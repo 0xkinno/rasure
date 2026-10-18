@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-18",
+  "circle": "4afb45d9dffa190f1829e2450481c032",
+  "publishTx": "0xb201f7e665755f5e4a38217682a09aea9173605d44f976415b9e1efa9e4d88e1",
+  "auditorExtendTx": "0x6359aae7de622702a7bbb86e13d143784f34913786e5930aad10e60ff7911f24",
+  "auditor": "0xa5e729484843f0d18E2e39C0bC8170a1a0D8AD23",
+  "creator": "0x9257991047D23e58EF1b90e893924f9eB5AB25e3",
+  "ownerBefore": "0x9257991047D23e58EF1b90e893924f9eB5AB25e3",
+  "ownerAfter": "0x9257991047D23e58EF1b90e893924f9eB5AB25e3",
+  "expiresAtBefore": "4631673",
+  "expiresAtAfter": "4631686",
+  "served": "1",
+  "auditorExtendRefusedOnRide": "refused: Transaction failed: entity 0xe3dedfd9…975293 is owned by 0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771, not 0xa5e729484843f0d18E2e39C0bC8170a1a0D8AD23"
+}

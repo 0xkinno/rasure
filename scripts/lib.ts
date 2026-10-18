@@ -19,15 +19,25 @@ if (existsSync(envFile)) {
 }
 export const RPC_HTTP = process.env.ARKIV_RPC ?? "https://rpc.tiramisu.db-chain.testnet.arkiv.network";
 export const EXPLORER = "https://tiramisu.explorer.arkiv.network";
-export const ROLES = ["dispatcher", "volunteerA", "volunteerB", "forger", "probe", "drip"] as const;
+export const ROLES = ["dispatcher", "volunteerA", "volunteerB", "forger", "probe", "drip", "auditor"] as const;
 export type Role = (typeof ROLES)[number];
 
 export function loadKeys(): Record<Role, `0x${string}`> {
-  const fromEnv = Object.fromEntries(ROLES.map((r) => [r, process.env[`${r.toUpperCase()}_PRIVATE_KEY`]]));
-  if (ROLES.every((r) => fromEnv[r])) return fromEnv as Record<Role, `0x${string}`>;
+  // Per role: the ROLE_PRIVATE_KEY environment variable wins; otherwise .secrets/wallets.json. A role may be absent
+  // (CI holds only the keys it needs); asking for it then throws.
   const p = resolve(ROOT, ".secrets/wallets.json");
-  if (!existsSync(p)) throw new Error("missing .secrets/wallets.json: run `npx tsx scripts/keys.ts`");
-  return JSON.parse(readFileSync(p, "utf8"));
+  const file: Record<string, string> = existsSync(p) ? JSON.parse(readFileSync(p, "utf8")) : {};
+  const out: Partial<Record<Role, `0x${string}`>> = {};
+  for (const r of ROLES) {
+    const v = process.env[`${r.toUpperCase()}_PRIVATE_KEY`] || file[r];
+    if (v) out[r] = v as `0x${string}`;
+  }
+  return new Proxy(out, {
+    get(t, k: string) {
+      if (!t[k as Role]) throw new Error(`no key for role ${k}: set ${k.toUpperCase()}_PRIVATE_KEY or run npx tsx scripts/keys.ts`);
+      return t[k as Role];
+    },
+  }) as Record<Role, `0x${string}`>;
 }
 
 export function accountFor(role: Role) {
@@ -37,7 +47,7 @@ export function accountFor(role: Role) {
 /** Optional Hub access key, from env ARKIV_ACCESS_KEY, sent as X-API-KEY. Never logged. */
 export function transport() {
   const key = process.env.ARKIV_ACCESS_KEY;
-  return http(RPC_HTTP, key ? { retryCount: 0, timeout: 60_000, fetchOptions: { headers: { "X-API-KEY": key } } } : { retryCount: 0, timeout: 60_000 });
+  return http(RPC_HTTP, key ? { retryCount: 3, retryDelay: 1500, timeout: 60_000, fetchOptions: { headers: { "X-API-KEY": key } } } : { retryCount: 3, retryDelay: 1500, timeout: 60_000 });
 }
 
 export const reader = () => createPublicClient({ chain: tiramisu, transport: transport() });

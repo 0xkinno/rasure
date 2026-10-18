@@ -111,7 +111,7 @@ export function MeerasNight() {
           {b.link && <Link className="btn btn-ink" href="/drill" style={{ marginTop: 10 }}>Replay this moment in the drill</Link>}
         </div>
       ))}
-      <p className="label">Meera Kulkarni is a fictional dispatcher. Every place and ride in this product is synthetic.</p>
+      <p className="label">Every place, ride and wallet in this product is synthetic test data.</p>
     </div>
   );
 }

@@ -7,6 +7,8 @@ import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 
 const SKIP = new Set(["RULES_EXTRACT.md", "scripts/check-copy.mjs", "package-lock.json"]);
+// Files that legitimately mention the placeholder tokens (templates, task lists, workflow syntax).
+const TOKEN_SKIP = (f) => f.startsWith(".github/") || f.startsWith("docs/templates/") || f === "TASK.md" || f === "PROGRESS.md";
 const SKIP_EXT = /\.(png|jpg|jpeg|webp|gif|ico|mp4|woff2?|zip|pdf)$/i;
 const HYPE = ["revolutionary", "seamless", "cutting-edge", "world-class", "military-grade", "zero-trust", "unbreakable"];
 const banned = existsSync("reference/banned.txt")
@@ -43,6 +45,7 @@ for (const f of files) {
     for (const h of HYPE) if (low.includes(h)) fail(f, n, `hype word "${h}"`);
     for (const b of banned) if (low.includes(b.toLowerCase())) fail(f, n, "banned name");
     for (const [re, why] of secrets) if (re.test(ln)) fail(f, n, `secret: ${why}`);
+    if (!TOKEN_SKIP(f)) for (const tok of ["LIVE_URL", "VIDEO_URL", "PENDING", "BASELINE_SHA", ...(f.endsWith(".md") ? ["{{"] : [])]) if (ln.includes(tok)) fail(f, n, `unfilled token ${tok}`);
     if (/\bTTL\b/.test(ln)) fail(f, n, 'say "Entity Expiration", not TTL');
   });
 }

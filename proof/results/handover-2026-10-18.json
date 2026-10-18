@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-18",
+  "circle": "4afb45d9dffa190f1829e2450481c032",
+  "batchTx": "0xd66625e0ce69dd05ad39a112ad09cf886897f8a6d353d6200a3fa7450739971d",
+  "handoverBlock": "743657",
+  "entitiesCreated": 1,
+  "ownershipChanges": 1,
+  "ownerBefore": "0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771",
+  "ownerAfter": "0x9257991047D23e58EF1b90e893924f9eB5AB25e3",
+  "creatorUnchanged": "0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771",
+  "rideByNewHolderTx": "0x3e3eb772b54303636f8eed295ec542f32baecd09e701db8d1dfe9178196789fb",
+  "rideByOldHolderAfterHandoverTx": "0x8af057ced6f213d013a696c04044c908afe531e78dfd55a1baf33a3411617982",
+  "rideByNewHolderCounted": true,
+  "rideByOldHolderAfterHandoverIgnored": true,
+  "rideBeforeHandoverStillCounted": true,
+  "oldHolderLeaseExtend": "refused: Transaction failed: entity 0x324a1502…9adb15 is owned by 0x9257991047D23e58EF1b90e893924f9eB5AB25e3, not 0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2",
+  "newHolderLeaseExtendTx": "0xa288fe9cfa323aa956104e1a662021db144b845804f0351b1f88d36471227e1f",
+  "networksHeldByNewHolder": 3,
+  "networksHeldByOldHolder": 5
+}

@@ -10,3 +10,5 @@ export * from "./writes";
 export * from "./read";
 export * from "./rekey";
 export * from "./writes-rekey";
+export * from "./writes-more";
+export * from "./watch";

@@ -1,7 +1,7 @@
 // Q1 to Q8: every query Rasure runs. Each returns an SDK Expression; `render()` gives the exact
 // predicate string that goes into /arkiv/schema.md and the curl on /proof. Trust is by $creator.
 
-import { and, eq, not, or, render, type Expression } from "@arkiv-network/sdk/query";
+import { and, eq, lte, not, or, render, type Expression } from "@arkiv-network/sdk/query";
 import { addr, key, str, u64 } from "@arkiv-network/sdk/attr";
 import { PROJECT, TYPES } from "./schema";
 
@@ -83,6 +83,26 @@ export function q10Rekeys(circle: string, fromEpoch: bigint, dispatchers: readon
   ]);
 }
 
+/** Q11 handover records of a circle (their creation block marks when a changeOwnership took effect). */
+export function q11Handovers(circle: string): Expression {
+  return and(base(circle, TYPES.handover));
+}
+
+/** Q12 service tallies of a circle, trusted holders only. */
+export function q12Tallies(circle: string, holders: readonly string[]): Expression {
+  return and([...base(circle, TYPES.tally), creatorsOf(holders)]);
+}
+
+/** Q13 rides that die in the next `untilBlock - now` blocks: Q1 plus a `$expiresAt` range. */
+export function q13DyingSoon(circle: string, epoch: bigint, holders: readonly string[], untilBlock: bigint): Expression {
+  return and([...base(circle, TYPES.ride), epochs(epoch), creatorsOf(holders), lte("$expiresAt", u64(untilBlock))]);
+}
+
+/** Q14 networks I hold: circle anchors; the caller adds `.ownedBy(me)` on the builder. */
+export function q14Circles(): Expression {
+  return and([eq("project", PROJECT), eq("type", TYPES.circle)]);
+}
+
 /** Q7 leak audit: every Rasure entity (cursor-paginated, pinned with `.atBlock(head)`). */
 export function q7Audit(): Expression {
   return eq("project", PROJECT);
@@ -103,6 +123,10 @@ export function renderedPredicates(circle: string, epoch: bigint, dispatchers: r
     Q6: render(q6Circle(circle)),
     Q9: render(q9Members(circle)),
     Q10: render(q10Rekeys(circle, epoch, dispatchers)),
+    Q11: render(q11Handovers(circle)),
+    Q12: render(q12Tallies(circle, dispatchers)),
+    Q13: render(q13DyingSoon(circle, epoch, dispatchers, 0n)),
+    Q14: render(q14Circles()),
     Q7: render(q7Audit()),
     Q8: render(q8History()),
   };

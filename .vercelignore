@@ -1,0 +1,9 @@
+reference
+node_modules
+.secrets
+test-results
+.next
+tests
+proof/results
+docs/screens
+*.png.bak

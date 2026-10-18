@@ -13,6 +13,8 @@ export const TYPES = {
   closeout: "closeout", // the dispatcher's encrypted "ride done" note
   member: "member", // a device public key (secp256k1, not the wallet key) so the dispatcher can rekey
   rekey: "rekey", // a fresh chain key sealed to each remaining member device key
+  handover: "handover", // a sealed note written in the same transaction as a shift handover (changeOwnership)
+  tally: "tally", // rides served in one closed epoch: a count, nothing else; funders may extend it
 } as const;
 export type EntityType = (typeof TYPES)[keyof typeof TYPES];
 
@@ -30,6 +32,8 @@ export const PUBLIC_ATTRIBUTE_ALLOWLIST = [
   "ref", // key  the ride a claim/assign/closeout points at
   "epoch_blocks", // u64  circle entity only: epoch length
   "genesis", // u64  circle entity only: block of epoch 0
+  "gen", // u64  circle entity only: chain generation, patched by every rekey
+  "served", // u64  tally entity only: rides closed in that epoch
 ] as const;
 export type PublicAttributeName = (typeof PUBLIC_ATTRIBUTE_ALLOWLIST)[number];
 

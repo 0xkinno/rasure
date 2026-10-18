@@ -81,6 +81,7 @@ export function toChainEntity(e: any): ChainEntity {
     owner: String(e.owner ?? ""),
     expiresAt: BigInt(e.expiresAt ?? 0),
     attributes,
+    ...(e.createdAt !== undefined ? { createdAt: BigInt(e.createdAt) } : {}),
   };
 }
 
@@ -92,13 +93,14 @@ export async function fetchAll(
   c: ArkivReader,
   sel: Record<string, true>,
   where: Expression,
-  opts: { atBlock?: bigint; pageSize?: number; maxPages?: number; createdBy?: string } = {},
+  opts: { atBlock?: bigint; pageSize?: number; maxPages?: number; createdBy?: string; ownedBy?: string } = {},
 ): Promise<{ atBlock: bigint; entities: any[]; pages: number }> {
   const head = opts.atBlock ?? (await guarded(() => c.getBlockNumber({ cacheTime: 0 })));
   const maxPages = opts.maxPages ?? 50;
   const build = () => {
     let b = c.select(sel).where(where);
     if (opts.createdBy) b = b.createdBy(opts.createdBy as `0x${string}`); // SDK createdBy(): immutable $creator filter
+    if (opts.ownedBy) b = b.ownedBy(opts.ownedBy as `0x${string}`); // SDK ownedBy(): current $owner filter
     return b.atBlock(head).limit(opts.pageSize ?? 100).fetch() as Promise<PageLike>;
   };
   let page = await guarded(build);

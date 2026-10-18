@@ -56,7 +56,7 @@ export default function Judge() {
             </div>
           ))}
         </div>
-        <p className="label" style={{ marginTop: 28 }}>The same walks are in <a href={`${REPO}/blob/main/JUDGE.md`}>JUDGE.md</a>. Persona and data are fictional and synthetic.</p>
+        <p className="label" style={{ marginTop: 28 }}>The same walks are in <a href={`${REPO}/blob/main/JUDGE.md`}>JUDGE.md</a>. Every place, ride and wallet in this product is synthetic test data.</p>
       </div>
     </>
   );

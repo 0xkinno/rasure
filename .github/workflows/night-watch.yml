@@ -1,0 +1,45 @@
+name: Night watch
+
+# Kept alive on purpose: during judging this posts one sealed ride and claim per epoch on the demo circle,
+# renews its lease, and checks invariants I1 and I3 on every live entity. It uses the same SDK calls as the app.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: night-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run the watch
+        env:
+          WATCH_CIRCLE: ${{ vars.WATCH_CIRCLE }}
+          WATCH_GENESIS: ${{ vars.WATCH_GENESIS }}
+          WATCH_EPOCH_BLOCKS: ${{ vars.WATCH_EPOCH_BLOCKS }}
+          DEMO_CHAIN_KEY: ${{ secrets.DEMO_CHAIN_KEY }}
+          DISPATCHER_PRIVATE_KEY: ${{ secrets.DISPATCHER_KEY }}
+          VOLUNTEERA_PRIVATE_KEY: ${{ secrets.VOLUNTEER_A_KEY }}
+          ARKIV_ACCESS_KEY: ${{ secrets.ARKIV_ACCESS_KEY }}
+        run: npx tsx scripts/night-watch.ts
+      - name: Commit the log as 0xkinno
+        if: always()
+        run: |
+          git config user.name 0xkinno
+          git config user.email 140649226+0xkinno@users.noreply.github.com
+          git add proof/watch
+          git diff --cached --quiet || git commit -m "Night watch log"
+          git pull --rebase origin main || true
+          git push origin HEAD:main || true

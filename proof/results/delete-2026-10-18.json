@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-18",
+  "circle": "4afb45d9dffa190f1829e2450481c032",
+  "cancelRideTx": "0x5703329028930066d4f3b6fc264f193f2ca9b11343ac13d68d8bb5dbc9ced6c7",
+  "withdrawClaimTx": "0x05f7cd5f9f4bc3b4296b47e8298206c55208d3395883843c4c8b00b17ce3f9b3",
+  "rideGoneFromLiveState": true,
+  "claimGoneFromLiveState": true,
+  "ciphertextStillInCreationTx": true,
+  "payloadStillOpensWithLiveKey": true,
+  "unreadableAtBlock": "743808",
+  "uiNotice": "Removed from the board now. Its ciphertext still exists in the transaction; it becomes unreadable at block 743808, when tonight's key dies."
+}

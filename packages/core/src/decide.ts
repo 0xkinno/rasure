@@ -8,6 +8,8 @@ export interface ChainEntity {
   owner: string;
   expiresAt: bigint;
   attributes: Record<string, string | bigint | number>;
+  /** Block the entity was created in, when selected. */
+  createdAt?: bigint;
 }
 
 const lc = (s: string) => s.toLowerCase();
@@ -52,4 +54,33 @@ export function visibleRecords<T extends { attributes: Record<string, string | b
   head: bigint,
 ): T[] {
   return records.filter((r) => liveEpochs.has(BigInt(r.attributes.epoch as string | bigint | number)) && r.expiresAt > head);
+}
+
+/**
+ * I9 (shift handover): a ride counts only if its `$creator` held the circle (`$owner` of the anchor) at the ride's creation block.
+ * `creator` is the anchor's `$creator` (the first holder); each change is the block a `changeOwnership` took effect and the new holder.
+ * A forged ride by the previous holder after a handover is ignored; so is a ride by the next holder written before it.
+ */
+export interface OwnerTimeline {
+  creator: string;
+  changes: { block: bigint; owner: string }[];
+}
+export function ownerAt(t: OwnerTimeline, block: bigint): string {
+  let owner = t.creator;
+  for (const c of [...t.changes].sort((a, b) => (a.block < b.block ? -1 : 1))) if (c.block <= block) owner = c.owner;
+  return owner.toLowerCase();
+}
+export function partitionRidesAt(rides: ChainEntity[], t: OwnerTimeline) {
+  const counted: ChainEntity[] = [];
+  const ignored: ChainEntity[] = [];
+  for (const r of rides) {
+    const block = r.createdAt;
+    const ok = block !== undefined && lc(r.creator) === ownerAt(t, block);
+    (ok ? counted : ignored).push(r);
+  }
+  return { counted, ignored };
+}
+/** Every wallet that held the circle, used to build the `$creator` OR-list for queries. */
+export function holders(t: OwnerTimeline): string[] {
+  return [...new Set([t.creator, ...t.changes.map((c) => c.owner)].map(lc))];
 }

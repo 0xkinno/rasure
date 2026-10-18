@@ -38,7 +38,8 @@ const common = (circle: string, type: EntityType) => ({ project: PROJECT, v: i32
 
 export function circleParams(circle: string, clock: CircleClock): CreateEntityParameters {
   return {
-    attributes: { ...common(circle, TYPES.circle), epoch_blocks: u64(clock.epochBlocks), genesis: u64(clock.genesisBlock) },
+    // Six public attributes: project, type, circle, epoch_blocks, genesis, gen. `v` is carried by project "rasure/v1".
+    attributes: { project: PROJECT, type: TYPES.circle, circle, epoch_blocks: u64(clock.epochBlocks), genesis: u64(clock.genesisBlock), gen: u64(1n) },
     payload: new Uint8Array(),
     contentType: "application/octet-stream",
     expires: ExpirationTime.fromBlocks(Number(CIRCLE_LEASE_BLOCKS)),
