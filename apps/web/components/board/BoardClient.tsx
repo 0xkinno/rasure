@@ -8,7 +8,7 @@ import { tiramisu } from "@arkiv-network/sdk/chains";
 import { createPublicClient as viemPublicClient, webSocket, type Hex } from "viem";
 import { eq } from "@arkiv-network/sdk/query";
 import {
-  EpochTooLateError, advance, assignClaim, assignAndClosePrevious, claimRide, closeRide, createCircle, currentKey, epochAt, extendCircle,
+  q5Claims, EpochTooLateError, advance, assignClaim, assignAndClosePrevious, claimRide, closeRide, createCircle, currentKey, epochAt, extendCircle,
   fetchAll, guarded, keyDeathBlock, keyFor, newChain, open, partitionRides, postRide, q1OpenBoard, q2Zone, q3bRelated, q4Forged, q6Circle,
   rideStatus, toChainEntity, visibleRecords, zoneTag, aad, detectRateLimit, openRekey, postMember, postRekey, q9Members, q10Rekeys,
   type ArkivWriter, type ChainEntity, type EntityType,
@@ -63,6 +63,9 @@ export function BoardClient() {
   const [members, setMembers] = useState<{ creator: string; pub: Uint8Array }[]>([]);
   const [removeSet, setRemoveSet] = useState<Set<string>>(new Set());
   const [rekeyNote, setRekeyNote] = useState<string | null>(null);
+  const [myClaims, setMyClaims] = useState<number | null>(null);
+  const accountRef = useRef<string | null>(null);
+  accountRef.current = w.account;
   const [form, setForm] = useState({ landmark: LANDMARKS[0], zone: ZONES[0], window: WINDOWS[0], seats: 2, note: "SYN-note: two passengers, one small bag" });
   const [epochBlocks, setEpochBlocks] = useState("300");
   const ringRef = useRef<Ring | null>(null);
@@ -141,14 +144,14 @@ export function BoardClient() {
     try {
       const h = await reader.getBlockNumber({ cacheTime: 0 });
       const epoch = epochAt(r.state.clock, h < r.state.clock.genesisBlock ? r.state.clock.genesisBlock : h);
-      const run = async (where: any, sel: Record<string, true>) => {
-        try { return await fetchAll(reader as any, sel, where, { atBlock: h }); }
+      const run = async (where: any, sel: Record<string, true>, extra: { createdBy?: string } = {}) => {
+        try { return await fetchAll(reader as any, sel, where, { atBlock: h, ...extra }); }
         catch (e) {
           const rl = detectRateLimit(e);
           if (!rl) throw e;
           setRelayNote(`Anonymous RPC limit reached (${rl.message}). Reads continue through the read-only relay.`);
           const { relayReader } = await import("@/lib/chain");
-          return fetchAll(relayReader() as any, sel, where, { atBlock: h });
+          return fetchAll(relayReader() as any, sel, where, { atBlock: h, ...extra });
         }
       };
       const sel = { key: true, creator: true, owner: true, expiresAt: true, attributes: true, payload: true } as const;
@@ -161,11 +164,16 @@ export function BoardClient() {
         run(where, sel),
         run(q3bRelated(r.state.circle, epoch), sel),
         run(q4Forged(r.state.circle, r.dispatchers), { key: true, creator: true, owner: true, expiresAt: true, attributes: true }),
-        run(q6Circle(r.state.circle), { key: true, creator: true, expiresAt: true, attributes: true }),
+        run(q6Circle(r.state.circle), { key: true, creator: true, expiresAt: true, attributes: true }, { createdBy: r.dispatchers[0] }),
       ]);
       const a = (anchor.entities as any[]).find((e) => r.dispatchers.map((d) => d.toLowerCase()).includes(String(e.creator).toLowerCase()));
       setLeaseUntil(a ? { key: a.key, expiresAt: BigInt(a.expiresAt) } : null);
 
+      // Q5: my claims, filtered by the SDK createdBy() on the connected wallet.
+      if (accountRef.current && r.role === "member") {
+        const mine = await run(q5Claims(r.state.circle), { key: true }, { createdBy: accountRef.current });
+        setMyClaims(mine.entities.length);
+      } else setMyClaims(null);
       // Rekey: the dispatcher lists member device keys; a member looks for a rekey sealed to its own device key.
       if (r.role === "dispatcher") {
         const m = await run(q9Members(r.state.circle), { key: true, creator: true, payload: true });
@@ -472,6 +480,7 @@ export function BoardClient() {
           <div style={{ marginTop: 28 }}>
             <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
               <h2 className="story" style={{ fontSize: 32 }}>Open rides</h2>
+              {myClaims !== null && <span className="chip">your live claims: {myClaims}</span>}
               <label className="label" style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>Zone filter (blind tag)
                 <select value={zone} onChange={(e) => setZone(e.target.value)} style={{ width: "auto" }}>
                   <option value="">all zones</option>

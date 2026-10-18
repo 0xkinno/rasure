@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rasure one-file reader</title>
+<style>
+  :root { --cobalt:#0a2fb3; --ink:#0b1626; --paper:#f4f7fc; --rule:#cbd6ea; --lime:#d7f25a; --red:#a3230f; }
+  body { margin:0; font:16px/1.6 system-ui, sans-serif; background:var(--paper); color:var(--ink); }
+  header { background:var(--cobalt); color:#eaf0ff; padding:20px 16px; }
+  main { max-width:960px; margin:0 auto; padding:24px 16px 64px; }
+  h1 { margin:0; font:700 24px ui-monospace, monospace; }
+  label { display:block; font:13px ui-monospace, monospace; margin:12px 0 4px; }
+  input { width:100%; padding:10px; border:1.5px solid #0b1a5e; border-radius:8px; font:14px ui-monospace, monospace; background:#fff; }
+  button { margin-top:14px; padding:10px 16px; border:2px solid #0b1a5e; border-radius:10px; background:var(--lime); font:600 15px ui-monospace, monospace; cursor:pointer; box-shadow:4px 4px 0 #0b1a5e; }
+  pre { background:#fff; border:1px solid var(--rule); padding:12px; overflow:auto; font:12.5px/1.5 ui-monospace, monospace; }
+  .bad { color:var(--red); } .note { color:#3a4a60; font-size:14px; }
+  table { border-collapse:collapse; width:100%; font:12.5px ui-monospace, monospace; background:#fff; }
+  td, th { border-bottom:1px solid var(--rule); padding:6px 8px; text-align:left; word-break:break-all; }
+</style>
+</head>
+<body>
+<header><h1>rasure reader</h1><div class="note" style="color:#afc0f2">One file. Reads Arkiv directly. Built only from arkiv/schema.md. No server of ours is involved.</div></header>
+<main>
+  <p class="note">Rasure payloads are ciphertext, so this reader shows the public attributes only, applies the two trust rules from the schema (a ride counts only if its creator is a trusted dispatcher; an assignment counts only if the ride's dispatcher created it), and lists what is ignored.</p>
+  <label for="rpc">RPC URL</label>
+  <input id="rpc" value="https://rpc.tiramisu.db-chain.testnet.arkiv.network">
+  <label for="circle">Circle id (32 hex characters)</label>
+  <input id="circle" placeholder="46123014e78f511adb2fb383b4db365b">
+  <label for="disp">Trusted dispatcher addresses (comma separated)</label>
+  <input id="disp" placeholder="0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771">
+  <button id="go">Read the board</button>
+  <p id="status" class="note" role="status"></p>
+  <div id="out"></div>
+  <h2 style="font:700 16px ui-monospace, monospace">Queries this page runs</h2>
+  <pre id="queries">(press Read the board)</pre>
+</main>
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const hex = (n) => "0x" + n.toString(16);
+const num = (v) => (typeof v === "string" && v.startsWith("0x") ? BigInt(v) : BigInt(v));
+let rid = 1;
+
+async function rpc(url, method, params) {
+  const r = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: rid++, method, params }) });
+  if (r.status === 429) throw new Error("Rate limited (HTTP 429, ANON_COST_LIMITED). Retry-After: " + (r.headers.get("retry-after") || "unknown") + " s");
+  const j = await r.json();
+  if (j.error) throw new Error(j.error.message || JSON.stringify(j.error));
+  return j.result;
+}
+// Walks every page, all pinned to one block.
+async function query(url, q, select, atBlock) {
+  let cursor, all = [], block = atBlock;
+  for (let pages = 0; pages < 50; pages++) {
+    const opts = { select, limit: "0x64" };
+    if (block !== undefined) opts.atBlock = block;
+    if (cursor) opts.cursor = cursor;
+    const res = await rpc(url, "arkiv_query", [q, opts]);
+    if (block === undefined) block = res.blockNumber;
+    all = all.concat(res.data);
+    cursor = res.cursor;
+    if (!cursor) break;
+  }
+  return { block, data: all };
+}
+const attrs = (e) => Object.fromEntries((e.attributes || []).map((a) => [a.name, a.value]));
+const lc = (s) => String(s).toLowerCase();
+
+$("go").onclick = async () => {
+  const url = $("rpc").value.trim(), circle = $("circle").value.trim().toLowerCase();
+  const disp = $("disp").value.split(",").map((s) => s.trim()).filter(Boolean);
+  if (!/^[0-9a-f]{32}$/.test(circle) || !disp.length) { $("status").textContent = "Enter a 32 hex circle id and at least one dispatcher address."; return; }
+  $("status").textContent = "Reading..."; $("out").innerHTML = "";
+  try {
+    const sel = { key: true, creator: true, expiresAt: true, attributes: true };
+    const base = `project = str('rasure/v1') AND circle = str('${circle}')`;
+    const q6 = `${base} AND type = str('circle')`;
+    const anchorRes = await query(url, q6, sel);
+    const dset = new Set(disp.map(lc));
+    const anchor = anchorRes.data.find((e) => dset.has(lc(e.creator)));
+    if (!anchor) { $("status").textContent = "No circle anchor created by a trusted dispatcher at block " + num(anchorRes.block); return; }
+    const a = attrs(anchor);
+    const genesis = num(a.genesis), eb = num(a.epoch_blocks), head = num(anchorRes.block);
+    const epoch = head < genesis ? 0n : (head - genesis) / eb;
+    const creators = disp.map((d) => `$creator = addr(${d})`).join(" OR ");
+    const epochs = epoch === 0n ? `epoch = u64(0)` : `(epoch = u64(${epoch}) OR epoch = u64(${epoch - 1n}))`;
+    const q1 = `${base} AND type = str('ride') AND ${epochs} AND (${creators})`;
+    const q3b = `${base} AND (type = str('claim') OR type = str('assign') OR type = str('closeout')) AND ${epochs}`;
+    const q4 = `${base} AND type = str('ride') AND NOT (${creators})`;
+    $("queries").textContent = [`Q6  ${q6}`, `Q1  ${q1}`, `Q3b ${q3b}`, `Q4  ${q4}`].join("\n\n");
+    const [rides, related, forged] = await Promise.all([query(url, q1, sel, anchorRes.block), query(url, q3b, sel, anchorRes.block), query(url, q4, sel, anchorRes.block)]);
+    const rideCreator = new Map(rides.data.map((e) => [e.key, lc(e.creator)]));
+    const rows = [];
+    for (const r of rides.data) {
+      const ra = attrs(r);
+      const rel = related.data.filter((e) => attrs(e).ref === r.key);
+      const byOwner = (t) => rel.filter((e) => attrs(e).type === t && lc(e.creator) === lc(r.creator));
+      const status = byOwner("closeout").length ? "closed" : byOwner("assign").length ? "assigned" : rel.some((e) => attrs(e).type === "claim") ? "claimed" : "open";
+      rows.push(`<tr><td>${r.key}</td><td>${num(ra.epoch)}</td><td>${status}</td><td>${num(r.expiresAt)}</td></tr>`);
+    }
+    const badAssign = related.data.filter((e) => { const x = attrs(e); return x.type === "assign" && rideCreator.has(x.ref) && lc(e.creator) !== rideCreator.get(x.ref); });
+    $("out").innerHTML =
+      `<p>Head block ${head}, epoch ${epoch}. Circle genesis ${genesis}, epoch length ${eb} blocks.</p>` +
+      `<h2 style="font:700 16px ui-monospace,monospace">Counted rides (${rows.length})</h2>` +
+      `<table><tr><th>Ride key</th><th>Epoch</th><th>Status</th><th>Expires at block</th></tr>${rows.join("")}</table>` +
+      `<h2 class="bad" style="font:700 16px ui-monospace,monospace">Ignored (${forged.data.length + badAssign.length})</h2>` +
+      `<table><tr><th>Entity</th><th>Creator</th><th>Why</th></tr>` +
+      forged.data.map((e) => `<tr><td>${e.key}</td><td>${e.creator}</td><td>ride not created by a trusted dispatcher</td></tr>`).join("") +
+      badAssign.map((e) => `<tr><td>${e.key}</td><td>${e.creator}</td><td>assignment not created by the ride's dispatcher</td></tr>`).join("") + `</table>`;
+    $("status").textContent = "Done. Every number above came straight from the node.";
+  } catch (e) { $("status").textContent = "Error: " + e.message; }
+};
+</script>
+</body>
+</html>

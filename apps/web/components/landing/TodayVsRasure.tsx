@@ -29,7 +29,7 @@ export function TodayVsRasure() {
               cursor: "pointer",
               padding: "8px 14px",
               fontSize: 13,
-              background: mode === m ? (m === "today" ? "var(--exposed)" : "var(--cobalt-ink)") : "var(--paper-2)",
+              background: mode === m ? (m === "today" ? "var(--exposed-ink)" : "var(--cobalt-ink)") : "var(--paper-2)",
               color: mode === m ? (m === "today" ? "#fff" : "var(--signal)") : "var(--cobalt-ink)",
             }}
           >

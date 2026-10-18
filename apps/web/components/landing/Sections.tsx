@@ -173,10 +173,10 @@ export function BuiltOnArkiv() {
     ["Lifetime Extension", "The dispatcher's login extends the circle lease.", "A network badge; a silent network vanishes."],
     ["Creation flags", "readonly on every sealed record; no permissionless extension, on purpose.", "Only the dispatcher sets lifetimes."],
     ["Attributes vs payload", "Six or fewer public attributes; the zone is a rotating blind tag; content is sealed.", "The stranger view shows nothing personal."],
-    ["Queries", "Compound predicates, $creator OR-lists, NOT for forgeries, createdBy, cursor pagination pinned with atBlock.", "Board, Ignored panel, audit."],
+    ["Queries", "Compound predicates, $creator OR-lists, NOT for forgeries, createdBy() for the circle anchor, cursor pagination pinned with atBlock.", "Board, Ignored panel, audit."],
     ["$creator", "Trust for rides and assignments.", "Ignored: not written by a trusted dispatcher."],
     ["WebSocket events", "watchEntityEvents plus block heads drive the live board and key death.", "The board updates and the key dies without refresh."],
-    ["Batch writes", "Assign plus close a previous ride, or circle plus first ride, in one transaction.", "One popup; both land or neither."],
+    ["Batch writes", "Assign one claim and close a previous ride in one transaction.", "One popup; both land or neither."],
     ["Historical queries (atBlock)", "The drill and the audit read the past on purpose.", "Drill rows."],
   ];
   return (

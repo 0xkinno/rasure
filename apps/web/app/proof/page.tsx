@@ -70,7 +70,7 @@ export default function Proof() {
             </table></div>
           )}
           {evidence && evidence.length > 0 && (
-            <ul>{evidence.map((e) => <li key={e.label} className="label">{e.label}: {e.tx ? <a href={txUrl(e.tx)}>{e.tx}</a> : null} {e.key}</li>)}</ul>
+            <ul>{evidence.map((e, i) => <li key={`${e.label}-${i}`} className="label">{e.label}: {e.tx ? <a href={txUrl(e.tx)}>{e.tx}</a> : null} {e.key}</li>)}</ul>
           )}
         </section>
 

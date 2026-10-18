@@ -56,9 +56,7 @@ export function isRetentionError(e: unknown): boolean {
 export interface ArkivReader {
   getBlockNumber(opts?: { cacheTime?: number }): Promise<bigint>;
   select(sel: Record<string, true>): {
-    where(e: Expression): {
-      atBlock(b: bigint): { limit(n: number): { fetch(): Promise<PageLike> } };
-    };
+    where(e: Expression): any;
   };
 }
 interface PageLike {
@@ -94,11 +92,16 @@ export async function fetchAll(
   c: ArkivReader,
   sel: Record<string, true>,
   where: Expression,
-  opts: { atBlock?: bigint; pageSize?: number; maxPages?: number } = {},
+  opts: { atBlock?: bigint; pageSize?: number; maxPages?: number; createdBy?: string } = {},
 ): Promise<{ atBlock: bigint; entities: any[]; pages: number }> {
   const head = opts.atBlock ?? (await guarded(() => c.getBlockNumber({ cacheTime: 0 })));
   const maxPages = opts.maxPages ?? 50;
-  let page = await guarded(() => c.select(sel).where(where).atBlock(head).limit(opts.pageSize ?? 100).fetch());
+  const build = () => {
+    let b = c.select(sel).where(where);
+    if (opts.createdBy) b = b.createdBy(opts.createdBy as `0x${string}`); // SDK createdBy(): immutable $creator filter
+    return b.atBlock(head).limit(opts.pageSize ?? 100).fetch() as Promise<PageLike>;
+  };
+  let page = await guarded(build);
   const entities = [...page.entities];
   let pages = 1;
   while (page.hasNextPage()) {

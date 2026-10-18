@@ -55,3 +55,19 @@ mkdirSync(resolve(ROOT, "docs"), { recursive: true });
 writeFileSync(resolve(ROOT, "docs/FACTS.json"), text);
 copyFileSync(resolve(ROOT, "docs/FACTS.json"), resolve(ROOT, "apps/web/public/facts.json"));
 console.log(text);
+
+// Fill the "Measured" block of README.md from the same facts (never typed by hand).
+const f = facts as any;
+const lines: string[] = [];
+if (f.d1) lines.push(`- D1: expired entity absent from live state, payload recovered from calldata byte for byte: ${f.d1.recoveredByteForByte} (tx \`${f.d1.txHash}\`).`);
+if (f.d2) lines.push(`- D2: node answered history down to block 1 (${Math.round(f.d2.retentionHours)} hours of history); payload returned at the last live block: ${f.d2.payloadReturnedAfterExpiry}.`);
+if (f.drill) for (const [k, v] of Object.entries(f.drill as Record<string, { exposed: number; total: number }>)) lines.push(`- Seizure drill, ${k}: ${v.exposed} of ${v.total} records exposed.`);
+if (f.errorDirections) lines.push(`- Error directions: attacker opened ${f.errorDirections.attackerOpenedPast} past records; legitimate member refused ${f.errorDirections.memberRefused} of ${f.errorDirections.liveRecords} live records.`);
+if (f.leakAudit) lines.push(`- Leak audit: ${f.leakAudit.entities} entities, at most ${f.leakAudit.maxPublicAttributes} public attributes, ${f.leakAudit.plaintextTx} plaintext creation transactions, pass: ${f.leakAudit.pass}.`);
+if (f.wild) lines.push(`- Wild-set expiry audit (aggregate): ${f.wild.sampled} expired public entities sampled at block ${f.wild.pastBlock}; ${f.wild.stillReturnPayload} still return a payload; ${f.wild.readableText} parse as readable text or JSON.`);
+if (f.cost) lines.push(`- Cost: about ${f.cost.gasPerRide} gas and ${f.cost.glmPerRide} GLM per ride.`);
+const rp = resolve(ROOT, "README.md");
+if (existsSync(rp) && lines.length) {
+  const r = readFileSync(rp, "utf8");
+  writeFileSync(rp, r.replace(/<!-- facts:start -->[\s\S]*?<!-- facts:end -->/, `<!-- facts:start -->\n${lines.join("\n")}\n<!-- facts:end -->`));
+}
