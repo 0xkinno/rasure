@@ -3,8 +3,8 @@
     "role": "dispatcher",
     "address": "0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771",
     "note": "Creates `circle`, `ride`, `assign`, `closeout`, `rekey`, `handover` entities; the night dispatcher",
-    "transactions": 86,
-    "firstTx": "0x01c751d8e33a387310ff509d3968bb6e4872c2fafc645395c4bc0c7b86364517"
+    "transactions": 183,
+    "firstTx": "0x14f06f638739b964ad8d42f9049a4dae413188ad2beb8b25ecc1d9c6716f52bc"
   },
   {
     "role": "volunteerA",

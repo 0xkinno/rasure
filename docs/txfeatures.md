@@ -13,7 +13,7 @@
 | `changeOwnership` (shift handover) | [0xd66625e0ce...](https://tiramisu.explorer.arkiv.network/tx/0xd66625e0ce69dd05ad39a112ad09cf886897f8a6d353d6200a3fa7450739971d) | The circle anchor moves to the morning dispatcher with a sealed handover record (rule I9). |
 | `$creator` and `$owner` (rule I9) | [0x8af057ced6...](https://tiramisu.explorer.arkiv.network/tx/0x8af057ced6f213d013a696c04044c908afe531e78dfd55a1baf33a3411617982) | A ride by the previous holder after the handover: on chain, and ignored by the board. |
 | `permissionlessExtension` (tally) | [0x6359aae7de...](https://tiramisu.explorer.arkiv.network/tx/0x6359aae7de622702a7bbb86e13d143784f34913786e5930aad10e60ff7911f24) | An auditor wallet that does not own the tally extends it; the same wallet is refused on a ride. |
-| WebSocket entity events | read-only | `watchEntityEvents` observed 34 EntityDeleted and 1 OwnershipTransferred events during the feature run. |
+| WebSocket entity events | read-only | `watchEntityEvents` observed 34 EntityDeleted and 1 OwnershipTransferred events network-wide while the feature run executed, including its own cancel, withdraw and handover. |
 | Historical queries (`atBlock`) | read-only | Reads at blocks 739910, 739911, 739939 returned the entity; at the expiry block and after it did not (read-only, no transaction). |
 | `$expiresAt` range query | read-only | Q13 found 3 rides dying within 300 blocks (read-only). |
 | Arkiv MCP (outside the product) | read-only | The Arkiv MCP confirmed 34 of 34 transactions and agreed with our reader on 33 of 34 entities. |

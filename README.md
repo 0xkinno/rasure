@@ -4,23 +4,20 @@
 
 **The dispatch board that forgets on schedule.**
 
-[![Live](https://img.shields.io/badge/live-rasure-0a2fb3)](LIVE_URL) [![CI](https://github.com/0xkinno/rasure/actions/workflows/ci.yml/badge.svg)](https://github.com/0xkinno/rasure/actions/workflows/ci.yml) [![MIT](https://img.shields.io/badge/license-MIT-d7f25a)](LICENSE) [![Arkiv Tiramisu](https://img.shields.io/badge/Arkiv-Tiramisu%207738577-0b1a5e)](https://tiramisu.explorer.arkiv.network) [![SDK](https://img.shields.io/badge/%40arkiv--network%2Fsdk-0.8.1-3a4a60)](https://www.npmjs.com/package/@arkiv-network/sdk)
+[![Live](https://img.shields.io/badge/live-rasure-0a2fb3)](https://rasure.vercel.app) [![CI](https://github.com/0xkinno/rasure/actions/workflows/ci.yml/badge.svg)](https://github.com/0xkinno/rasure/actions/workflows/ci.yml) [![MIT](https://img.shields.io/badge/license-MIT-d7f25a)](LICENSE) [![Arkiv Tiramisu](https://img.shields.io/badge/Arkiv-Tiramisu%207738577-0b1a5e)](https://tiramisu.explorer.arkiv.network) [![SDK](https://img.shields.io/badge/%40arkiv--network%2Fsdk-0.8.1-3a4a60)](https://www.npmjs.com/package/@arkiv-network/sdk)
 
 Rasure is a ride board for volunteers who drive survivors of domestic violence to safety. It truly forgets: a phone taken tonight cannot read last night's pickups, even by someone holding the whole chain.
 
-<!-- headline:start -->
-On Tiramisu, **294 of 300** public entities that had expired still returned their full payload from history. An expired record is gone from the board. It is not gone from the chain.
-<!-- headline:end -->
+On Tiramisu, **294 of 300** public entities that have since expired returned their full payload when read from history. An expired record is gone from the board. It is not gone from the chain.
 
 A night dispatcher posts pickups for volunteer drivers. Each pickup is sealed under a key that every phone erases at the same block where Arkiv expires the record. We found that on Arkiv an expired entity's payload stays in its creation transaction, so expiry hides a record and does not forget it. Rasure binds Entity Expiration to key destruction to close that gap.
 
 | | |
 |---|---|
-| **Live app** | [LIVE_URL](LIVE_URL) (no wallet needed to explore) |
-| **For judges** | [`/judge`](LIVE_URL/judge) and [JUDGE.md](JUDGE.md): 60 seconds, 3 minutes, 10 minutes |
-| **Seizure Drill** | [`/drill`](LIVE_URL/drill): attack the history yourself |
-| **Demo video** | [VIDEO_URL](VIDEO_URL) (under 3 minutes) |
-| **Read it without us** | [`reader.html`](LIVE_URL/reader.html), [`examples/raw-drill.mjs`](examples/raw-drill.mjs) (no SDK), the [CLI](scripts/rasure.ts), a `curl` |
+| **Live app** | [https://rasure.vercel.app](https://rasure.vercel.app) (no wallet needed to explore) |
+| **For judges** | [`/judge`](https://rasure.vercel.app/judge) and [JUDGE.md](JUDGE.md): 60 seconds, 3 minutes, 10 minutes |
+| **Seizure Drill** | [`/drill`](https://rasure.vercel.app/drill): attack the history yourself |
+| **Read it without us** | [`reader.html`](https://rasure.vercel.app/reader.html), [`examples/raw-drill.mjs`](examples/raw-drill.mjs) (no SDK), the [CLI](scripts/rasure.ts), a `curl` |
 | **Data contract** | [arkiv/schema.md](arkiv/schema.md) |
 | **Friction report** | [arkiv/friction.md](arkiv/friction.md) |
 | **Evidence** | [arkiv/evidence.md](arkiv/evidence.md) · [arkiv/wallets.md](arkiv/wallets.md) · [docs/FACTS.json](docs/FACTS.json) |
@@ -63,11 +60,9 @@ The law already knows a shared database is dangerous for survivors. US victim-se
 2. **History queries return expired entities.** `atBlock` reads returned the entity and its payload up to its last live block. The node answered a read at block 1.
 3. **It is true across the network, not just for us.** We sampled public entities from every app on Tiramisu that were alive at a past block and have since expired. Counts only: no content, creator or app is printed.
 
-<!-- wild:start -->
-| Expired how long ago | Sampled | Still returned payload | Readable as plain text or JSON |
+| Read from history this long ago | Sampled | Returned their payload | Readable as plain text or JSON |
 |---|---|---|---|
-| about 20 minutes | 300 | 294 | 12 |
-<!-- wild:end -->
+| about 20 minutes (partial run) | 300 | 294 | 12 |
 
 Arkiv's own agent guidance warns builders not to promise erasure. Rasure is the first app we know of that acts on it.
 
@@ -95,10 +90,10 @@ In Meera's words:
 
 No wallet needed for steps 1 to 4.
 
-1. **[`/drill`](LIVE_URL/drill)**, press *Run the seizure*. Three boards hold the same rides; one phone is seized; the full history is replayed from Arkiv. Watch which rows open.
-2. **[`/explorer-view`](LIVE_URL/explorer-view)**: pick a live ride. You see what any stranger sees: six attributes, ciphertext, the decoded creation transaction. Open the same entity in the Arkiv Data Explorer.
-3. **[`/proof`](LIVE_URL/proof)**: copy a `curl`, run it in a terminal, get the same answer without our site.
-4. **[`/board`](LIVE_URL/board)**: the demo network is live. Watch the key-death strip count down; at zero the oldest cards scrape away.
+1. **[`/drill`](https://rasure.vercel.app/drill)**, press *Run the seizure*. Three boards hold the same rides; one phone is seized; the full history is replayed from Arkiv. Watch which rows open.
+2. **[`/explorer-view`](https://rasure.vercel.app/explorer-view)**: pick a live ride. You see what any stranger sees: six attributes, ciphertext, the decoded creation transaction. Open the same entity in the Arkiv Data Explorer.
+3. **[`/proof`](https://rasure.vercel.app/proof)**: copy a `curl`, run it in a terminal, get the same answer without our site.
+4. **[`/board`](https://rasure.vercel.app/board)**: the demo network is live. Watch the key-death strip count down; at zero the oldest cards scrape away.
 5. **With a wallet:** open a network, post a ride (one popup, a real Tiramisu transaction), claim it from a second wallet, assign it, then *Post as a stranger* and see it ignored by `$creator`.
 
 ## How it works
@@ -230,24 +225,31 @@ Every feature below changes something a dispatcher, a driver or a stranger sees.
 
 ### One transaction per feature
 
-<!-- txfeatures:start -->
-Generated by `scripts/evidence.ts` from `proof/results`.
-<!-- txfeatures:end -->
+| Arkiv feature | Transaction | What it shows |
+|---|---|---|
+| Entity Expiration per type | [0xf237ec8751...](https://tiramisu.explorer.arkiv.network/tx/0xf237ec87519f1c631213045646c4cd943120135748de461507dab51029e15b57) | A sealed ride whose expiry block equals the key-death block (invariant I1). |
+| Creation flags (`readonly`) | [0xf237ec8751...](https://tiramisu.explorer.arkiv.network/tx/0xf237ec87519f1c631213045646c4cd943120135748de461507dab51029e15b57) | The same ride is created `readonly` with no permissionless extension. |
+| Attributes vs payload | [0xf237ec8751...](https://tiramisu.explorer.arkiv.network/tx/0xf237ec87519f1c631213045646c4cd943120135748de461507dab51029e15b57) | Six public attributes and a padded ciphertext payload; open it in the stranger view. |
+| Direct JSON-RPC and calldata | [0xf3f506c014...](https://tiramisu.explorer.arkiv.network/tx/0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6) | An expired probe whose payload is recovered from this transaction's input. |
+| Lifetime Extension | [0x84e2a6bc61...](https://tiramisu.explorer.arkiv.network/tx/0x84e2a6bc616e552f1ef073d31ea7c5dbe6b34eae8c3ce82c6a0158a0bd315d52) | The circle lease moved to a later block, read back from the node. |
+| Batch writes (`executeBatch`) | [0x39d6f8d2e3...](https://tiramisu.explorer.arkiv.network/tx/0x39d6f8d2e3717e59ffc557560062e81986d7c5078c5130793003fa957db98dba) | Assign and closeout created in one transaction: both land or neither. |
+| Batch: circle plus first ride | [0x31c606980e...](https://tiramisu.explorer.arkiv.network/tx/0x31c606980e3b71a13d97708d4308aa579d3209e82c132a37ac00191ed8d4cbe8) | "Open tonight's network": the circle and the first ride in one transaction. |
+| `deleteEntity` (cancel a ride) | [0x5703329028...](https://tiramisu.explorer.arkiv.network/tx/0x5703329028930066d4f3b6fc264f193f2ca9b11343ac13d68d8bb5dbc9ced6c7) | The ride leaves live state at once; its ciphertext stays in the creation transaction until the key dies. |
+| `deleteEntity` (withdraw a claim) | [0x05f7cd5f9f...](https://tiramisu.explorer.arkiv.network/tx/0x05f7cd5f9f4bc3b4296b47e8298206c55208d3395883843c4c8b00b17ce3f9b3) | A volunteer removes their own claim. |
+| `patchEntity` (circle `gen`) | [0x8cc250e691...](https://tiramisu.explorer.arkiv.network/tx/0x8cc250e69125c6dd1570db23361c435fa57579f4865dd31af93a0648c1e476ea) | A rekey entity is created and the circle's public `gen` patched in one transaction. |
+| `changeOwnership` (shift handover) | [0xd66625e0ce...](https://tiramisu.explorer.arkiv.network/tx/0xd66625e0ce69dd05ad39a112ad09cf886897f8a6d353d6200a3fa7450739971d) | The circle anchor moves to the morning dispatcher with a sealed handover record (rule I9). |
+| `$creator` and `$owner` (rule I9) | [0x8af057ced6...](https://tiramisu.explorer.arkiv.network/tx/0x8af057ced6f213d013a696c04044c908afe531e78dfd55a1baf33a3411617982) | A ride by the previous holder after the handover: on chain, and ignored by the board. |
+| `permissionlessExtension` (tally) | [0x6359aae7de...](https://tiramisu.explorer.arkiv.network/tx/0x6359aae7de622702a7bbb86e13d143784f34913786e5930aad10e60ff7911f24) | An auditor wallet that does not own the tally extends it; the same wallet is refused on a ride. |
+| WebSocket entity events | read-only | `watchEntityEvents` observed 34 EntityDeleted and 1 OwnershipTransferred events network-wide while the feature run executed, including its own cancel, withdraw and handover. |
+| Historical queries (`atBlock`) | read-only | Reads at blocks 739910, 739911, 739939 returned the entity; at the expiry block and after it did not (read-only, no transaction). |
+| `$expiresAt` range query | read-only | Q13 found 3 rides dying within 300 blocks (read-only). |
+| Arkiv MCP (outside the product) | read-only | The Arkiv MCP confirmed 34 of 34 transactions and agreed with our reader on 33 of 34 entities. |
 
 ## Measured
 
-<!-- facts:start -->
 - D1: expired entity absent from live state, payload recovered from calldata byte for byte: true (tx `0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6`).
 - D2: node answered a history query at block 1; payload returned at the last live block: true.
-- Seizure drill, plaintext: 12 of 12 records exposed.
-- Seizure drill, static_key: 12 of 12 records exposed.
-- Seizure drill, ratchet: 2 of 12 records exposed.
-- Seizure drill, rekey: 0 of 2 records exposed.
-- Error directions: attacker opened 0 past records; legitimate member refused 0 of 4 live records.
-- Leak audit: 60 entities, at most 6 public attributes, 0 plaintext creation transactions, pass: true.
-- Wild-set audit (aggregate, partial run): 300 public entities that were live at block 738949 and have since expired were read at that block; 294 returned a payload; 12 parse as readable text or JSON.
 - Cost: about 115072 gas and 0.00011507 GLM per ride.
-<!-- facts:end -->
 
 **Three boards, one seized phone.** The same rides were written three ways on Tiramisu and attacked with what a seized phone holds plus the full history. Plaintext and a single key leak everything. Rasure leaks only the current and grace epoch, by design, and nothing after a rekey.
 
@@ -305,7 +307,7 @@ Public metadata remains visible: wallet addresses, timing to the block, rides pe
 
 ## Disclosures
 
-Pre-existing work: none. Baseline commit: [`BASELINE_SHA`](https://github.com/0xkinno/rasure/commit/BASELINE_SHA), the first commit, 18 October 2026. AI assistance: Claude was used as a coding assistant. Every place, ride and wallet is synthetic test data; the persona is described in [MOMENT.md](MOMENT.md).
+Pre-existing work: none. Baseline commit: [`4b29fc20d0bd6892ddf8b94c1e6471d985dab18a`](https://github.com/0xkinno/rasure/commit/4b29fc20d0bd6892ddf8b94c1e6471d985dab18a), the first commit, 18 October 2026. AI assistance: Claude was used as a coding assistant. Every place, ride and wallet is synthetic test data; the persona is described in [MOMENT.md](MOMENT.md).
 
 ## Run it locally
 

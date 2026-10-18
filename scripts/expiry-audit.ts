@@ -93,4 +93,4 @@ const out = {
   note: "Counts only. No content, keys, creators or project names are printed or stored.",
 };
 console.log(JSON.stringify(out, (_k, v) => (typeof v === "bigint" ? v.toString() : v), 2));
-console.log("wrote", writeResult(`wild-${today()}.json`, out));
+console.log("wrote", writeResult(`wild-${today()}-${back}.json`, out));

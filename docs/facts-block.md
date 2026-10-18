@@ -1,0 +1,3 @@
+- D1: expired entity absent from live state, payload recovered from calldata byte for byte: true (tx `0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6`).
+- D2: node answered a history query at block 1; payload returned at the last live block: true.
+- Cost: about 115072 gas and 0.00011507 GLM per ride.
