@@ -14,7 +14,7 @@ const created = await w.createEntity({
   attributes: { project: "rasure/probe" },
   payload,
   contentType: "text/plain",
-  expires: ExpirationTime.fromBlocks(30n),
+  expires: ExpirationTime.fromBlocks(30),
 });
 const receipt = await c.getTransactionReceipt({ hash: created.txHash });
 console.log("tx", created.txHash, "block", receipt.blockNumber, "expiresAt", created.expiresAt);

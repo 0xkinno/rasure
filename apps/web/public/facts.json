@@ -1,0 +1,14 @@
+{
+  "generated": true,
+  "generatedAt": "2026-10-18T13:18:18.351Z",
+  "sources": {
+    "wild": "wild-2026-10-18.json"
+  },
+  "wild": {
+    "sampled": 300,
+    "stillReturnPayload": 294,
+    "readableText": 12,
+    "pastBlock": "738949",
+    "head": "739549"
+  }
+}
