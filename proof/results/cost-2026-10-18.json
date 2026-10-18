@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-18",
+  "cost": {
+    "gasPerRide": 115072,
+    "glmPerRide": "0.00011507",
+    "gasPerBatch": 230144,
+    "glmPerBatch": "0.00023014",
+    "gasPerRekey": 167008,
+    "glmPerRekey": "0.00016701"
+  },
+  "keyDeathTiming": {
+    "checked": 13,
+    "i1Pass": 13,
+    "failures": []
+  }
+}

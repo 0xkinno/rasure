@@ -33,9 +33,11 @@ function Copyable({ text, label }: { text: string; label: string }) {
 export default function Proof() {
   const facts = useFacts();
   const [wallets, setWallets] = useState<{ role: string; address: string; note: string }[] | null>(null);
+  const [mcp, setMcp] = useState<any>(null);
   const [evidence, setEvidence] = useState<{ label: string; tx?: string; key?: string }[] | null>(null);
   useEffect(() => {
     fetch("/proof/wallets.json").then((r) => r.json()).then(setWallets).catch(() => setWallets([]));
+    fetch("/proof/mcp.json").then((r) => (r.ok ? r.json() : null)).then(setMcp).catch(() => setMcp(null));
     fetch("/proof/evidence.json").then((r) => (r.ok ? r.json() : [])).then(setEvidence).catch(() => setEvidence([]));
   }, []);
   const circle = DEMO_CIRCLE || "<circle id>";
@@ -74,6 +76,16 @@ export default function Proof() {
             <ul>{evidence.map((e, i) => <li key={`${e.label}-${i}`} className="label">{e.label}: {e.tx ? <a href={txUrl(e.tx)}>{e.tx}</a> : null} {e.key}</li>)}</ul>
           )}
         </section>
+
+        {mcp && (
+          <section className="sec" style={{ paddingTop: 24, paddingBottom: 24 }}>
+            <h2>Confirmed by Arkiv MCP</h2>
+            <p style={{ color: "var(--ink-2)" }}>
+              The Arkiv MCP server ({mcp.endpoint}) independently observed {mcp.transactionsReportedSuccess} of {mcp.transactionsChecked} demo transactions as successful receipts and agreed with our reader on {mcp.agreementWithOurReader} of {mcp.entitiesChecked} entities
+              ({mcp.entitiesLiveAccordingToMcp} live per MCP, {mcp.entitiesLiveAccordingToReader} live per our reader). It returns creation and expiry metadata and creation flags only: no attributes, creator, owner or payload.
+            </p>
+          </section>
+        )}
 
         <section className="sec" style={{ paddingTop: 24, paddingBottom: 24 }}>
           <h2>Invariants</h2>

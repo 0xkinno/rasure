@@ -51,7 +51,8 @@ if (wild) {
   facts.wild = { sampled: x.sampled, stillReturnPayload: x.stillReturnPayload, readableText: x.readableText, pastBlock: x.pastBlock, head: x.head };
   src.wild = wild.file;
 }
-if (seed?.data.cost) { facts.cost = seed.data.cost; src.seed = seed.file; }
+const costR = newest("cost-");
+if (costR) { facts.cost = costR.data.cost; facts.keyDeathTiming = costR.data.keyDeathTiming; src.cost = costR.file; } else if (seed?.data.cost) { facts.cost = seed.data.cost; src.seed = seed.file; }
 
 if (wildAll.length) facts.wildWindows = wildAll.map((w) => ({ windowBlocks: w.data.windowBlocks, approxMinutes: Math.round((Number(w.data.windowBlocks) * 2) / 60), sampled: w.data.sampled, stillReturnPayload: w.data.stillReturnPayload, readableText: w.data.readableText, partial: !!w.data.error }));
 if (wildCalldata) { facts.wildCalldata = { sampled: wildCalldata.data.sampled, creationTxFound: wildCalldata.data.creationTxFound, payloadRecoveredFromCalldata: wildCalldata.data.payloadRecovered, payloadMatchesHistoryRead: wildCalldata.data.matchesHistory }; src.wildCalldata = wildCalldata.file; }

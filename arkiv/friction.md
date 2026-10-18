@@ -75,6 +75,26 @@ Every item below was hit or measured by us. Items that depend on a funded write 
 - **Reproduce:** `packages/core/test/queries-writes.test.ts`, test "unwraps typed attributes"; `apps/web/public/reader.html` for the raw shape.
 - **What would fix it:** document both shapes side by side on the query page.
 
+## 10. The Arkiv MCP `verify_entity` returns metadata only
+
+- **Surface:** `https://mcp.arkiv.network/devfolio`, tools `verify_entity` and `verify_tx`.
+- **Expected:** enough fields to compare with a reader: expiry, owner, creator.
+- **Actual:** `verify_entity` returns `createdAt`, `updatedAt`, `expiresAt` and creation flags; it excludes attributes, creator, owner and payload by design. `verify_tx` returns the receipt status and log count. An absent entity cannot be told apart from an expired or deleted one (the tool says so).
+- **Reproduce:** `node scripts/mcp-verify.mjs`; output in `proof/results/mcp-<date>.json`.
+- **What would fix it:** optionally return `creator` and `owner`, which are public chain data, so an observer can check trust rules.
+
+## 11. `check_schema` recognises durations and a narrow query shape
+
+- **Surface:** MCP `check_schema` shallow checks.
+- **Expected:** a block-based Entity Expiration formula such as `keyDeathBlock(epoch)` counts as an expiry description.
+- **Actual:** it reported a blocker for every type whose expiry was written as a block formula, and for queries written with `select({...})` and `and([...])`. It accepted a human duration ("about 20 minutes") and `client.select().where(eq('project', 'x')).fetch()`.
+- **Reproduce:** `scripts/mcp-verify.mjs` runs it on `arkiv/schema.md`; the file now passes with 0 blockers.
+- **What would fix it:** accept block formulas and the full select form, or list the accepted patterns in the docs.
+
+## 12. A hosting platform blocked Next.js 15.1.6 as vulnerable
+
+- **Surface:** deployment, not Arkiv. Vercel refused to promote a build on Next.js 15.1.6; 15.5.28 deployed. Noted because the SDK quickstart pins older tooling.
+
 ## Paths that worked, tested with the same rigour
 
 | Path | Expected | Result |

@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from "node:fs";
 
 const SKIP = new Set(["RULES_EXTRACT.md", "scripts/check-copy.mjs", "package-lock.json"]);
 // Files that legitimately mention the placeholder tokens (templates, task lists, workflow syntax).
-const TOKEN_SKIP = (f) => f.startsWith(".github/") || f.startsWith("docs/templates/") || f === "TASK.md" || f === "PROGRESS.md";
+const TOKEN_SKIP = (f) => f.startsWith(".github/") || f.startsWith("docs/templates/") || f === "TASK.md" || f === "PROGRESS.md" || f === "scripts/readme.ts";
 const SKIP_EXT = /\.(png|jpg|jpeg|webp|gif|ico|mp4|woff2?|zip|pdf)$/i;
 const HYPE = ["revolutionary", "seamless", "cutting-edge", "world-class", "military-grade", "zero-trust", "unbreakable"];
 const banned = existsSync("reference/banned.txt")
