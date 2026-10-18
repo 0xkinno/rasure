@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advance, keyDeathBlock, newChain, renderedPredicates, rideParams, claimParams, assertMargin, EpochTooLateError, q1OpenBoard, q4Forged, render, circleParams, detectRateLimit, RateLimitedError, extendCircle, CIRCLE_LEASE_BLOCKS } from "../src";
+import { visibleRecords, q2Zone, q3bRelated, advance, keyDeathBlock, newChain, renderedPredicates, rideParams, claimParams, assertMargin, EpochTooLateError, q1OpenBoard, q4Forged, render, circleParams, detectRateLimit, RateLimitedError, extendCircle, CIRCLE_LEASE_BLOCKS } from "../src";
 
 const D1 = "0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771";
 const D2 = "0x31740a981E6c793907b51B877e2FBe518137c173";
@@ -26,7 +26,7 @@ describe("queries render exact predicates", () => {
   });
   it("renders all eight", () => {
     const p = renderedPredicates("abc", 5n, [D1], "t", "0x" + "11".repeat(32));
-    expect(Object.keys(p)).toEqual(["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8"]);
+    expect(Object.keys(p)).toEqual(["Q1", "Q2", "Q3b", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8"]);
   });
 });
 
@@ -69,4 +69,28 @@ describe("rate limit detection", () => {
     expect(r?.retryAfterSeconds).toBe(42);
   });
   it("ignores other errors", () => expect(detectRateLimit(new Error("boom"))).toBeNull());
+});
+
+describe("board visibility and zone query", () => {
+  it("board hides records whose key is dead", () => {
+    const recs = [
+      { attributes: { epoch: 3n }, expiresAt: 900n },
+      { attributes: { epoch: 1n }, expiresAt: 400n },
+    ];
+    const out = visibleRecords(recs, new Set([2n, 3n]), 500n);
+    expect(out).toHaveLength(1);
+    expect(out[0]?.attributes.epoch).toBe(3n);
+  });
+  it("a record past its expiry is hidden even with a key", () => {
+    expect(visibleRecords([{ attributes: { epoch: 3n }, expiresAt: 100n }], new Set([3n]), 100n)).toHaveLength(0);
+  });
+  it("Q2 carries one (epoch, tag) pair per epoch", () => {
+    const s = render(q2Zone("abc", [D1], [{ epoch: 5n, tag: "aa" }, { epoch: 4n, tag: "bb" }]));
+    expect(s).toContain("tag = str('aa')");
+    expect(s).toContain("tag = str('bb')");
+  });
+  it("Q3b covers claim, assign, closeout", () => {
+    const s = render(q3bRelated("abc", 5n));
+    for (const t of ["claim", "assign", "closeout"]) expect(s).toContain(`type = str('${t}')`);
+  });
 });

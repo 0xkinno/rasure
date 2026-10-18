@@ -9,7 +9,7 @@
 //
 // The ABI strings below are copied from SDK 0.8.1. If the SDK version changes, re-check them.
 
-import { decodeAbiParameters, decodeFunctionData, hexToString, parseAbi, parseAbiParameters, type Hex } from "viem";
+import { decodeAbiParameters, decodeFunctionData, hexToBytes, hexToString, parseAbi, parseAbiParameters, type Hex } from "viem";
 
 export const ARKIV_ADDRESS = "0x4400000000000000000000000000000000000044" as const;
 export const EXECUTE_ABI = parseAbi([
@@ -46,7 +46,7 @@ export function recoverCreates(input: Hex): RecoveredCreate[] {
     for (const a of c.attributes) {
       const name = nameOf(a.name);
       attributes[name] = a.value;
-      if (name === "$payload") payload = Uint8Array.from(Buffer.from(a.value.slice(2), "hex"));
+      if (name === "$payload") payload = hexToBytes(a.value);
     }
     out.push({ index, expiresAt: c.expiresAt, creationFlags: c.creationFlags, attributes, payload });
   });

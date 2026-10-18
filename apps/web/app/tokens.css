@@ -1,0 +1,25 @@
+:root {
+  --cobalt: #0a2fb3;
+  --cobalt-deep: #071f7a;
+  --cobalt-ink: #0b1a5e;
+  --paper: #f4f7fc;
+  --paper-2: #e9eff8;
+  --card: #fbfcfe;
+  --rule: #cbd6ea;
+  --ink: #0b1626;
+  --ink-2: #3a4a60;
+  --on-cobalt: #eaf0ff;
+  --on-cobalt-2: #afc0f2;
+  --signal: #d7f25a;
+  --signal-glow: rgba(215, 242, 90, 0.45);
+  --exposed: #f0533a;
+  --exposed-ink: #a3230f;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-card: 0 1px 0 rgba(11, 22, 38, 0.05), 0 18px 44px -22px rgba(7, 31, 122, 0.35);
+  --hard-shadow: 4px 4px 0 var(--cobalt-ink);
+  --font-story: var(--font-instrument), Georgia, serif;
+  --font-chain: var(--font-geist-mono), ui-monospace, monospace;
+  --font-read: var(--font-geist), system-ui, sans-serif;
+}
+body { background: var(--paper); color: var(--ink); }

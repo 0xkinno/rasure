@@ -40,3 +40,16 @@ export function auditAttributes(e: ChainEntity): string[] {
   const allowed = new Set<string>(PUBLIC_ATTRIBUTE_ALLOWLIST);
   return Object.keys(e.attributes).filter((n) => !n.startsWith("$") && !allowed.has(n));
 }
+
+/**
+ * The board shows a record only if this device still holds the key for its epoch and the record
+ * has not expired. A record whose key every phone has destroyed is hidden, never shown as junk.
+ * Guarded by the test "board hides records whose key is dead".
+ */
+export function visibleRecords<T extends { attributes: Record<string, string | bigint | number>; expiresAt: bigint }>(
+  records: T[],
+  liveEpochs: ReadonlySet<bigint>,
+  head: bigint,
+): T[] {
+  return records.filter((r) => liveEpochs.has(BigInt(r.attributes.epoch as string | bigint | number)) && r.expiresAt > head);
+}

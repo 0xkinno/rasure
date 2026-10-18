@@ -28,9 +28,24 @@ export function q1OpenBoard(circle: string, epoch: bigint, dispatchers: readonly
   return and([...base(circle, TYPES.ride), epochs(epoch), creatorsOf(dispatchers)]);
 }
 
-/** Q2 board filtered by zone: Q1 plus the blind tag derived under this epoch's key. */
-export function q2Zone(circle: string, epoch: bigint, dispatchers: readonly string[], tag: string): Expression {
-  return and([...base(circle, TYPES.ride), epochs(epoch), creatorsOf(dispatchers), eq("tag", str(tag))]);
+/**
+ * Q2 board filtered by zone: Q1 plus the blind tag. The tag is derived under each epoch's index
+ * key, so the predicate carries one (epoch, tag) pair per epoch on screen.
+ */
+export function q2Zone(circle: string, dispatchers: readonly string[], pairs: readonly { epoch: bigint; tag: string }[]): Expression {
+  if (pairs.length === 0) throw new Error("at least one (epoch, tag) pair is required");
+  const perEpoch = pairs.map((p) => and([eq("epoch", u64(p.epoch)), eq("tag", str(p.tag))]));
+  return and([...base(circle, TYPES.ride), or(perEpoch), creatorsOf(dispatchers)]);
+}
+
+/** Q3b everything pointing at any ride of this epoch pair, one query for the whole board. */
+export function q3bRelated(circle: string, epoch: bigint): Expression {
+  return and([
+    eq("project", PROJECT),
+    eq("circle", circle),
+    or([eq("type", TYPES.claim), eq("type", TYPES.assign), eq("type", TYPES.closeout)]),
+    epochs(epoch),
+  ]);
 }
 
 /** Q3 everything that points at one ride (claims, assigns, closeouts). */
@@ -65,7 +80,8 @@ export const q8History = q7Audit;
 export function renderedPredicates(circle: string, epoch: bigint, dispatchers: readonly string[], tag: string, rideKey: string) {
   return {
     Q1: render(q1OpenBoard(circle, epoch, dispatchers)),
-    Q2: render(q2Zone(circle, epoch, dispatchers, tag)),
+    Q2: render(q2Zone(circle, dispatchers, [{ epoch, tag }, ...(epoch > 0n ? [{ epoch: epoch - 1n, tag }] : [])])),
+    Q3b: render(q3bRelated(circle, epoch)),
     Q3: render(q3PointingAt(circle, rideKey)),
     Q4: render(q4Forged(circle, dispatchers)),
     Q5: render(q5Claims(circle)),
