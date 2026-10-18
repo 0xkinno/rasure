@@ -1,0 +1,281 @@
+{
+  "generatedAt": "2026-10-18T14:25:17.449Z",
+  "circle": "46123014e78f511adb2fb383b4db365b",
+  "genesis": "740348",
+  "epochBlocks": "300",
+  "dispatcher": "0x0e02A09Fcdf1E2fe35F897Ab7A79b86B2a8B0771",
+  "records": [
+    {
+      "key": "0x75288b5fca6a3b608eb4ff70562f0251871e8c3c003caa2e5020821bc690cd7b",
+      "txHash": "0x14f06f638739b964ad8d42f9049a4dae413188ad2beb8b25ecc1d9c6716f52bc",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "0",
+      "type": "circle",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x0e5401af5c2ab1c768f0de736e6309ae64039ee38d077b3a59f7840181b2f734",
+      "txHash": "0xf237ec87519f1c631213045646c4cd943120135748de461507dab51029e15b57",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "0",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0xaf87b72c415df7cf3a28be02cb174487b1aa3a883653d888e42280f1cbaf0889",
+      "txHash": "0x1057684b3829706dd09dd117c6c39af93c1b86aad985eac6f86fffb36dbbdf73",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "0",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x3b67e982d90cd2654cdb4070101ef84c783e53059d3c59706b59b1be5e7c2886",
+      "txHash": "0x12a99931cd9d326d3d438dbbf016a9230637368223022da5f148b23a2ebe06fd",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "0",
+      "type": "claim",
+      "role": "volunteerA"
+    },
+    {
+      "key": "0xee67db55874128f175fcdb87536d5525d63738f71ad75757ae1a3bb483bc144a",
+      "txHash": "0xb53e32775219266f5cb3473e2644b4215182d9096aec5e138dd91c7ba6cf832e",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "0",
+      "type": "claim",
+      "role": "volunteerB"
+    },
+    {
+      "key": "0xca2104f077c9b39204cdcf95b0614f8bbb50dcec86326212d582fd5ee7cb3413",
+      "txHash": "0x518866ea0346d52286ea0d2f1ae886308d45187f12ac7da2738b36fb8f8df2be",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "0",
+      "type": "assign",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0xf52b45abfcc1973985644768f1a7ac47b4b9b11ca77116936211de9ecf6e9d8c",
+      "txHash": "0x3992dc5acd4a1baa5c914594264ea0537b3e2e3fa37fa510109c2e5814d3cd20",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "1",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x623d30a29661283ae718851e589bf3bb861697dd1cd1101d451a67bdb505e25c",
+      "txHash": "0x6e7c1f52a8e9ca21f399f5e3a6b9f09bc01e9163a1d54c28d701956037f61e4a",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "1",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x2896d84182ec979aa76dc10a6553c9c4f41b6c96e69e94bd1f2989fa3effe70f",
+      "txHash": "0x0c719087e8edc888141d8414b5b4aaa4c202f77bc3c0d2e86ca4bda3ddf2ab77",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "1",
+      "type": "claim",
+      "role": "volunteerA"
+    },
+    {
+      "key": "0x36b99d25fca0cc719c8620fcff53e5398caa7ec130b9befdd75773b4413f2160",
+      "txHash": "0x07a537b519e1fc6a3f7fef1b66103d9ccbd3582673c281be61952f6b1ee24669",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "1",
+      "type": "claim",
+      "role": "volunteerB"
+    },
+    {
+      "key": "0x2439233080be59aa95e7bc3feaa2dc5e274e0b53a37bfbb2a60ae5fdb1333de5",
+      "txHash": "0xbd678615d9c57aed80b6889e041b52acef0263ba641281672ac941dbacf87a08",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "1",
+      "type": "assign",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x83efb2a0e66abf1a43674856665d30d6a459699cdbc4949d286288d01812f163",
+      "txHash": "0xb2f9cc5bfb395d01b79249284ea3e9fb4a871b860027db8d1d2a5014df0417bc",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "2",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x9d88995d49cb60d29705ec8709cc3535365bc4096c77e843d0ff27a2b12275f4",
+      "txHash": "0x86933db952d0dc8fc0f6be8f850d796a3560f4b74d0111d80f258a9c87fa7bf6",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "2",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x38f46e390a428e7378e50475d2dc5ffbeae328aa8008a13e2a6e341a8e74a119",
+      "txHash": "0x976d82754b2d7a8b618b6fdde3adad752ba44c6321c95fa4417d27ed1ef91c47",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "2",
+      "type": "claim",
+      "role": "volunteerA"
+    },
+    {
+      "key": "0xa7f403324c92f555c35e9e968c27e0abca50f9e443e2eab7acac9e5102c9b264",
+      "txHash": "0xb39dbd73384055a8564b4e186fbfd78d59176dd8be3ece60b6fb39f98a601901",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "2",
+      "type": "claim",
+      "role": "volunteerB"
+    },
+    {
+      "key": "0xe28ba7c87b5a03125119195a44c933afd711e6d9994faaade84bc0aee5dcf839",
+      "txHash": "0x399fbfb6c79728b9c9dce01396a2c707d0eb124624a722f9ec0314d4a4ab1210",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "2",
+      "type": "assign",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0xf6afc91305fc9b4c422bc1aaeb810beaf96b73ff4dfc593575493775731bbfc3",
+      "txHash": "0x2ee6f9c9cff7beb79a2df7cfce220d0361d8728ef908990bfc15e1a955a37fa6",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "3",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0xb635b1f4242d0781417a3f24fd989eedc72b73bc1803269c2f34b4cff0e29c71",
+      "txHash": "0x166484e8dc6d091976ff4e6df485956f992e577e6a26d5b12c5cd8051560c15e",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "3",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0xd50e4e2495e281435ea787de8f88d22cbacd1a32428fd51fca6f0251e437f7ad",
+      "txHash": "0x1944b3c9eb48b571dfe082c6d6ec277749038ee328fb1912268bfa6d42b9ef39",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "3",
+      "type": "claim",
+      "role": "volunteerA"
+    },
+    {
+      "key": "0x8820e3f2577e4afe5d30a0600d922682d03e2135b519b09dd7e3382ebd7b88ac",
+      "txHash": "0x77ac1150118a5983eaf9f3ecd93f12aa029042defd256b08cfeca9dda09c71f8",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "3",
+      "type": "claim",
+      "role": "volunteerB"
+    },
+    {
+      "key": "0x1ab50615bcb0f2db0c2c34b3ed6d3a123a235070bbe5a0a86188cefed7d79711",
+      "txHash": "0xc549ccba718df1f8c442160d1c80b9f2ae5e34f29a7eaebd8152290d3ad565e2",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "3",
+      "type": "assign",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x31a974396a71c8dfee2ee3849cf07a912bc50b5c75c24a1f105e53c06ad0213e",
+      "txHash": "0x57f4192f58620cabeabd1e2c6a93284cd4640eaa1da1ec3382ee3f51d2103dd4",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "4",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x99a89d606361a34fad8fd508aad333a8551953c133f8f73b1fb1ed4a53321b68",
+      "txHash": "0x63578be270f4867653091f386902d7a86f5af71bf2e0f24adf8203d6ff4d879f",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "4",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0xfe05421d30a2708004faeb4b97c10176225e900e983f83b84834956732936573",
+      "txHash": "0xf13a4438296757d80ac5dfcb9bd3ffb513438d1951e73fb1d7dae341aa2e80b6",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "4",
+      "type": "claim",
+      "role": "volunteerA"
+    },
+    {
+      "key": "0x51b5aa331559a081c5455e20631a6c8532df1bed758b02f587c047544d26973e",
+      "txHash": "0xddd15c7aa58dfe7d9406a157f8545f740f215eebdef9754dd8069c45523157ec",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "4",
+      "type": "claim",
+      "role": "volunteerB"
+    },
+    {
+      "key": "0x4eaa9e7aec4ea44efecf27b07594a4bda1c55ea769f554d1ce26f5714bf30c0c",
+      "txHash": "0xedf3113b1dbf9188f1161e9b3c9291e728359000ef7d5ddd02de381069b0f3bd",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "4",
+      "type": "assign",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0xaf40d08427b92a3d4bce54c868a9fc197d07e7981ddf530817822b3f48f1816b",
+      "txHash": "0x640f21668900f14c613226e2df9494bfbccfe0ed64dae738441bbd83262e9021",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "5",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x976e4203a246c1adaf066cdc0e82aea765a0de84f166b024d4c735e69467f7a2",
+      "txHash": "0xe93f05dab51351c9735de3b6a55aaa2a11c4e43916b812b63f0012d6b43b7fdc",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "5",
+      "type": "ride",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0xf6ef9cbc63b6ce1d24e81057e404657681e3d91cec331d057f024f1bc2f7b812",
+      "txHash": "0xcaf4fad8075edfb730abace6b6f2adf2eb40141a016c0f2fbe954985fae86b69",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "5",
+      "type": "claim",
+      "role": "volunteerA"
+    },
+    {
+      "key": "0x2556b917a53710bde1643903e60178bb2ac82dc8e8c537dfe808d7bf449c7c0d",
+      "txHash": "0x1282092ea8fb43400888fcd5ed6816a446e1733e3670016816009b85ea24482f",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "5",
+      "type": "claim",
+      "role": "volunteerB"
+    },
+    {
+      "key": "0x1ff47f468cfa78beb3d6ca3d4e9656b1f22e7406714ef589edd94e664e28a9ca",
+      "txHash": "0xb771490df50cff19b96fb08999260371c85fd54d08fc298a6427827473903ba9",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "5",
+      "type": "assign",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0x036acb4a7a099c381a8ab0112a02eb6fa516f52927381fcccbbdd8ece15ec8c8",
+      "txHash": "0x25cdab2f9f0fe9c2fef00f34b477213239a444ef97a36d1e63d554894a858c4b",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "4",
+      "type": "closeout",
+      "role": "dispatcher"
+    },
+    {
+      "key": "0xf658f90b8adb509ae6d67cf318e59f7b1a420f8a9a38178c3e2c414c86536e90",
+      "txHash": "0xca6c24af062d1ec97797c667c94ec5a4378b8c64cdd1eb2bba8473ccbe2824ff",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "5",
+      "type": "ride",
+      "role": "forger"
+    },
+    {
+      "key": "0x116395da32e7366ce57275d86ce4e25a37de79fd704334b7af47a8c6938a86c2",
+      "txHash": "0x65df5ccdb5a7c37b3527af5854451e19222a9cac25bbc3c6bb353ffcc003b0ca",
+      "circle": "46123014e78f511adb2fb383b4db365b",
+      "epoch": "5",
+      "type": "assign",
+      "role": "forger"
+    }
+  ]
+}

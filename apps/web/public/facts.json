@@ -1,13 +1,14 @@
 {
   "generated": true,
-  "generatedAt": "2026-10-18T14:07:32.726Z",
+  "generatedAt": "2026-10-18T14:50:28.228Z",
   "sources": {
     "d1": "d1-2026-10-18.json",
     "d2": "d2-2026-10-18.json",
     "drill": "drill-2026-10-18.json",
     "rekey": "rekey-2026-10-18.json",
     "leakAudit": "leak-audit-2026-10-18.json",
-    "wild": "wild-2026-10-18.json"
+    "wild": "wild-2026-10-18.json",
+    "seed": "seed-2026-10-18.json"
   },
   "d1": {
     "txHash": "0xf3f506c0140ad1b298c052ff3797d7ba9a9fa7a7651fd28643c9e54cca098ba6",
@@ -43,10 +44,10 @@
     "liveRecords": 4
   },
   "leakAudit": {
-    "entities": 11,
+    "entities": 60,
     "maxPublicAttributes": 6,
     "plaintextTx": 0,
-    "minEntropy": 7.172619261800955,
+    "minEntropy": 7.168454030195016,
     "pass": true
   },
   "wild": {
@@ -55,5 +56,9 @@
     "readableText": 12,
     "pastBlock": "738949",
     "head": "739549"
+  },
+  "cost": {
+    "gasPerRide": 115072,
+    "glmPerRide": "0.00011507"
   }
 }

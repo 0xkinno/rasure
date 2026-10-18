@@ -1,7 +1,7 @@
 {
   "experiment": "leak audit I3 and I6",
   "date": "2026-10-18",
-  "head": "740134",
+  "head": "742584",
   "pages": 1,
   "allowlist": [
     "project",
@@ -14,13 +14,13 @@
     "epoch_blocks",
     "genesis"
   ],
-  "entities": 11,
+  "entities": 60,
   "maxPublicAttributes": 6,
   "attributeViolations": [],
-  "creationTxChecked": 8,
+  "creationTxChecked": 40,
   "creationTxNotFound": 0,
   "plaintextTx": 0,
-  "minEntropy": 7.172619261800955,
+  "minEntropy": 7.168454030195016,
   "entropyThresholds": {
     "256": 6.9,
     "512": 7.4,
@@ -28,8 +28,12 @@
   },
   "perLengthBucket": {
     "285": {
-      "n": 8,
-      "minEntropy": 7.172619261800955
+      "n": 30,
+      "minEntropy": 7.168454030195016
+    },
+    "1024": {
+      "n": 1,
+      "minEntropy": 7.792343651207888
     }
   },
   "findings": [],

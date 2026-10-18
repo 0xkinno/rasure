@@ -7,6 +7,7 @@ import { createPublicClient } from "@arkiv-network/sdk";
 import { tiramisu } from "@arkiv-network/sdk/chains";
 import { createPublicClient as viemPublicClient, webSocket, type Hex } from "viem";
 import { eq } from "@arkiv-network/sdk/query";
+import { key } from "@arkiv-network/sdk/attr";
 import {
   q5Claims, EpochTooLateError, advance, assignClaim, assignAndClosePrevious, claimRide, closeRide, createCircle, currentKey, epochAt, extendCircle,
   fetchAll, guarded, keyDeathBlock, keyFor, newChain, open, partitionRides, postRide, q1OpenBoard, q2Zone, q3bRelated, q4Forged, q6Circle,
@@ -14,7 +15,7 @@ import {
   type ArkivWriter, type ChainEntity, type EntityType,
 } from "@rasure/core";
 import { useWallet, fmtGlm } from "@/lib/wallet";
-import { reader } from "@/lib/chain";
+import { reader, readWithRelay } from "@/lib/chain";
 import { RPC_WS, FAUCET, txUrl, addrUrl, short, TRUSTED_DISPATCHERS, DEMO_CIRCLE } from "@/lib/config";
 import {
   type Ring, advanceAndSave, createDispatcherRing, encodeJoin, deleteDeviceKey, ensureDeviceKey, listCircles, loadDeviceKey, loadRing, saveRing,
@@ -133,9 +134,10 @@ export function BoardClient() {
 
   // ---- board reads: Q1 (or Q2 with a zone), Q3b, Q4, Q6
   const refetchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadRef = useRef<() => Promise<void>>(async () => undefined);
   const scheduleRefetch = () => {
     if (refetchTimer.current) clearTimeout(refetchTimer.current);
-    refetchTimer.current = setTimeout(() => { void load(); }, 1200);
+    refetchTimer.current = setTimeout(() => { void loadRef.current(); }, 1200); // always the latest loader (current zone filter)
   };
   const load = useCallback(async () => {
     const r = ringRef.current;
@@ -232,6 +234,7 @@ export function BoardClient() {
       setError(rl ? rl.message : (e?.message ?? String(e)).slice(0, 300));
     }
   }, [zone]);
+  loadRef.current = load;
   useEffect(() => { if (ring) void load(); }, [ring?.state.circle, zone, load]); // eslint-disable-line react-hooks/exhaustive-deps
   const lastEpoch = useRef<bigint | null>(null);
   useEffect(() => {
@@ -306,7 +309,7 @@ export function BoardClient() {
   async function doReplay() {
     const c = cards?.[0];
     if (!c || !ring) return setReplayMsg("Post a ride first, then replay its ciphertext.");
-    const { value } = await guarded(async () => ({ value: await reader.select({ payload: true }).where(eq("$key", `0x${c.entity.key.slice(2)}` as any)).fetch() })).catch(() => ({ value: null as any }));
+    const { value } = await readWithRelay((rc) => rc.select({ payload: true }).where(eq("$key", key(c.entity.key as Hex))).fetch()).catch(() => ({ value: null as any }));
     const payload = value?.entities?.[0]?.payload as Uint8Array | undefined;
     const ck = keyFor(ring.state, c.epoch);
     if (!payload || !ck) return setReplayMsg("Could not load that ride's ciphertext.");

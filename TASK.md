@@ -29,7 +29,7 @@ done, in progress, next, live vs designed.
 - [x] `packages/core/src/queries.ts` (Q1 to Q8) + unit tests that render each predicate string
 - [x] `packages/core/src/writes.ts`: createCircle, postRide, claimRide, assignClaim (batch where two writes must land together), closeRide, extendCircle; every sealed write uses `ExpirationTime.atBlock(keyDeathBlock)` with a 20-block margin guard
 - [x] `packages/core/src/read.ts`: retryCount 0, 429 detection with retry time, cursor pagination pinned by `atBlock`
-- [ ] `scripts/seed.ts` (demo circle, 300-block epochs): rides across at least 6 epochs, claims, assigns, a closeout, one forged ride and one forged assign (forger); `proof/seed-manifest.json`
+- [x] `scripts/seed.ts` (demo circle, 300-block epochs): rides across at least 6 epochs, claims, assigns, a closeout, one forged ride and one forged assign (forger); `proof/seed-manifest.json`
 - [x] `scripts/drill-run.ts`: same synthetic rides written three ways (plaintext, static key, ratchet) as separate circles; keys and tx hashes in `proof/drill-manifest.json`; wait until older epochs are dead; run `seizureDrill` from calldata; `proof/results/drill-*.json`
 - [x] Both error directions measured: attacker opens a past record (target 0) and a legitimate member is refused a current or grace record (target 0)
 - [x] `scripts/leak-audit.ts` (I3, I6) over every rasure/v1 entity and its creation tx
@@ -50,7 +50,7 @@ done, in progress, next, live vs designed.
 - [x] `/api/rpc` read relay (only `arkiv_query`, `eth_getTransactionByHash`, `eth_blockNumber`, `eth_getBlockByNumber`; adds `X-API-KEY`; used only after a 429)
 - [x] Keyring in IndexedDB; `advance()` on load, on each WebSocket head, before each read
 - [x] `/join` from a fragment, then strip the fragment from the address bar
-- [ ] `/board`: create circle + QR, post ride, live cards, claim, assign, close out, rekey, zone filter by blind tag, Ignored panel (forged ride, forged assign), night dispatch theme
+- [x] `/board`: create circle + QR, post ride, live cards, claim, assign, close out, rekey, zone filter by blind tag, Ignored panel (forged ride, forged assign), night dispatch theme
 - [x] Key-death strip with countdown and live scrape-out dissolve at the death block
 - [x] `/drill` (no wallet): four scenarios, live run from manifest and calldata, totals equal FACTS
 - [x] `/explorer-view` (no wallet): raw attributes, payload hex, decoded creation tx, verdict line
@@ -69,8 +69,8 @@ done, in progress, next, live vs designed.
 - [x] `scripts/check-copy.mjs` passes (no em or en dashes, no emoji, no hype words, no banned names, no secrets)
 
 ## Phase 6. Docs and evidence
-- [ ] `arkiv/schema.md` complete
-- [ ] `arkiv/friction.md` complete (every item with versions and repro; tested paths that worked too)
+- [x] `arkiv/schema.md` complete
+- [x] `arkiv/friction.md` complete (every item with versions and repro; tested paths that worked too)
 - [x] `arkiv/wallets.md` and `arkiv/evidence.md` (generated)
 - [x] `SDK_SURFACE.md` with file:line and "Not used, so not claimed"
 - [ ] `README.md` per instruction section 10, banner + 2x2 real screenshots, all four pillar sections
