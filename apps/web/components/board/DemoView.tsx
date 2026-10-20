@@ -1,6 +1,7 @@
 "use client";
 // Read-only view of the live demo network for visitors who hold no key: public attributes, ciphertext size and the key-death countdown.
 // Nothing here is decrypted. It is the same data a stranger sees on the explorer.
+import { ExposureMeter } from "./ExposureMeter";
 import { useEffect, useState } from "react";
 import { epochAt, fetchAll, keyDeathBlock, q1OpenBoard, q6Circle, toChainEntity, type ChainEntity } from "@rasure/core";
 import { readWithRelay, reader } from "@/lib/chain";
@@ -60,6 +61,7 @@ export function DemoView() {
       <div className="notice">
         <b>Live demo network</b> (read-only, no key needed). Epoch {state.epoch.toString()} now; the key for epoch {oldestEpoch.toString()} dies in <span className="mono">{mmss(death - now)}</span> (block {death.toString()}), when every phone erases it and Arkiv expires the records sealed under it. Held by <a className="hash" href={addrUrl(state.owner)} target="_blank" rel="noreferrer">{short(state.owner, 6)}</a>, generation {state.gen}. An automated night watch keeps it alive during judging.
       </div>
+      <ExposureMeter who="A member phone" ring={{ clock: state.clock, keys: [state.epoch > 0n ? state.epoch - 1n : 0n, state.epoch].filter((e, i, a) => a.indexOf(e) === i).map((epoch) => ({ epoch, chainKey: new Uint8Array(0) })) }} records={state.rides.map((r) => ({ epoch: BigInt(r.attributes.epoch as string | bigint) }))} head={now} />
       <div className="grid g3" style={{ marginTop: 16 }}>
         {state.rides.length === 0 && <p className="notice">No live ride in this epoch yet; the watch posts one each epoch.</p>}
         {state.rides.map((r) => (

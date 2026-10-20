@@ -1,4 +1,5 @@
 "use client";
+import { epochGuarantee } from "@rasure/core";
 import { useEffect, useState } from "react";
 import { hexToBytes } from "viem";
 import { ShieldCheck, ShieldAlert } from "lucide-react";
@@ -65,6 +66,7 @@ export default function DrillPage() {
           <p style={{ fontSize: 19, maxWidth: 760 }}>
             It is 23:40. A volunteer's phone is gone. The attacker also has a full Arkiv node. The same synthetic rides were written to Tiramisu under three designs, plus one where the circle was rekeyed after the seizure. Press the button: this page fetches each creation transaction, recovers the payload from calldata, and tries to open it with only what the seized phone holds.
           </p>
+          <p className="mono" style={{ fontSize: 14, lineHeight: "22px", color: "var(--on-cobalt-2)", maxWidth: 760 }}>{epochGuarantee().sentence}</p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
             <button className="btn btn-lime" onClick={run} disabled={running || manifest === null || manifest === "missing"}>{running ? "Running..." : "Run the seizure"}</button>
             <label className="label" style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
@@ -76,6 +78,11 @@ export default function DrillPage() {
       </section>
       <section className="sec" style={{ paddingTop: 48 }}>
         <div className="wrap">
+          {hasFacts(facts) && facts.drill && (
+            <p className="label" style={{ marginBottom: 20 }} data-testid="drill-facts">
+              Measured totals ({facts.generatedAt}): {Object.entries(facts.drill).map(([k, v]) => `${k} ${v.exposed}/${v.total}`).join(" · ")}. The live run below should match.
+            </p>
+          )}
           {manifest === null && <div className="skeleton" style={{ height: 120 }} />}
           {manifest === "missing" && (
             <div className="notice">
@@ -116,11 +123,6 @@ export default function DrillPage() {
                 })}
               </div>
               {forward && <ForwardPanel manifest={manifest} />}
-              {hasFacts(facts) && facts.drill && (
-                <p className="label" style={{ marginTop: 20 }}>
-                  FACTS.json totals ({facts.generatedAt}): {Object.entries(facts.drill).map(([k, v]) => `${k} ${v.exposed}/${v.total}`).join(" · ")}. The live run above should match.
-                </p>
-              )}
             </>
           )}
         </div>

@@ -125,3 +125,12 @@ done, in progress, next, live vs designed.
 - [ ] G: second live Playwright spec against the live URL
 - [ ] G: red-team round with five roles, `REDTEAM_LOG.md`
 - [ ] G: video only after deploy, seed, night watch and one red-team round
+
+## Phase 11: Final pass
+- [x] 1. `apps/web/lib/facts.ts` bakes `public/facts.json` into the build; no-JavaScript Playwright test for `/`, `/proof` and `/drill` (`tests/e2e/nojs.spec.ts`); live check with curl
+- [x] 2. Human first: README quote under the pitch, same three sentences as a mono caption in the landing hero
+- [x] 3. The guarantee in hours, derived from `EPOCH_BLOCKS` (`epochGuarantee()` in core): README, landing, drill page
+- [x] 4. Exposure meter (`ExposureMeter.tsx`, `exposureOf` with tests): board and demo view; README step 4
+- [x] 5. Positioning paragraph in README "The problem"
+- [x] 6. `arkiv-encryption@0.1.0` evaluated: `scripts/repro/aad-replay.mjs`, friction item 13, README and SDK_SURFACE rows, surfaces used
+- [ ] 7. History scrub: skipped by decision of Kinnoski

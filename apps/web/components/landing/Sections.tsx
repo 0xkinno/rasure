@@ -1,4 +1,5 @@
 "use client";
+import { epochGuarantee } from "@rasure/core";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { hasFacts, useFacts } from "@/lib/facts";
@@ -60,7 +61,7 @@ export function ThreeBoards() {
   const cards = [
     { k: "plaintext", t: "Plaintext board", s: "Every payload readable from the creation transaction." },
     { k: "static_key", t: "One-key board", s: "One key on the phone opens every past ride." },
-    { k: "ratchet", t: "Rasure", s: "Only the current and grace epoch, by design." },
+    { k: "ratchet", t: "Rasure", s: `Only the current and previous epoch: at most the last ${epochGuarantee().window}, by design.` },
   ];
   return (
     <div>

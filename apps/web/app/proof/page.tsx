@@ -140,7 +140,7 @@ export default function Proof() {
           {f && (f.wildWindows?.length > 0 || f.wildCalldata) && (
             <>
               <h3 className="pf-h3">Wild set · other people's expired records on Arkiv</h3>
-              <div className="pf-tablewrap"><table className="pf-table">
+              <div className="pf-tablewrap" tabIndex={0} role="region" aria-label="Scrollable table"><table className="pf-table">
                 <thead><tr><th>Window</th><th>Sampled</th><th>Still return a payload</th><th>Parse as text</th></tr></thead>
                 <tbody>
                   {f.wildWindows?.map((w: any) => <tr key={w.windowBlocks}><td>{w.approxMinutes} min back{w.partial ? " (partial)" : ""}</td><td className="mono">{w.sampled}</td><td className="mono">{w.stillReturnPayload}</td><td className="mono">{w.readableText}</td></tr>)}
@@ -154,7 +154,7 @@ export default function Proof() {
         <section id="onchain" className="pf-sec">
           <div className="pf-head"><h2>On chain</h2><span className="label pf-meta">{evidence?.length ?? 0} transactions with entity keys</span></div>
           {evidence === null ? <div className="skeleton" style={{ height: 120 }} /> : (
-            <div className="pf-tablewrap"><table className="pf-table">
+            <div className="pf-tablewrap" tabIndex={0} role="region" aria-label="Scrollable table"><table className="pf-table">
               <thead><tr><th>What</th><th>Transaction</th><th>Entity key</th></tr></thead>
               <tbody>{evidence.map((e, i) => (
                 <tr key={`${e.label}-${i}`}>
@@ -195,7 +195,7 @@ export default function Proof() {
         <section id="wallets" className="pf-sec">
           <div className="pf-head"><h2>Wallets</h2><span className="label pf-meta">all testnet, all synthetic</span></div>
           {wallets === null ? <div className="skeleton" style={{ height: 80 }} /> : (
-            <div className="pf-tablewrap"><table className="pf-table">
+            <div className="pf-tablewrap" tabIndex={0} role="region" aria-label="Scrollable table"><table className="pf-table">
               <thead><tr><th>Role</th><th>Address</th><th>What it does</th></tr></thead>
               <tbody>{wallets.map((w) => <tr key={w.address}><td className="mono">{w.role}</td><td className="mono"><a href={addrUrl(w.address)} target="_blank" rel="noreferrer" title={w.address}>{short(w.address)}</a></td><td>{w.note.replace(/`/g, "")}</td></tr>)}</tbody>
             </table></div>

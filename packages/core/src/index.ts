@@ -12,3 +12,4 @@ export * from "./rekey";
 export * from "./writes-rekey";
 export * from "./writes-more";
 export * from "./watch";
+export * from "./exposure";

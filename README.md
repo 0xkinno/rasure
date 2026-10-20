@@ -8,6 +8,10 @@
 
 Rasure is a ride board for volunteers who drive survivors of domestic violence to safety. It truly forgets: a phone taken tonight cannot read last night's pickups, even by someone holding the whole chain.
 
+> 23:40, Pune. A volunteer driver's phone is taken at a petrol pump by the man whose wife she
+> drove to a shelter an hour earlier. On an ordinary shared board, that phone holds weeks of
+> pickups. On Rasure it holds tonight, and by morning it holds nothing.
+
 On Tiramisu, **300 of 300** public entities that have since expired returned their full payload when read from history. An expired record is gone from the board. It is not gone from the chain.
 
 A night dispatcher posts pickups for volunteer drivers. Each pickup is sealed under a key that every phone erases at the same block where Arkiv expires the record. We found that on Arkiv an expired entity's payload stays in its creation transaction, so expiry hides a record and does not forget it. Rasure binds Entity Expiration to key destruction to close that gap.
@@ -17,6 +21,7 @@ A night dispatcher posts pickups for volunteer drivers. Each pickup is sealed un
 | **Live app** | [https://rasure.vercel.app](https://rasure.vercel.app) (no wallet needed to explore) |
 | **For judges** | [`/judge`](https://rasure.vercel.app/judge) and [JUDGE.md](JUDGE.md): 60 seconds, 3 minutes, 10 minutes |
 | **Seizure Drill** | [`/drill`](https://rasure.vercel.app/drill): attack the history yourself |
+| **Demo video** | [https://youtu.be/dzsXBH4UuC0](https://youtu.be/dzsXBH4UuC0) (under 3 minutes) |
 | **Read it without us** | [`reader.html`](https://rasure.vercel.app/reader.html), [`examples/raw-drill.mjs`](examples/raw-drill.mjs) (no SDK), the [CLI](scripts/rasure.ts), a `curl` |
 | **Data contract** | [arkiv/schema.md](arkiv/schema.md) |
 | **Friction report** | [arkiv/friction.md](arkiv/friction.md) |
@@ -52,6 +57,8 @@ The law already knows a shared database is dangerous for survivors. US victim-se
 | Advocates plan for abusers who monitor and take phones | [NNEDV Safety Net](https://www.techsafety.org/) |
 | About 51,100 women and girls were killed by an intimate partner or family member in 2023 | [UN, 25 November 2025](https://turkiye.un.org/en/node/306761) |
 
+Some survivor data must last for years, like a dated record of abuse for a court. Some must die by morning, like where she was picked up and where she was taken. Arkiv is excellent at the first. Rasure is built for the second, and for the gap we found: on Arkiv, expiring a record is not the same as forgetting it.
+
 ## What we found on Arkiv
 
 **Expiry hides. It does not forget.** Everyone building on Arkiv, and the Privacy track itself, treats Entity Expiration as the privacy control. We tested what it actually does.
@@ -84,7 +91,7 @@ In Meera's words:
 1. **I post a ride.** My phone seals it under tonight's key before anything leaves it.
 2. **Arkiv holds only ciphertext,** and its Entity Expiration is the block where tonight's key dies.
 3. **Drivers' phones open it.** They filter by area with a tag that changes every few hours, so nobody can follow a place across nights.
-4. **At the death block, every phone erases the key and Arkiv expires the record.** Same block. Nothing to remember to delete.
+4. **At the death block, every phone erases the key and Arkiv expires the record.** Same block. Nothing to remember to delete. My phone shows me the result as it happens: "If this phone were taken now, it opens N rides, all from the last few hours, and none in mm:ss" (the exposure meter on the board).
 5. **If a phone is lost, I rekey.** The remaining drivers get a fresh chain; the lost phone reads nothing written after that.
 6. **When my shift ends, I hand the network over.** The morning dispatcher holds it from that block on. Rides I write afterwards no longer count.
 7. **Our funder sees how many rides we served,** signed by me and kept alive by them, with no person, place or time in it.
@@ -157,7 +164,7 @@ sequenceDiagram
 
 **Who is exposed today:** a survivor whose pickup history sits on every phone and server that ever showed the board. Expiring the post does not help: the content stays in history and in the transaction.
 
-**What changes from day one:** a lost phone reads at most two epochs. Nothing on the explorer names a person, a place or an exact time. The dispatcher sets every lifetime and nobody can stretch a ride's. Rekeying cuts a lost phone off completely.
+**What changes from day one:** Production epochs are 6 hours. A taken phone can read at most the current and previous epoch: up to the last 12 hours, never older. The demo network uses 10-minute epochs so you can watch a key die. A lost phone reads at most two epochs. Nothing on the explorer names a person, a place or an exact time. The dispatcher sets every lifetime and nobody can stretch a ride's. Rekeying cuts a lost phone off completely.
 
 ## Why Security
 
@@ -223,6 +230,7 @@ Every feature below changes something a dispatcher, a driver or a stranger sees.
 | **History (`atBlock`)** | the drill, the audits, owner-at-block checks and the reader's rewind read the past on purpose | drill rows, rewind |
 | **WebSocket entity events** | `watchEntityEvents` with no `fromBlock`; heads drive key death; transfers and deletes move the board | the board and the keys change live |
 | **Direct JSON-RPC** | calldata recovery with `eth_getTransactionByHash`; a `curl` for every query | drill and proof pages |
+| **`arkiv-encryption@0.1.0` (evaluated, not adopted)** | its v1 envelope has no additional authenticated data, so a valid envelope can be replayed into another entity, network or context; Rasure needs each ciphertext bound to circle, epoch and type (I5), so we kept WebCrypto AES-256-GCM with AAD and filed an `aad` parameter as a suggestion ([friction 13](arkiv/friction.md), [repro](scripts/repro/aad-replay.mjs)) | nothing visible: the replay is refused |
 
 **Outside the product, used to check it:** the Arkiv Data Explorer shows the same entities from Arkiv's own tool, and the Arkiv MCP server independently observed the demo transactions and entities and agreed with our reader ([`proof/results/mcp-*.json`](proof/results)).
 
@@ -257,13 +265,14 @@ Every feature below changes something a dispatcher, a driver or a stranger sees.
 - Seizure drill, ratchet: 4 of 32 records exposed.
 - Seizure drill, rekey: 0 of 2 records exposed.
 - Error directions: attacker opened 0 past records; legitimate member refused 0 of 8 live records.
+- Leak audit: 60 entities, at most 6 public attributes, 0 plaintext creation transactions, pass: true.
 - Calldata on the wild set: of 39 sampled public entities, 39 creation transactions were found and 39 payloads were recovered from calldata, 39 identical to the history read.
 - Cost: about 115072 gas and 0.00011507 GLM per ride; 0.00023014 GLM per batch; 0.00016701 GLM per rekey.
 - Key-death timing: 13 demo rides checked, expiresAt equals keyDeathBlock for 13 (I1).
 
 **Three boards, one seized phone.** The same rides were written three ways on Tiramisu and attacked with what a seized phone holds plus the full history. Plaintext and a single key leak everything. Rasure leaks only the current and grace epoch, by design, and nothing after a rekey.
 
-**Misses we publish:** the current and grace epoch are readable from a seized phone (two epochs at most). The leak audit's entropy bar is set per payload length, because 256 random bytes measure about 7.2 bits per byte, not the 7.5 we first planned.
+**Misses we publish:** the current and previous epoch are readable from a seized phone (two epochs at most: up to 12 hours with production epochs of 6 hours). The leak audit's entropy bar is set per payload length, because 256 random bytes measure about 7.2 bits per byte, not the 7.5 we first planned.
 
 ## Invariants
 
@@ -308,7 +317,7 @@ A public workflow ([`night-watch.yml`](.github/workflows/night-watch.yml)) runs 
 | Ride content | No | sealed on the phone; Arkiv holds ciphertext |
 | Who wrote what | No | `$creator` and `$owner`, set by the chain |
 | When records die | No | Entity Expiration, enforced by the network |
-| A member's phone | **Yes, for two epochs** | it can read the current and grace epoch; rekey cuts it off |
+| A member's phone | **Yes, for two epochs (up to 12 hours)** | it can read the current and previous epoch; rekey cuts it off |
 | The join link | **Yes** | it carries a chain key; hand it over in person; rekey if it leaks |
 | `/api/drip`, `/api/rpc` | Barely | test GLM and a read-only relay used after a rate limit; neither writes an entity |
 | Arkiv Tiramisu | **Yes** | it is a testnet; history retention was measured once, not guaranteed |

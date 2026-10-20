@@ -20,6 +20,7 @@
 | Cursor pagination pinned with `atBlock` | every page of a walk is read at one block | [read.ts:104](packages/core/src/read.ts) | consistent board | leak audit and CLI |
 | WebSocket entity events | `watchEntityEvents` on a WebSocket, no `fromBlock`; deletes and ownership transfers move the board | [BoardClient.tsx:119](apps/web/components/board/BoardClient.tsx) | the board updates without refresh | `events-*.json` (network-wide events observed) |
 | Historical queries (`atBlock`) | the drill, the audits and D2 read the past on purpose | [d2-atblock.ts:24](scripts/discovery/d2-atblock.ts), [leak-audit.ts:23](scripts/leak-audit.ts) | drill rows | `d2-*.json` |
+| `arkiv-encryption@0.1.0` (evaluated, not used) | its envelope has no additional authenticated data, so it cannot bind a ciphertext to circle, epoch and type (I5); we kept AES-256-GCM with AAD and suggested an optional `aad` parameter | [scripts/repro/aad-replay.mjs](scripts/repro/aad-replay.mjs), [friction.md](arkiv/friction.md) | nothing: a replayed record is refused | `node scripts/repro/aad-replay.mjs` |
 | Direct JSON-RPC | calldata recovery with `eth_getTransactionByHash`; the drill with no SDK | [calldata.ts](packages/core/src/calldata.ts), [examples/raw-drill.mjs](examples/raw-drill.mjs) | drill, stranger view, proof | `d1-*.json` |
 
 ## Not used, so not claimed
@@ -30,4 +31,11 @@
 
 ## Surfaces used (for the Devfolio form)
 
-TypeScript SDK, Direct JSON-RPC, WebSocket events, Docs, Hub (access key), Faucet (see friction item 2), Block Explorer, Data Explorer (deep links), Arkiv MCP (`scripts/mcp-verify.mjs`, outside the product), Arkiv skills.
+TypeScript SDK, Direct JSON-RPC, WebSocket events, Docs, Hub (access key), Faucet (see friction item 2), Block Explorer, Data Explorer, Arkiv MCP, Arkiv skills, and the `arkiv-encryption` package (evaluated).
+
+What each did:
+
+- **Arkiv skills:** guided the SDK calls while building (entity creation, queries, expiry); nothing from them ships in the product.
+- **Arkiv MCP:** `scripts/mcp-verify.mjs` asked it to confirm our demo transactions and entities independently. It agreed on 34 of 34 receipts and returns metadata only ([friction 10](arkiv/friction.md)). Outside the product.
+- **Data Explorer:** deep links from the proof page, the explorer view and the drill open the same entity or query in Arkiv's own tool, so a judge can check us against it.
+- **`arkiv-encryption`:** evaluated and not adopted, see [friction 13](arkiv/friction.md).

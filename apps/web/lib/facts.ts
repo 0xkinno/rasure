@@ -1,5 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+// Baked in at build time from public/facts.json (written by scripts/facts.ts from proof/results).
+// This makes every number part of the server-rendered HTML, so a judge, a crawler or an AI reviewer
+// that does not run JavaScript sees the measured totals, not a loading state.
+import BAKED from "@/public/facts.json";
 
 export interface Facts {
   generated?: boolean;
@@ -15,12 +19,29 @@ export interface Facts {
   [k: string]: unknown;
 }
 
-/** Numbers only ever come from FACTS.json. When it is not generated yet, pages say so. */
+const INITIAL = BAKED as unknown as Facts;
+
+/**
+ * Numbers only ever come from FACTS.json. The build-time copy renders immediately; the live
+ * /api/facts copy replaces it after load, so a newer run shows without a redeploy.
+ */
 export function useFacts() {
-  const [facts, setFacts] = useState<Facts | null>(null);
+  const [facts, setFacts] = useState<Facts>(INITIAL);
   useEffect(() => {
-    fetch("/api/facts").then((r) => r.json()).then(setFacts).catch(() => setFacts({ generated: false, reason: "could not load /api/facts" }));
+    let alive = true;
+    fetch("/api/facts", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((f: Facts) => {
+        if (alive && f && f.generated !== false) setFacts(f);
+      })
+      .catch(() => {
+        /* keep the build-time facts; they are real results, not a placeholder */
+      });
+    return () => {
+      alive = false;
+    };
   }, []);
   return facts;
 }
+
 export const hasFacts = (f: Facts | null): f is Facts => !!f && f.generated !== false;

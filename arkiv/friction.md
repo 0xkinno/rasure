@@ -95,6 +95,16 @@ Every item below was hit or measured by us. Items that depend on a funded write 
 
 - **Surface:** deployment, not Arkiv. Vercel refused to promote a build on Next.js 15.1.6; 15.5.28 deployed. Noted because the SDK quickstart pins older tooling.
 
+## 13. The official `arkiv-encryption@0.1.0` envelope has no additional authenticated data
+
+- **Surface:** the `arkiv-encryption` package, `encryptPayload` and `decryptPayload`.
+- **Expected:** a ciphertext made for one entity cannot be reused as another.
+- **Actual:** the v1 envelope is `iv || ciphertext || tag` with "no extra authenticated data" (its own README says so). A valid envelope therefore opens under the same key whatever entity, network or context carries it, so it can be copied into another entity and still decrypt. This is by design for a general helper, and it is stated in the docs.
+- **Why it matters for us:** Rasure needs each ciphertext bound to its circle, epoch and entity type (invariant I5), so a record cannot be replayed into another circle or epoch. We kept WebCrypto AES-256-GCM with `additionalData = rasure/v1|circle|epoch|type`.
+- **Versions:** `arkiv-encryption` 0.1.0, Node 24.14.1.
+- **Reproduce:** `node scripts/repro/aad-replay.mjs` prints the package envelope opening after replay, and the Rasure form refusing the same replay into another circle, epoch and type.
+- **What would fix it:** an optional `aad` parameter (bytes) on `encryptPayload` and `decryptPayload`, passed to AES-GCM as `additionalData`, with the existing format unchanged when it is omitted.
+
 ## Paths that worked, tested with the same rigour
 
 | Path | Expected | Result |

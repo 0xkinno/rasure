@@ -5,6 +5,7 @@ import { execSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { ROOT } from "./lib";
+import { epochGuarantee } from "@rasure/core";
 
 const rd = (p: string) => (existsSync(resolve(ROOT, p)) ? readFileSync(resolve(ROOT, p), "utf8").trim() : "");
 const cfg = existsSync(resolve(ROOT, "docs/deploy.json")) ? JSON.parse(readFileSync(resolve(ROOT, "docs/deploy.json"), "utf8")) : {};
@@ -31,6 +32,8 @@ fill("facts", rd("docs/facts-block.md"));
 fill("txfeatures", rd("docs/txfeatures.md"));
 
 if (!VIDEO) t = t.split("\n").filter((l) => !l.includes("VIDEO_URL")).join("\n");
+const g = epochGuarantee();
+t = t.replaceAll("EPOCH_SENTENCE", g.sentence).replaceAll("EPOCH_WINDOW", g.window).replaceAll("EPOCH_PROD", g.prod);
 t = t.replaceAll("VIDEO_URL", VIDEO).replaceAll("LIVE_URL", LIVE).replaceAll("BASELINE_SHA", baseline);
 t = t.replace(/<!--[\s\S]*?-->\n?/g, "").replace(/\n{3,}/g, "\n\n");
 writeFileSync(resolve(ROOT, "README.md"), t.trim() + "\n");

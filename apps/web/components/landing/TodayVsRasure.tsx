@@ -80,7 +80,7 @@ export function TodayVsRasure() {
         </svg>
         <p className="label" style={{ display: "flex", gap: 16, flexWrap: "wrap", margin: "8px 6px 4px" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, background: "#f0533a", border: "1.5px solid #0b1a5e", display: "inline-block" }} />readable from history</span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, background: "#d7f25a", border: "1.5px solid #0b1a5e", display: "inline-block" }} />readable by design (current and grace epoch)</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, background: "#d7f25a", border: "1.5px solid #0b1a5e", display: "inline-block" }} />readable by design (current and previous epoch)</span>
         </p>
       </div>
       <div className="grid g2" style={{ marginTop: 24 }}>

@@ -1,4 +1,5 @@
 "use client";
+import { ExposureMeter } from "./ExposureMeter";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -627,6 +628,10 @@ export function BoardClient() {
               </>
             )}
           </div>
+        )}
+
+        {ring && head !== null && head >= ring.state.clock.genesisBlock && (
+          <ExposureMeter ring={ring.state} records={(cards ?? []).map((c) => ({ epoch: c.epoch }))} head={head} />
         )}
 
         {ring && (

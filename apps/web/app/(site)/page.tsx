@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { epochGuarantee } from "@rasure/core";
 import { RideSlipStack } from "@/components/hero/RideSlipStack";
 import { TodayVsRasure } from "@/components/landing/TodayVsRasure";
 import { HowARideMoves, ThreeBoards, MeerasNight, StrangerPreview, BuiltOnArkiv } from "@/components/landing/Sections";
@@ -22,6 +23,9 @@ export default function Landing() {
               <Link href="/drill" className="btn btn-lime">Run the seizure drill</Link>
               <Link href="/board" className="btn btn-line">Open the board</Link>
             </div>
+            <p className="mono" style={{ fontSize: 14, lineHeight: "22px", color: "var(--on-cobalt-2)", maxWidth: 560, marginTop: 22 }}>
+              23:40, Pune. A volunteer driver's phone is taken at a petrol pump by the man whose wife she drove to a shelter an hour earlier. On an ordinary shared board, that phone holds weeks of pickups. On Rasure it holds tonight, and by morning it holds nothing.
+            </p>
           </div>
           <div style={{ display: "grid", justifyItems: "center" }}>
             <RideSlipStack />
